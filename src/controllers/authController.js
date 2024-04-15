@@ -34,6 +34,7 @@ const createJWT = async (req, res) => {
             });
     }
     const jwt = authService.createJWT(user);
+    
     res
         .status(201).send({ 
             status: true, 

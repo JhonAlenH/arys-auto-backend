@@ -12,8 +12,6 @@ const sqlConfig = {
     }
 }
 
-console.log(sqlConfig)
-
 const verifyIfUsernameExists = async (xlogin) => {
     try {
         let pool = await sql.connect(sqlConfig);

@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import multer from 'multer';
 
 import v1AuthRouter from './v1/authRoutes.js';
+import v1MaestrosRouter from './v1/maestrosRoutes.js';
 
 
 
@@ -32,6 +33,7 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use("/api/v1/auth", v1AuthRouter);
+app.use("/api/v1/maestros", v1MaestrosRouter);
 
 const PORT = process.env.PORT || 3000; 
 

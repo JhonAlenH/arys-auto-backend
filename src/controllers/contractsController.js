@@ -28,7 +28,7 @@ const searchContracts = async (req, res) => {
             xplaca: item.xplaca
         });
     });
-    console.log(contractList)
+
     return res
         .status(200)
         .send({

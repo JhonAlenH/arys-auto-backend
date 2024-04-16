@@ -8,6 +8,7 @@ import multer from 'multer';
 
 import v1AuthRouter from './v1/authRoutes.js';
 import v1MaestrosRouter from './v1/maestrosRoutes.js';
+import v1ContractsRouter from './v1/contractsRoutes.js';
 
 
 
@@ -34,6 +35,13 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use("/api/v1/auth", v1AuthRouter);
 app.use("/api/v1/maestros", v1MaestrosRouter);
+app.use("/api/v1/contracts", v1ContractsRouter);
+
+
+
+
+
+
 
 const PORT = process.env.PORT || 3000; 
 

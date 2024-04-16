@@ -58,6 +58,7 @@ const getOneUser = async (xlogin) => {
         return result.recordset[0];
     }
     catch (error) {
+        console.log(error.message)
         return { error: error.message };
     }
 }

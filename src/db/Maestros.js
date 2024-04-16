@@ -20,7 +20,8 @@ const getMaMonedas = async() => {
       result: result
     };
   } catch (error) {
-    
+    console.log(error.message)
+    return { error: error.message };
   }
 }
 const getMaCompania = async() => {
@@ -32,7 +33,8 @@ const getMaCompania = async() => {
       result: result
     };
   } catch (error) {
-    
+    console.log(error.message)
+    return { error: error.message };
   }
 }
 const getMaPais = async() => {
@@ -44,7 +46,8 @@ const getMaPais = async() => {
       result: result
     };
   } catch (error) {
-    
+    console.log(error.message)
+    return { error: error.message };
   }
 }
 const getMaMetPago = async() => {
@@ -56,7 +59,8 @@ const getMaMetPago = async() => {
       result: result
     };
   } catch (error) {
-    
+    console.log(error.message)
+    return { error: error.message };
   }
 }
 const getServicios = async(cpais, ccompania) => {
@@ -68,7 +72,8 @@ const getServicios = async(cpais, ccompania) => {
       result: result
     };
   } catch (error) {
-    
+    console.log(error.message)
+    return { error: error.message };
   }
 }
 const getAseguradoras = async() => {
@@ -80,7 +85,8 @@ const getAseguradoras = async() => {
       result: result
     };
   } catch (error) {
-    
+    console.log(error.message)
+    return { error: error.message };
   }
 }
 

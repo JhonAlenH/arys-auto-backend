@@ -6,5 +6,6 @@ const router = express.Router();
 
 router
     .post("/create", planController.createPlan)
+    .post("/search", planController.searchPlans)
     
 export default router;

@@ -13,14 +13,12 @@ const sqlConfig = {
 }
 
 const createPlan = async(data) => {
-  // console.log(data)
   var keys = Object.keys(data)
   var valuesAndTypes = Object.values(data)
   var values = []
   var i = 0
 
   for (const value of valuesAndTypes) {
-    // const newValue = parseInt(value)
     const valueSplited = value.split('[]')
     const type = valueSplited[1].split('=')[1]
     if(type == 'extern') {
@@ -57,6 +55,22 @@ const createPlan = async(data) => {
 
 }
 
+const searchPlans = async (ccompania) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`
+    SELECT xplan, cplan, mcosto FROM POPLAN WHERE ccompania = ${ccompania};
+    `)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
-  createPlan
+  createPlan,
+  searchPlans
 }

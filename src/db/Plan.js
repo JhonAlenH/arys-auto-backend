@@ -43,11 +43,8 @@ const createPlan = async(data) => {
 
   try {
     let pool = await sql.connect(sqlConfig);
-    console.log(`
-    INSERT INTO POPLAN (${keys}) VALUES (${values});
-    `)
     let result = await pool.request().query(`
-    INSERT INTO POPLAN (${keys}) output inserted.CPLAN values (${values});
+    INSERT INTO POPLAN (${keys}) values (${values});
     `)
     await pool.close();
     return { 

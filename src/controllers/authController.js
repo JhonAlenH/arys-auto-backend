@@ -34,22 +34,21 @@ const createJWT = async (req, res) => {
             });
     }
     const jwt = authService.createJWT(user);
-    
+    console.log(user)
     res
         .status(201).send({ 
             status: true, 
             message: 'Usuario Autenticado',
             data: {
-                cusuario: user.cusuario,
-                xusuario: user.xusuario,
-                cdepartamento: user.cdepartamento,
-                crol: user.crol,
-                bcrear: user.bcrear,
-                bconsultar: user.bconsultar,
-                bmodificar: user.bmodificar,
-                beliminar: user.beliminar,
-                ccorredor: user.ccorredor,
-                xcorredor: user.xcorredor,
+                cusuario: user.CUSUARIO,
+                crol: user.CROL,
+                // bcrear: user.bcrear,
+                // bconsultar: user.bconsultar,
+                // bmodificar: user.bmodificar,
+                // beliminar: user.beliminar,
+                ccompania: user.CCOMPANIA,
+                cpais: user.CPAIS,
+                ctipo_sistema: user.CTIPO_SISTEMA,
                 token: 'Bearer ' + jwt
             }
         });

@@ -21,11 +21,31 @@ const createPlan = async (req, res) => {
     
   }
 }
+const searchPlanInfo = async (req, res) => {
+  try {
+    const plan = await Plan.searchPlanInfo(req.params.id);
+    // console.log(plan)
+    if (plan.error) {
+      return res.status(plan.code).send({
+        status: false,
+        message: plan.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Informacion del Plan Obtenida',
+      data: plan
+    });
+    
+  } catch (error) {
+    
+  }
+}
 const searchPlans = async (req, res) => {
   const ccompania = 1
   try {
     const plans = await Plan.searchPlans(ccompania);
-    console.log(plans)
+    // console.log(plans)
     if (plans.error) {
       return res.status(plans.code).send({
         status: false,
@@ -45,5 +65,6 @@ const searchPlans = async (req, res) => {
 
 export default {
   createPlan,
-  searchPlans
+  searchPlans,
+  searchPlanInfo
 }

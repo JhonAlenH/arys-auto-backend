@@ -174,8 +174,7 @@ const getTrade = async (getTrade) => {
 const getCoin = async (getCoin) => {
   try {
     const coin = await Coin.findAll({
-      where: {ccompania: getCoin.ccompania},
-      attributes: ['cmoneda', 'xdescripcion_l'],
+      attributes: ['cmoneda', 'xdescripcion'],
     });
     const coins = coin.map((item) => item.get({ plain: true }));
     return coins;

@@ -35,6 +35,11 @@ const createJWT = (user) => {
     return jwt.sign(payload, process.env.JWT_SECRET)
 }
 
+const checkToken = (token) => { 
+    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded)
+}
+
 const getOneUser = async (xlogin) => {
     const user = await User.getOneUser(xlogin);
     if (user.error) {
@@ -53,5 +58,6 @@ export default {
     verifyIfUsernameExists,
     verifyIfPasswordMatchs,
     createJWT,
-    getOneUser
+    getOneUser,
+    checkToken
 }

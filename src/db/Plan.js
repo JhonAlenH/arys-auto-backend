@@ -42,7 +42,7 @@ const createPlan = async(data) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    INSERT INTO POPLAN (${keys}) values (${values});
+    INSERT INTO MAPLANES (${keys}) values (${values});
     `)
     await pool.close();
     return { 
@@ -59,7 +59,7 @@ const searchPlanInfo = async (id) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    SELECT * FROM POPLAN WHERE id = ${parseInt(id)};
+    SELECT * FROM MAPLANES WHERE id = ${parseInt(id)};
     `)
     await pool.close();
     const keys = Object.keys(result.recordset[0])
@@ -84,7 +84,7 @@ const searchPlans = async (ccompania) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    SELECT id, xplan, cplan, mcosto FROM POPLAN WHERE ccompania = ${ccompania};
+    SELECT id, xplan, cplan, mcosto FROM MAPLANES WHERE ccompania = ${ccompania};
     `)
     await pool.close();
     return { 

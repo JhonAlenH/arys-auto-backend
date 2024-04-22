@@ -6,6 +6,6 @@ const router = express.Router();
 
 router
 
-    .post("/search", contractsController.searchContracts)
+    .get("/search", contractsController.searchContracts)
 
 export default router;

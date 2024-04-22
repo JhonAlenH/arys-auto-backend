@@ -34,7 +34,7 @@ const createJWT = async (req, res) => {
             });
     }
     const jwt = authService.createJWT(user);
-    console.log(user)
+    console.log(jwt)
     res
         .status(201).send({ 
             status: true, 
@@ -54,6 +54,12 @@ const createJWT = async (req, res) => {
         });
     return;
 };
+
+const checkToken = async (req, res) => {
+    // console.log(req.body.token)
+    const token = req.body.token.split('Bearer ')
+    const checkToken = authService.checkToken(token[1])
+}
 
 const getUserModules = async (req, res) => {
     const userModules = await authService.getUserModules(req.body.cusuario);
@@ -78,4 +84,5 @@ const getUserModules = async (req, res) => {
 export default {
     createJWT,
     getUserModules,
+    checkToken,
 }

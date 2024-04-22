@@ -3,7 +3,7 @@ import Maestros from '../db/Maestros.js';
 const getMaMonedas = async (req, res) => {
   try {
     const gettedMonedas = await Maestros.getMaMonedas();
-    console.log(gettedMonedas.result.recordset)
+    // console.log(gettedMonedas.result.recordset)
     if (gettedMonedas.error) {
       return res.status(gettedMonedas.code).send({
         status: false,
@@ -29,7 +29,7 @@ const getMaMonedas = async (req, res) => {
 const getMaCompania = async (req, res) => {
   try {
     const gettedCompanias = await Maestros.getMaCompania();
-    console.log(gettedCompanias.result)
+    // console.log(gettedCompanias.result)
     if (gettedCompanias.error) {
       return res.status(gettedCompanias.code).send({
         status: false,
@@ -55,7 +55,7 @@ const getMaCompania = async (req, res) => {
 const getMaPais = async (req, res) => {
   try {
     const gettedPaises = await Maestros.getMaPais();
-    console.log(gettedPaises.result)
+    // console.log(gettedPaises.result)
     if (gettedPaises.error) {
       return res.status(gettedPaises.code).send({
         status: false,
@@ -81,7 +81,7 @@ const getMaPais = async (req, res) => {
 const getMaMetPago = async (req, res) => {
   try {
     const gettedMetsPago = await Maestros.getMaMetPago();
-    console.log(gettedMetsPago.result)
+    // console.log(gettedMetsPago.result)
     if (gettedMetsPago.error) {
       return res.status(gettedMetsPago.code).send({
         status: false,
@@ -107,7 +107,7 @@ const getMaMetPago = async (req, res) => {
 const getServicios = async (req, res) => {
   try {
     const gettedServicios = await Maestros.getServicios(58, 1);
-    console.log(gettedServicios.result)
+    // console.log(gettedServicios.result)
     if (gettedServicios.error) {
       return res.status(gettedServicios.code).send({
         status: false,
@@ -133,7 +133,7 @@ const getServicios = async (req, res) => {
 const getAseguradoras = async (req, res) => {
   try {
     const gettedAseguradoras = await Maestros.getAseguradoras(58, 1);
-    console.log(gettedAseguradoras.result)
+    // console.log(gettedAseguradoras.result)
     if (gettedAseguradoras.error) {
       return res.status(gettedAseguradoras.code).send({
         status: false,

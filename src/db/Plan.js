@@ -21,7 +21,7 @@ const createPlan = async(data) => {
   for (const value of valuesAndTypes) {
     const valueSplited = value.split('[]')
     const type = valueSplited[1].split('=')[1]
-    if(type == 'extern') {
+    if(type == 'extern' || type == 'noDB') {
       keys.splice(i, 1)
       i--
     } else if(valueSplited[0] == '') {
@@ -42,7 +42,7 @@ const createPlan = async(data) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    INSERT INTO POPLAN (${keys}) values (${values});
+    INSERT INTO MAPLANES (${keys}) values (${values});
     `)
     await pool.close();
     return { 
@@ -55,22 +55,49 @@ const createPlan = async(data) => {
 
 }
 
+const searchPlanInfo = async (id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`
+    SELECT * FROM MAPLANES WHERE id = ${parseInt(id)};
+    `)
+    await pool.close();
+    const keys = Object.keys(result.recordset[0])
+    const values = Object.values(result.recordset[0])
+    let resultLowerCase = {}
+    let i = 0
+    for (const key of keys) {
+      const lowerKey = key.toLowerCase()
+      resultLowerCase[lowerKey] = values[i]
+      i++
+    }
+    result.recordset[0] = resultLowerCase
+    return { 
+      result: result.recordset[0]
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 const searchPlans = async (ccompania) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    SELECT xplan, cplan, mcosto FROM POPLAN WHERE ccompania = ${ccompania};
+    SELECT id, xplan, cplan, mcosto FROM MAPLANES WHERE ccompania = ${ccompania};
     `)
     await pool.close();
     return { 
       result: result
     };
   } catch (error) {
+    console.log(error.message)
     return { error: error.message };
   }
 };
 
 export default {
   createPlan,
-  searchPlans
+  searchPlans,
+  searchPlanInfo
 }

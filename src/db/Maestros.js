@@ -24,7 +24,7 @@ const getMaMonedas = async() => {
     return { error: error.message };
   }
 }
-const getMaCompania = async() => {
+const getMaCompanias = async() => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query('SELECT ccompania, xcompania from MACOMPANIA')
@@ -37,10 +37,51 @@ const getMaCompania = async() => {
     return { error: error.message };
   }
 }
-const getMaPais = async() => {
+const getMaCompania = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT ccompania, xcompania from MACOMPANIA where ccompania = ${id.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+const getMaPaises = async() => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query('SELECT cpais, xpais from MAPAIS')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+const getMaCiudades = async(pais, estado) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    // console.log(pais)
+    console.log(`SELECT cciudad, xdescripcion_l from MACIUDADES where cpais = ${pais.toString()} and cestado = ${estado.toString()}`)
+    let result = await pool.request().query(`SELECT cciudad, xdescripcion_l from MACIUDADES where cpais = ${pais.toString()} and cestado = ${estado.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+const getMaEstados = async(pais) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT cestado, xdescripcion_l from MAESTADOS where cpais = ${pais.toString()}`)
     await pool.close();
     return { 
       result: result
@@ -92,9 +133,12 @@ const getAseguradoras = async() => {
 
 export default {
   getMaMonedas,
+  getMaCompanias,
   getMaCompania,
-  getMaPais,
+  getMaPaises,
   getMaMetPago,
   getServicios,
-  getAseguradoras
+  getAseguradoras,
+  getMaCiudades,
+  getMaEstados
 }

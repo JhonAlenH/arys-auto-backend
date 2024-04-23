@@ -26,9 +26,9 @@ const getMaMonedas = async (req, res) => {
     
   }
 }
-const getMaCompania = async (req, res) => {
+const getMaCompanias = async (req, res) => {
   try {
-    const gettedCompanias = await Maestros.getMaCompania();
+    const gettedCompanias = await Maestros.getMaCompanias();
     // console.log(gettedCompanias.result)
     if (gettedCompanias.error) {
       return res.status(gettedCompanias.code).send({
@@ -52,9 +52,35 @@ const getMaCompania = async (req, res) => {
     
   }
 }
-const getMaPais = async (req, res) => {
+const getMaCompania = async (req, res) => {
   try {
-    const gettedPaises = await Maestros.getMaPais();
+    const gettedCompania = await Maestros.getMaCompania(req.params.id);
+    // console.log(gettedCompanias.result)
+    if (gettedCompania.error) {
+      return res.status(gettedCompania.code).send({
+        status: false,
+        message: gettedCompania.error
+      });
+    }
+    const formatData = gettedCompania.result.recordset.map(item => {
+      return{
+        text: item.xcompania,
+        value: `${item.ccompania}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Compañias Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const getMaPaises = async (req, res) => {
+  try {
+    const gettedPaises = await Maestros.getMaPaises();
     // console.log(gettedPaises.result)
     if (gettedPaises.error) {
       return res.status(gettedPaises.code).send({
@@ -64,13 +90,65 @@ const getMaPais = async (req, res) => {
     }
     const formatData = gettedPaises.result.recordset.map(item => {
       return{
-        text: item.xpais,
+        text: item.xpais.toLowerCase(),
         value: `${item.cpais}`
       }
     })
     res.status(201).send({
       status: true, 
       message: 'Países Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const getMaCiudades = async (req, res) => {
+  try {
+    const gettedCiudades = await Maestros.getMaCiudades(req.params.pais, req.params.estado);
+    // console.log(gettedCiudades.result)
+    if (gettedCiudades.error) {
+      return res.status(gettedCiudades.code).send({
+        status: false,
+        message: gettedCiudades.error
+      });
+    }
+    const formatData = gettedCiudades.result.recordset.map(item => {
+      return{
+        text: item.xdescripcion_l,
+        value: `${item.cciudad}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Ciudades Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const getMaEstados = async (req, res) => {
+  try {
+    const gettedCiudades = await Maestros.getMaEstados(req.params.pais);
+    // console.log(gettedCiudades.result)
+    if (gettedCiudades.error) {
+      return res.status(gettedCiudades.code).send({
+        status: false,
+        message: gettedCiudades.error
+      });
+    }
+    const formatData = gettedCiudades.result.recordset.map(item => {
+      return{
+        text: item.xdescripcion_l,
+        value: `${item.cestado}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Ciudades Obtenidas',
       data: [...formatData]
     });
     
@@ -159,9 +237,12 @@ const getAseguradoras = async (req, res) => {
 
 export default {
   getMaMonedas,
+  getMaCompanias,
   getMaCompania,
-  getMaPais,
+  getMaPaises,
   getMaMetPago,
   getServicios,
-  getAseguradoras
+  getAseguradoras,
+  getMaCiudades,
+  getMaEstados
 }

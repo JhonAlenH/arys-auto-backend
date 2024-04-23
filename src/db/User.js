@@ -63,8 +63,48 @@ const getOneUser = async (xlogin) => {
     }
 }
 
+const getOneUserById = async (id) => {
+    try {
+        let pool = await sql.connect(sqlConfig);
+        let result = await pool.request()
+           .input('id', sql.NVarChar, id)
+           .query('select cusuario, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania from SEUSUARIO where cusuario = @id')
+        if (result.rowsAffected < 1) {
+            return false;
+        }
+        await pool.close();
+        return result;
+    }
+    catch (error) {
+        console.log(error.message)
+        return { error: error.message };
+    }
+}
+
+const getOwnerInfo = async (id) => {
+
+    try {
+        let pool = await sql.connect(sqlConfig);
+        let result = await pool.request()
+           .input('id', sql.NVarChar, id)
+           .query('select cpropietario, icedula, xdocidentidad, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
+        console.log(result)
+        if (result.rowsAffected < 1) {
+            return false;
+        }
+        await pool.close();
+        return result;
+    }
+    catch (error) {
+        console.log(error.message)
+        return { error: error.message };
+    }
+}
+
 export default {
     verifyIfUsernameExists,
     verifyIfPasswordMatchs,
-    getOneUser
+    getOneUser,
+    getOneUserById,
+    getOwnerInfo
 }

@@ -164,8 +164,8 @@ const getTrade = async (getTrade) => {
       where: {ccompania: getTrade.ccompania},
       attributes: ['cramo', 'xdescripcion_l'],
     });
-    const trades = trade.map((item) => item.get({ plain: true }));
-    return trades;
+    const result = trade.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -176,8 +176,8 @@ const getCoin = async (getCoin) => {
     const coin = await Coin.findAll({
       attributes: ['cmoneda', 'xdescripcion'],
     });
-    const coins = coin.map((item) => item.get({ plain: true }));
-    return coins;
+    const result = coin.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -189,8 +189,8 @@ const getClient = async (getClient) => {
       where: {ccompania: getClient.ccompania},
       attributes: ['cci_rif', 'xnombre', 'xapellido'],
     });
-    const clients = client.map((item) => item.get({ plain: true }));
-    return clients;
+    const result = client.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -202,8 +202,8 @@ const getBrokers = async (getBrokers) => {
       where: {ccompania: getBrokers.ccompania},
       attributes: ['cproductor', 'xintermediario'],
     });
-    const brokers = broker.map((item) => item.get({ plain: true }));
-    return brokers;
+    const result = broker.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -215,8 +215,8 @@ const getDepartament = async (getDepartament) => {
       where: {ccompania: getDepartament.ccompania},
       attributes: ['cdepartamento', 'xdepartamento'],
     });
-    const departaments = departament.map((item) => item.get({ plain: true }));
-    return departaments;
+    const result = departament.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -228,8 +228,8 @@ const getRol = async (rolData) => {
       where: rolData,
       attributes: ['crol', 'xrol'],
     });
-    const rols = rol.map((item) => item.get({ plain: true }));
-    return rols;
+    const result = rol.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -240,8 +240,8 @@ const getMainMenu = async () => {
     const menu = await MainMenu.findAll({
       attributes: ['cmenu_principal', 'xmenu'],
     });
-    const mainMenu = menu.map((item) => item.get({ plain: true }));
-    return mainMenu;
+    const result = menu.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -254,8 +254,8 @@ const getMenu = async (getMenu) => {
       where: getMenu,
       attributes: ['cmenu', 'xmenu'],
     });
-    const menuResult = menu.map((item) => item.get({ plain: true }));
-    return menuResult;
+    const result = menu.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -268,8 +268,8 @@ const getSubMenu = async (getSubMenu) => {
       where: getSubMenu,
       attributes: ['csubmenu', 'xsubmenu'],
     });
-    const subMenuResult = submenu.map((item) => item.get({ plain: true }));
-    return subMenuResult;
+    const result = submenu.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -281,8 +281,8 @@ const getUser = async () => {
     const user = await Users.findAll({
       attributes: ['cusuario', 'xusuario'],
     });
-    const users = user.map((item) => item.get({ plain: true }));
-    return users;
+    const result = user.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -294,8 +294,8 @@ const getPark = async () => {
     const park = await Park.findAll({
       attributes: ['plan_adquirido', 'xcompania'],
     });
-    const parks = park.map((item) => item.get({ plain: true }));
-    return parks;
+    const result = park.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -309,8 +309,8 @@ const getState = async (getState) => {
       where: getState,
       attributes: ['cestado', 'xdescripcion_l'],
     });
-    const state = estado.map((item) => item.get({ plain: true }));
-    return state;
+    const result = estado.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -323,8 +323,8 @@ const getCity = async (getCity) => {
       where: getCity,
       attributes: ['cciudad', 'xdescripcion_l'],
     });
-    const city = ciudad.map((item) => item.get({ plain: true }));
-    return city;
+    const result = ciudad.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };
@@ -337,8 +337,8 @@ const getBrand = async (getBrand) => {
       where: getBrand,
       attributes: [[sequelize.fn('DISTINCT', sequelize.col('xmarca')), 'xmarca']]
     });
-    const brand = marca.map((item) => item.get({ plain: true }));
-    return brand;
+    const result = marca.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -350,8 +350,8 @@ const getModel = async (getModel) => {
       where: getModel,
       attributes: [[sequelize.fn('DISTINCT', sequelize.col('xmodelo')), 'xmodelo']]
     });
-    const model = modelo.map((item) => item.get({ plain: true }));
-    return model;
+    const result = modelo.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -363,8 +363,8 @@ const getVersion = async (getVersion) => {
       where: getVersion,
       attributes: ['xversion', 'npasajero', 'xclasificacion', 'id', 'xclase_rcv', 'msum', 'ctarifa_exceso', 'xuso', 'npesovacio', 'ncapcarga'],
     });
-    const version = versions.map((item) => item.get({ plain: true }));
-    return version;
+    const result = versions.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -376,8 +376,8 @@ const getColor = async (getColor) => {
       where: {cpais: getColor.cpais},
       attributes: ['ccolor', 'xcolor'],
     });
-    const color = colores.map((item) => item.get({ plain: true }));
-    return color;
+    const result = colores.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -389,8 +389,8 @@ const getRates = async (getRates) => {
       where: {ccompania: getRates.ccompania},
       attributes: ['ctarifa_exceso', 'xgrupo'],
     });
-    const rates = tarifa.map((item) => item.get({ plain: true }));
-    return rates;
+    const result = tarifa.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -401,8 +401,8 @@ const getTypeVehicle = async (getTypeVehicle) => {
     const tipo = await TypeVehicle.findAll({
       attributes: ['cclase', 'xclase'],
     });
-    const type = tipo.map((item) => item.get({ plain: true }));
-    return type;
+    const result = tipo.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -413,8 +413,8 @@ const getUtilityRechange = async (getUtilityRechange) => {
     const uso = await UtilityRecharge.findAll({
       attributes: ['cclase', 'xclase'],
     });
-    const utilityR = uso.map((item) => item.get({ plain: true }));
-    return utilityR;
+    const result = uso.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -425,8 +425,8 @@ const getUtility = async (getUtility) => {
     const uso = await Utility.findAll({
       attributes: ['cclase', 'xclase'],
     });
-    const utility = uso.map((item) => item.get({ plain: true }));
-    return utility;
+    const result = uso.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -437,8 +437,8 @@ const getClass = async (getClass) => {
     const clase = await Class.findAll({
       attributes: ['cclase', 'xclase'],
     });
-    const classV = clase.map((item) => item.get({ plain: true }));
-    return classV;
+    const result = clase.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -450,9 +450,8 @@ const getPlan = async (getPlan) => {
       where: {ccompania: getPlan.ccompania},
       attributes: ['cplan', 'xplan'],
     });
-    const plan = planes.map((item) => item.get({ plain: true }));
-    console.log(plan)
-    return plan;
+    const result = planes.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -463,8 +462,8 @@ const getAccesories = async () => {
     const accesorios = await Accesories.findAll({
       attributes: ['caccesorio', 'xaccesorio', 'mmontomax', 'ptasa'],
     });
-    const accesories = accesorios.map((item) => item.get({ plain: true }));
-    return accesories;
+    const result = accesorios.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -476,8 +475,8 @@ const getMethodOfPayment = async (getMethodOfPayment) => {
       where: {ccompania: getMethodOfPayment.ccompania},
       attributes: ['cmetodologiapago', 'xmetodologiapago'],
     });
-    const payment = metodologia.map((item) => item.get({ plain: true }));
-    return payment;
+    const result = metodologia.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -488,8 +487,8 @@ const getTakers = async () => {
     const tomador = await Takers.findAll({
       attributes: ['ctomador', 'xtomador'],
     });
-    const takers = tomador.map((item) => item.get({ plain: true }));
-    return takers;
+    const result = tomador.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -501,8 +500,8 @@ const getTypeOfPayment = async (getTypeOfPayment) => {
       where: {ccompania: getTypeOfPayment.ccompania},
       attributes: ['ctipopago', 'xtipopago'],
     });
-    const typePayment = TipoPago.map((item) => item.get({ plain: true }));
-    return typePayment;
+    const result = TipoPago.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -514,8 +513,8 @@ const getBank = async (getBank) => {
       where: {itipo: getBank.itipo, ccompania: getBank.ccompania},
       attributes: ['cbanco', 'xbanco'],
     });
-    const bank = banco.map((item) => item.get({ plain: true }));
-    return bank;
+    const result = banco.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }
@@ -527,8 +526,8 @@ const getTargetBank = async (getTargetBank) => {
       where: getTargetBank,
       attributes: ['cbanco_destino', 'xbanco'],
     });
-    const targetBank = destino.map((item) => item.get({ plain: true }));
-    return targetBank;
+    const result = destino.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     return { error: error.message };
   }

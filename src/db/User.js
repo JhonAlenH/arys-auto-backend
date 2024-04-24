@@ -88,10 +88,38 @@ const getOwnerInfo = async (id) => {
         let result = await pool.request()
            .input('id', sql.NVarChar, id)
            .query('select cpropietario, icedula, xdocidentidad, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
-        console.log(result)
         if (result.rowsAffected < 1) {
             return false;
         }
+        await pool.close();
+        return result;
+    }
+    catch (error) {
+        console.log(error.message)
+        return { error: error.message };
+    }
+}
+
+const getUserSubscription = async (cpropietario) => {
+
+    try {
+        let pool = await sql.connect(sqlConfig);
+        let result = await pool.request()
+           .input('cpropietario', sql.NVarChar, cpropietario)
+           .query('select * FROM SUCONTRATOFLOTA where cpropietario = @cpropietario')
+        if (result.rowsAffected < 1) {
+            return false;
+        }
+        const keys = Object.keys(result.recordset[0])
+        const values = Object.values(result.recordset[0])
+        let resultLowerCase = {}
+        let i = 0
+        for (const key of keys) {
+        const lowerKey = key.toLowerCase()
+        resultLowerCase[lowerKey] = values[i]
+        i++
+        }
+        result.recordset[0] = resultLowerCase
         await pool.close();
         return result;
     }
@@ -106,5 +134,6 @@ export default {
     verifyIfPasswordMatchs,
     getOneUser,
     getOneUserById,
-    getOwnerInfo
+    getOwnerInfo,
+    getUserSubscription
 }

@@ -15,7 +15,7 @@ const TypeVehicle = sequelize.define('MACLASES', {}, { tableName: 'MACLASES' });
 const UtilityRecharge = sequelize.define('MACLASES', {}, { tableName: 'MACLASES' });
 const Utility = sequelize.define('MACLASES', {}, { tableName: 'MACLASES' });
 const Class = sequelize.define('MACLASES', {}, { tableName: 'MACLASES' });
-const Plan = sequelize.define('POPLAN', {}, { tableName: 'POPLAN' });
+const Plan = sequelize.define('MAPLANES', {});
 const Accesories = sequelize.define('MAACCESORIOS', {});
 const Payment = sequelize.define('MAMETODOLOGIAPAGO', {}, { tableName: 'MAMETODOLOGIAPAGO' });
 const Takers = sequelize.define('MATOMADORES', {});
@@ -448,7 +448,7 @@ const getPlan = async (getPlan) => {
   try {
     const planes = await Plan.findAll({
       where: {ccompania: getPlan.ccompania},
-      attributes: ['cplan', 'xplan'],
+      attributes: ['cplan', 'xplan', 'mcosto'],
     });
     const plan = planes.map((item) => item.get({ plain: true }));
     console.log(plan)

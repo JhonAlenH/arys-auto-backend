@@ -39,6 +39,60 @@ const searchContracts = async (req, res) => {
         });
 }
 
+const searchPropietary = async (req, res) => {
+    const propietary = await contractsService.searchPropietary(req.body);
+    if (!propietary) {
+        return res.status(200).send({
+          status: true,
+        });
+    }else{
+        return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                xnombre: propietary.xnombre,
+                xapellido: propietary.xapellido,
+                xtelefono: propietary.xtelefonocasa,
+                xcorreo: propietary.xemail,
+                cestado: propietary.cestado,
+                cciudad: propietary.cciudad,
+                xdireccion: propietary.xdireccion,
+            }
+        });
+    }
+}
+
+const typeServicePlan = async (req, res) => {
+    const type = await contractsService.typeServicePlan(req.body);
+    if (type.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: type.permissionError
+            });
+    }
+    if (type.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: type.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                type: type
+            }
+        });
+}
+
 export default {
     searchContracts,
+    searchPropietary,
+    typeServicePlan
 }

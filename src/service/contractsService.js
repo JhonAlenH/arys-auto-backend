@@ -15,6 +15,16 @@ const searchPropietary = async (searchPropietary) => {
     return propietary;
 }
 
+const searchVehicle = async (searchVehicle) => {
+    const vehicle = await Contracts.searchVehicle(searchVehicle);
+    if (vehicle.error) {
+        return {
+            error: vehicle.error
+        }
+    }
+    return vehicle;
+}
+
 const typeServicePlan = async (typeServicePlan) => {
     const type = await Contracts.typeServicePlan(typeServicePlan);
     if (type.error) {
@@ -25,8 +35,20 @@ const typeServicePlan = async (typeServicePlan) => {
     return type;
 }
 
+const createMembership = async (createMembership) => {
+    const create = await Contracts.createMembership(createMembership);
+    if (create.error) {
+        return {
+            error: create.error
+        }
+    }
+    return create;
+}
+
 export default {
     searchContracts,
     searchPropietary,
-    typeServicePlan
+    searchVehicle,
+    typeServicePlan,
+    createMembership
 }

@@ -91,8 +91,67 @@ const typeServicePlan = async (req, res) => {
         });
 }
 
+const createMembership = async (req, res) => {
+    const create = await contractsService.createMembership(req.body);
+    if (create.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: create.permissionError
+            });
+    }
+    if (create.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: create.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            message: 'La Membresía ha sido creada exitosamente!'
+        });
+}
+
+const searchVehicle = async (req, res) => {
+    const vehicle = await contractsService.searchVehicle(req.body);
+    if (vehicle.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: vehicle.permissionError
+            });
+    }
+    if (vehicle.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: vehicle.error
+            });
+    }
+    if (vehicle[0]) {
+        return res.status(200).send({
+          status: true,
+          message: `Lo sentimos, la placa ingresada ya se encuentra registrada al contrato N° ${vehicle[0].ccontratoflota}`,
+        });
+    }
+    return res
+        .status(200)
+        .send({
+            status: false
+        });
+}
+
 export default {
     searchContracts,
     searchPropietary,
-    typeServicePlan
+    searchVehicle,
+    typeServicePlan,
+    createMembership
 }

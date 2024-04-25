@@ -9,15 +9,18 @@ const getUserInfo = async (id) => {
     return { error: userResult.error, code: 500 };
   }
   if (userResult.rowsAffected < 1) {
-      return { error: "Authentication Error", code: 401 };
+      return { error: "Error", code: 401 };
   }
   const userInfo = userResult.recordset[0]
+  if(!userInfo) {
+    return { error: "Error", code: 401 };
+  }
   const ownerResult = await User.getOwnerInfo(userInfo.cpropietario.toString());
   if (ownerResult.error) {
     return { error: ownerResult.error, code: 500 };
   }
   if (ownerResult.rowsAffected < 1) {
-    return { error: "Authentication Error", code: 401 };
+    return { error: "Error", code: 401 };
   }
   const ownerInfo = ownerResult.recordset[0]
   
@@ -31,7 +34,7 @@ const getUserInfo = async (id) => {
     return { error: ownerResult.error, code: 500 };
   }
   if (ownerResult.rowsAffected < 1) {
-    return { error: "Authentication Error", code: 401 };
+    return { error: "Error", code: 401 };
   }
   result.subscription.metodologiapago = gettedMetPago.result.recordset[0]
   return result;

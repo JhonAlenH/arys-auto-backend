@@ -87,7 +87,7 @@ const getOwnerInfo = async (id) => {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
            .input('id', sql.NVarChar, id)
-           .query('select cpropietario, icedula, xdocidentidad, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
+           .query('select cpropietario, icedula, xcedula, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
         if (result.rowsAffected < 1) {
             return false;
         }

@@ -156,9 +156,9 @@ const getMaEstados = async (req, res) => {
     
   }
 }
-const getMaMetPago = async (req, res) => {
+const getMaMetsPago = async (req, res) => {
   try {
-    const gettedMetsPago = await Maestros.getMaMetPago();
+    const gettedMetsPago = await Maestros.getMaMetsPago();
     // console.log(gettedMetsPago.result)
     if (gettedMetsPago.error) {
       return res.status(gettedMetsPago.code).send({
@@ -240,7 +240,7 @@ export default {
   getMaCompanias,
   getMaCompania,
   getMaPaises,
-  getMaMetPago,
+  getMaMetsPago,
   getServicios,
   getAseguradoras,
   getMaCiudades,

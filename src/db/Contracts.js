@@ -117,7 +117,6 @@ const createMembership = async (createMembership) => {
         .input('cplan', sql.Int, createMembership.cplan)
         .input('cmetodologiapago', sql.Int, createMembership.cmetodologiapago)
         // .input('cuso', sql.Int, createMembership.cuso)
-        .input('finicio', sql.DateTime, new Date())
         .input('cpais', sql.Int, createMembership.cpais)
         .input('cestatusgeneral', sql.Int, 13)
         .input('ccompania', sql.Int, createMembership.ccompania)
@@ -127,13 +126,13 @@ const createMembership = async (createMembership) => {
                 icedula, xcedula, xnombre, xapellido, xcliente, xtelefono1, irif_cliente, email, cestado,
                 xrif_cliente, cciudad, xdireccionfiscal, xplaca, id_inma, ccolor, xserialcarroceria,
                 xserialmotor, cplan, cmetodologiapago, cpais,
-                ccompania, finicio, cestatusgeneral, cusuariocreacion
+                ccompania, cestatusgeneral, cusuariocreacion
             )
             VALUES (
                 @icedula, @xcedula, @xnombre, @xapellido, @xcliente, @xtelefono1, @irif_cliente, @email, @cestado,
                 @xrif_cliente, @cciudad, @xdireccionfiscal, @xplaca, @id_inma, @ccolor, @xserialcarroceria,
                 @xserialmotor,  @cplan, @cmetodologiapago, @cpais,
-                @ccompania, @finicio, @cestatusgeneral, @cusuario
+                @ccompania, @cestatusgeneral, @cusuario
             );
         `);
           await pool.close();

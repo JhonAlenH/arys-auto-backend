@@ -1,4 +1,6 @@
+import dayjs from "dayjs";
 import sql from "mssql";
+
 
 const sqlConfig = {
     user: process.env.USER_BD,
@@ -115,9 +117,12 @@ const getUserSubscription = async (cpropietario) => {
         let resultLowerCase = {}
         let i = 0
         for (const key of keys) {
-        const lowerKey = key.toLowerCase()
-        resultLowerCase[lowerKey] = values[i]
-        i++
+            const lowerKey = key.toLowerCase()
+            if(lowerKey == 'fdesde' || lowerKey == 'fhasta') {
+                values[i] = dayjs(values[i]).format('DD/MM/YYYY')
+            }
+            resultLowerCase[lowerKey] = values[i]
+            i++
         }
         result.recordset[0] = resultLowerCase
         await pool.close();

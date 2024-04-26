@@ -131,7 +131,7 @@ const createMembership = async (createMembership) => {
             VALUES (
                 @icedula, @xcedula, @xnombre, @xapellido, @xcliente, @xtelefono1, @irif_cliente, @email, @cestado,
                 @xrif_cliente, @cciudad, @xdireccionfiscal, @xplaca, @id_inma, @ccolor, @xserialcarroceria,
-                @xserialmotor,  @cplan, @cmetodologiapago, @cpais, fdesde, fhasta
+                @xserialmotor,  @cplan, @cmetodologiapago, @cpais, @fdesde, @fhasta
                 @ccompania, @cestatusgeneral, @cusuario
             );
         `);

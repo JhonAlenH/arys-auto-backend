@@ -36,13 +36,11 @@ const createPlan = async(data) => {
 
   keys = keys.join(',')
   values = values.join(',')
-  console.log(keys)
-  console.log(values)
 
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    INSERT INTO MAPLANES (${keys}) values (${values});
+    INSERT INTO MAPLANES (${keys}) values (${values});SELECT SCOPE_IDENTITY() AS cplan
     `)
     await pool.close();
     return { 

@@ -11,6 +11,13 @@ const createPlan = async (req, res) => {
         message: newPlan.error
       });
     }
+    const linkedServicios = await Servicio.linkServicios(data.ctiposervicio, newPlan.result.recordset[0].cplan);
+    if (linkedServicios.error) {
+      return res.status(linkedServicios.code).send({
+        status: false,
+        message: linkedServicios.error
+      });
+    }
     res.status(201).send({
       status: true, 
       message: 'Plan Creado',

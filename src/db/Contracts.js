@@ -125,13 +125,13 @@ const createMembership = async (createMembership) => {
             INSERT INTO TMSUSCRIPCION_SERVICIOS (
                 icedula, xcedula, xnombre, xapellido, xcliente, xtelefono1, irif_cliente, email, cestado,
                 xrif_cliente, cciudad, xdireccionfiscal, xplaca, id_inma, ccolor, xserialcarroceria,
-                xserialmotor, cplan, cmetodologiapago, cpais,
+                xserialmotor, cplan, cmetodologiapago, cpais, fdesde, fhasta
                 ccompania, cestatusgeneral, cusuariocreacion
             )
             VALUES (
                 @icedula, @xcedula, @xnombre, @xapellido, @xcliente, @xtelefono1, @irif_cliente, @email, @cestado,
                 @xrif_cliente, @cciudad, @xdireccionfiscal, @xplaca, @id_inma, @ccolor, @xserialcarroceria,
-                @xserialmotor,  @cplan, @cmetodologiapago, @cpais,
+                @xserialmotor,  @cplan, @cmetodologiapago, @cpais, fdesde, fhasta
                 @ccompania, @cestatusgeneral, @cusuario
             );
         `);

@@ -65,13 +65,12 @@ const linkServicios = async(services, cplan) => {
     }
     
     let result = await pool.request().bulk(table)
-    console.log(result);
     
     if (servicesGetted.rowsAffected < 1) {
         return false;
     }
     await pool.close();
-    return servicesGetted;
+    return result;
 }
 catch (error) {
     console.log(error.message)

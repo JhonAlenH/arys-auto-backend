@@ -4,7 +4,6 @@ import Servicio from '../db/Servicio.js';
 const createPlan = async (req, res) => {
   const data = req.body
   try {
-    console.log(data.ctiposervicio)
     const newPlan = await Plan.createPlan(data);
     if (newPlan.error) {
       return res.status(newPlan.code).send({

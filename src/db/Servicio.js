@@ -26,14 +26,11 @@ const getTypeServices = async(ccompania) => {
   }
 }
 
-const getServicesByType = async(ctiposervicio) => {
-  const table = new sql.Table();
-  table.columns.add('cplan', sql.Int);
-  table.columns.add('ctiposervicio', sql.VarChar(20));
-  table.columns.add('cservicio', sql.VarChar(20));
+const getServicesByType = async(ctiposervicio, ccompania) => {
+  
   try {
     let pool = await sql.connect(sqlConfig)
-    let result = await pool.request().query(`SELECT ctiposervicio, xtiposervicio from MATIPOSERVICIOS WHERE ctiposervicio = ${ctiposervicio}`)
+    let result = await pool.request().query(`SELECT cservicio, xservicio, ctiposervicio from MASERVICIO WHERE ccompania = ${ccompania};`)
     await pool.close();
     return { 
       result: result
@@ -49,22 +46,32 @@ const createServicio = async() => {
 
 }
 
-const linkServicios = async(services) => {
-
+const linkServicios = async(services, cplan) => {
+  
   try {
     let pool = await sql.connect(sqlConfig);
-    const table = new sql.Table();
-    table.columns.add('cplan', sql.Int);
-    table.columns.add('ctiposervicio', sql.VarChar(20));
-    table.columns.add('cservicio', sql.VarChar(20));
-    let result = await pool.request()
-       .input('id', sql.NVarChar, id)
-       .query('select cpropietario, icedula, xcedula, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
-    if (result.rowsAffected < 1) {
+    const servicesSplittedString = services.split('[]')
+
+    let servicesGetted = await pool.request().query(`SELECT cservicio, ctiposervicio FROM MASERVICIO WHERE ctiposervicio in (${servicesSplittedString[0]});`)
+    console.log(cplan);
+
+    const table = new sql.Table('MASERVICIOPLAN');
+    table.columns.add('cplan', sql.Int, {nullable: false});
+    table.columns.add('cservicio', sql.Int, {nullable: false});
+    table.columns.add('ctiposervicio', sql.Int, {nullable: true});
+
+    for (const service of servicesGetted.recordset) {
+      table.rows.add(cplan, service.cservicio, service.ctiposervicio);
+    }
+    
+    let result = await pool.request().bulk(table)
+    console.log(result);
+    
+    if (servicesGetted.rowsAffected < 1) {
         return false;
     }
     await pool.close();
-    return result;
+    return servicesGetted;
 }
 catch (error) {
     console.log(error.message)

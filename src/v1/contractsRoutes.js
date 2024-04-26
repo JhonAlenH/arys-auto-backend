@@ -11,5 +11,6 @@ router
     .post("/vehicle", contractsController.searchVehicle)
     .post("/type-service", contractsController.typeServicePlan)
     .post("/create", contractsController.createMembership)
+    .post("/detail", contractsController.detailMembership)
 
 export default router;

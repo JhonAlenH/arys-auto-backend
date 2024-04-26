@@ -15,6 +15,14 @@ const sqlConfig = {
 }
 
 const Search = sequelize.define('suVcontratos', {});
+const Contract = sequelize.define('sucontratoflota', {}, { tableName: 'sucontratoflota' });
+const Detail = sequelize.define('suVcontratos', {
+  ccontratoflota: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: true,
+  },
+});
 const TypeService = sequelize.define('maVtiposerpl', {}, { tableName: 'maVtiposerpl' });
 const Propietary = sequelize.define('suVpropietario', {  
   ccontratoflota: {
@@ -145,10 +153,81 @@ const createMembership = async (createMembership) => {
   }
 }
 
+const searchContractIndividual = async () => {
+  try {
+    const maxContract = await Contract.findOne({
+      attributes: ['ccontratoflota'],
+      order: [['ccontratoflota', 'DESC']],
+      limit: 1,
+    });
+
+    return maxContract ? maxContract.get({ plain: true }) : null;
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+};
+
+const detailMembership = async (detailMembership) => {
+  try {
+    const contract = await Detail.findOne({
+      where: {
+        ccontratoflota: detailMembership.ccontratoflota,
+        cpais: detailMembership.cpais,
+        ccompania: detailMembership.ccompania,
+      },
+      attributes: [
+        'cpropietario',
+        'cvehiculopropietario',
+        'xnombre',
+        'xapellido',
+        'xplaca',
+        'xmarca',
+        'xmodelo',
+        'xversion',
+        'ccontratoflota',
+        'fano',
+        'xcolor',
+        'xserialcarroceria',
+        'xserialmotor',
+        'fdesde',
+        'fhasta',
+        'xmoneda',
+        'cplan',
+        'xplan',
+      ],
+    });
+
+    return contract ? contract.get({ plain: true }) : null;;
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+};
+
+const detailMembershipService = async (detailMembershipService) => {
+  console.log(detailMembershipService)
+  try {
+    const service = await TypeService.findAll({
+      where: {
+        cplan: detailMembershipService
+      },
+      attributes: ['cplan', 'ctiposervicio', 'xtiposervicio'],
+    });
+    const type = service.map((item) => item.get({ plain: true }));
+    return type;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
     searchContracts,
     searchPropietary,
     searchVehicle,
     typeServicePlan,
-    createMembership
+    createMembership,
+    searchContractIndividual,
+    detailMembership,
+    detailMembershipService
 }

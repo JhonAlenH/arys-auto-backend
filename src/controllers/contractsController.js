@@ -109,11 +109,16 @@ const createMembership = async (req, res) => {
                 message: create.error
             });
     }
+    const contract = await emissionsService.searchContractIndividual();
+
     return res
         .status(200)
         .send({
             status: true,
-            message: 'La Membresía ha sido creada exitosamente!'
+            message: 'La Membresía ha sido creada exitosamente!',
+            data: {
+                ccontratoflota: contract.ccontratoflota,
+            }
         });
 }
 
@@ -148,10 +153,39 @@ const searchVehicle = async (req, res) => {
         });
 }
 
+const detailMembership = async (req, res) => {
+    const detail = await contractsService.detailMembership(req.body);
+    if (detail.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: detail.permissionError
+            });
+    }
+    if (detail.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: detail.error
+            });
+    }
+    const service = await contractsService.detailMembershipService(detail.cplan);
+    return res
+        .status(200)
+        .send({
+            status: true,
+            detail: detail,
+            service: service
+        });
+}
+
 export default {
     searchContracts,
     searchPropietary,
     searchVehicle,
     typeServicePlan,
-    createMembership
+    createMembership,
+    detailMembership
 }

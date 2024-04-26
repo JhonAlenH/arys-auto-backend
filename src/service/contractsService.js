@@ -45,10 +45,43 @@ const createMembership = async (createMembership) => {
     return create;
 }
 
+const searchContractIndividual = async () => {
+    const contract = await Emissions.searchContractIndividual();
+    if (contract.error) {
+        return {
+            error: contract.error
+        }
+    }
+    return contract;
+}
+
+const detailMembership = async (detailMembership) => {
+    const detail = await Contracts.detailMembership(detailMembership);
+    if (detail.error) {
+        return {
+            error: detail.error
+        }
+    }
+    return detail;
+}
+
+const detailMembershipService = async (detailMembershipService) => {
+    const service = await Contracts.detailMembershipService(detailMembershipService);
+    if (service.error) {
+        return {
+            error: service.error
+        }
+    }
+    return service;
+}
+
 export default {
     searchContracts,
     searchPropietary,
     searchVehicle,
     typeServicePlan,
-    createMembership
+    createMembership,
+    searchContractIndividual,
+    detailMembership,
+    detailMembershipService
 }

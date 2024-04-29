@@ -109,7 +109,7 @@ const createMembership = async (req, res) => {
                 message: create.error
             });
     }
-    const contract = await emissionsService.searchContractIndividual();
+    const contract = await contractsService.searchContractIndividual();
 
     return res
         .status(200)

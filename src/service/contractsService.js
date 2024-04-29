@@ -46,7 +46,7 @@ const createMembership = async (createMembership) => {
 }
 
 const searchContractIndividual = async () => {
-    const contract = await Emissions.searchContractIndividual();
+    const contract = await Contracts.searchContractIndividual();
     if (contract.error) {
         return {
             error: contract.error

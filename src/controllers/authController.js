@@ -1,7 +1,6 @@
 import authService from '../service/authService.js';
 
 const createJWT = async (req, res) => {
-    console.log(req.body)
     const xlogin = req.body.xlogin;
     const verifiedUsername = await authService.verifyIfUsernameExists(xlogin);
     if (verifiedUsername.error) { 
@@ -34,7 +33,6 @@ const createJWT = async (req, res) => {
             });
     }
     const jwt = authService.createJWT(user);
-    console.log(jwt)
     res
         .status(201).send({ 
             status: true, 

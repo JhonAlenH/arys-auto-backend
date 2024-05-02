@@ -70,7 +70,7 @@ const getOneUserById = async (id) => {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
            .input('id', sql.NVarChar, id)
-           .query('select cusuario, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania from SEUSUARIO where cusuario = @id')
+           .query('select cusuario, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania, ximagen1, ximagen2 from SEUSUARIO where cusuario = @id')
         if (result.rowsAffected < 1) {
             return false;
         }

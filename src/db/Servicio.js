@@ -50,23 +50,25 @@ const linkServicios = async(services, cplan) => {
   
   try {
     let pool = await sql.connect(sqlConfig);
-    const servicesSplittedString = services.split('[]')
+    const servicesSplittedString = services.split('[]')[0].split(',')
+    console.log(servicesSplittedString);
 
-    let servicesGetted = await pool.request().query(`SELECT cservicio, ctiposervicio FROM MASERVICIO WHERE ctiposervicio in (${servicesSplittedString[0]});`)
-    console.log(cplan);
-
-    const table = new sql.Table('MASERVICIOPLAN');
-    table.columns.add('cplan', sql.Int, {nullable: false});
-    table.columns.add('cservicio', sql.Int, {nullable: false});
+    const table = new sql.Table('MAPLANES_SERVICIOS');
+    table.columns.add('cplan', sql.Int, {nullable: true});
+    table.columns.add('cservicio', sql.Int, {nullable: true});
     table.columns.add('ctiposervicio', sql.Int, {nullable: true});
 
-    for (const service of servicesGetted.recordset) {
-      table.rows.add(cplan, service.cservicio, service.ctiposervicio);
+    for (const service of servicesSplittedString) {
+      const splittedServiceInfo =  service.split('?')
+      table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
     }
+    console.log(table);
     
     let result = await pool.request().bulk(table)
+
+    await pool.close();
     
-    if (servicesGetted.rowsAffected < 1) {
+    if (result.rowsAffected < 1) {
         return false;
     }
     await pool.close();

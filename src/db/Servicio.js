@@ -51,7 +51,6 @@ const linkServicios = async(services, cplan) => {
   try {
     let pool = await sql.connect(sqlConfig);
     const servicesSplittedString = services.split('[]')[0].split(',')
-    console.log(servicesSplittedString);
 
     const table = new sql.Table('MAPLANES_SERVICIOS');
     table.columns.add('cplan', sql.Int, {nullable: true});
@@ -62,7 +61,6 @@ const linkServicios = async(services, cplan) => {
       const splittedServiceInfo =  service.split('?')
       table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
     }
-    console.log(table);
     
     let result = await pool.request().bulk(table)
 

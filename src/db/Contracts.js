@@ -133,13 +133,13 @@ const createMembership = async (createMembership) => {
             INSERT INTO TMSUSCRIPCION_SERVICIOS (
                 icedula, xcedula, xnombre, xapellido, xcliente, xtelefono1, irif_cliente, email, cestado,
                 xrif_cliente, cciudad, xdireccionfiscal, xplaca, id_inma, ccolor, xserialcarroceria,
-                xserialmotor, cplan, cmetodologiapago, cpais, fdesde, fhasta
+                xserialmotor, cplan, cmetodologiapago, cpais, fdesde, fhasta,
                 ccompania, cestatusgeneral, cusuariocreacion
             )
             VALUES (
                 @icedula, @xcedula, @xnombre, @xapellido, @xcliente, @xtelefono1, @irif_cliente, @email, @cestado,
                 @xrif_cliente, @cciudad, @xdireccionfiscal, @xplaca, @id_inma, @ccolor, @xserialcarroceria,
-                @xserialmotor,  @cplan, @cmetodologiapago, @cpais, @fdesde, @fhasta
+                @xserialmotor,  @cplan, @cmetodologiapago, @cpais, @fdesde, @fhasta,
                 @ccompania, @cestatusgeneral, @cusuario
             );
         `);
@@ -147,7 +147,6 @@ const createMembership = async (createMembership) => {
       return { result: result };
   }
   catch (error) {
-      console.log(error.message)
       return { error: error.message };
   }
 }
@@ -159,10 +158,8 @@ const searchContractIndividual = async () => {
       order: [['ccontratoflota', 'DESC']],
       limit: 1,
     });
-
     return maxContract ? maxContract.get({ plain: true }) : null;
   } catch (error) {
-    console.log(error.message)
     return { error: error.message };
   }
 };

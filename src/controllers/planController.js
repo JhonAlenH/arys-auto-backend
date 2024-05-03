@@ -38,7 +38,6 @@ const searchPlanInfo = async (req, res) => {
       });
     }
     const planServices = await Servicio.searchPlanServices(plan.result.id);
-    console.log(planServices)
     if (planServices.error) {
       return res.status(planServices.code).send({
         status: false,

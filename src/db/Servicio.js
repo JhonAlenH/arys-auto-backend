@@ -42,8 +42,43 @@ const getServicesByType = async(ctiposervicio, ccompania) => {
 }
 
 
-const createServicio = async() => {
+const createService = async() => {
 
+}
+
+const searchPlanServices = async(cplan) => {
+  try {
+
+    let pool = await sql.connect(sqlConfig)
+    let result = await pool.request().query(`SELECT * from MAPLANES_SERVICIOS WHERE cplan = ${cplan};`)
+
+    let j = 0
+    for (const record of result.recordset) {
+      const keys = Object.keys(record)
+      const values = Object.values(record)
+      let resultLowerCase = {}
+      let i = 0
+      for (const key of keys) {
+        const lowerKey = key.toLowerCase()
+        resultLowerCase[lowerKey] = values[i]
+        i++
+      }
+      result.recordset[j] = resultLowerCase
+      j++ 
+    };
+
+    await pool.close();
+    
+    if (result.rowsAffected < 1) {
+        return false;
+    }
+    await pool.close();
+    return result.recordset;
+  }
+  catch (error) {
+      console.log(error.message)
+      return { error: error.message };
+  }
 }
 
 const linkServicios = async(services, cplan) => {
@@ -71,17 +106,20 @@ const linkServicios = async(services, cplan) => {
     }
     await pool.close();
     return result;
-}
-catch (error) {
-    console.log(error.message)
-    return { error: error.message };
-}
+  }
+  catch (error) {
+      console.log(error.message)
+      return { error: error.message };
+  }
 }
 
+
+
 export default {
-  createServicio,
+  createService,
   linkServicios,
   getTypeServices,
-  getServicesByType
+  getServicesByType,
+  searchPlanServices
 }
 

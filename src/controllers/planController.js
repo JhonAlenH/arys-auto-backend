@@ -31,13 +31,20 @@ const createPlan = async (req, res) => {
 const searchPlanInfo = async (req, res) => {
   try {
     const plan = await Plan.searchPlanInfo(req.params.id);
-    // console.log(plan)
     if (plan.error) {
       return res.status(plan.code).send({
         status: false,
         message: plan.error
       });
     }
+    const planServices = await Servicio.searchPlanServices(plan.result.id);
+    if (planServices.error) {
+      return res.status(planServices.code).send({
+        status: false,
+        message: planServices.error
+      });
+    }
+    plan.result.ctiposervicio = planServices
     res.status(201).send({
       status: true, 
       message: 'Informacion del Plan Obtenida',

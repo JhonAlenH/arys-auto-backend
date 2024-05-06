@@ -234,6 +234,27 @@ const getAseguradoras = async (req, res) => {
     
   }
 }
+const getMoneda = async (req, res) => {
+  try {
+    const gettedMoneda = await Maestros.getMoneda(req.params.id);
+    console.log(gettedMoneda)
+    if (gettedMoneda.error) {
+      return res.status(gettedMoneda.code).send({
+        status: false,
+        message: gettedMoneda.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Moneda Obtenida',
+      data: gettedMoneda
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
 
 export default {
   getMaMonedas,
@@ -244,5 +265,6 @@ export default {
   getServicios,
   getAseguradoras,
   getMaCiudades,
-  getMaEstados
+  getMaEstados,
+  getMoneda
 }

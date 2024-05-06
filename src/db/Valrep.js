@@ -160,11 +160,11 @@ const Version = sequelize.define('mainma', {
 
 const getTrade = async (getTrade) => {
   try {
-    const trade = await Trade.findAll({
+    const items = await Trade.findAll({
       where: {ccompania: getTrade.ccompania},
       attributes: ['cramo', 'xdescripcion_l'],
     });
-    const result = trade.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -173,10 +173,10 @@ const getTrade = async (getTrade) => {
 
 const getCoin = async (getCoin) => {
   try {
-    const coin = await Coin.findAll({
-      attributes: ['cmoneda', 'xdescripcion'],
+    const items = await Coin.findAll({
+      attributes: ['cmoneda', 'xdescripcion', 'xmoneda'],
     });
-    const result = coin.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -185,11 +185,11 @@ const getCoin = async (getCoin) => {
 
 const getClient = async (getClient) => {
   try {
-    const client = await Client.findAll({
+    const items = await Client.findAll({
       where: {ccompania: getClient.ccompania},
       attributes: ['cci_rif', 'xnombre', 'xapellido'],
     });
-    const result = client.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -198,11 +198,11 @@ const getClient = async (getClient) => {
 
 const getBrokers = async (getBrokers) => {
   try {
-    const broker = await Broker.findAll({
+    const items = await Broker.findAll({
       where: {ccompania: getBrokers.ccompania},
       attributes: ['cproductor', 'xintermediario'],
     });
-    const result = broker.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -211,11 +211,11 @@ const getBrokers = async (getBrokers) => {
 
 const getDepartament = async (getDepartament) => {
   try {
-    const departament = await Departament.findAll({
+    const items = await Departament.findAll({
       where: {ccompania: getDepartament.ccompania},
       attributes: ['cdepartamento', 'xdepartamento'],
     });
-    const result = departament.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -224,11 +224,11 @@ const getDepartament = async (getDepartament) => {
 
 const getRol = async (rolData) => {
   try {
-    const rol = await Rol.findAll({
+    const items = await Rol.findAll({
       where: rolData,
       attributes: ['crol', 'xrol'],
     });
-    const result = rol.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -237,10 +237,10 @@ const getRol = async (rolData) => {
 
 const getMainMenu = async () => {
   try {
-    const menu = await MainMenu.findAll({
+    const items = await MainMenu.findAll({
       attributes: ['cmenu_principal', 'xmenu'],
     });
-    const result = menu.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -250,11 +250,11 @@ const getMainMenu = async () => {
 
 const getMenu = async (getMenu) => {
   try {
-    const menu = await Menu.findAll({
+    const items = await Menu.findAll({
       where: getMenu,
       attributes: ['cmenu', 'xmenu'],
     });
-    const result = menu.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -264,11 +264,11 @@ const getMenu = async (getMenu) => {
 
 const getSubMenu = async (getSubMenu) => {
   try {
-    const submenu = await SubMenu.findAll({
+    const items = await SubMenu.findAll({
       where: getSubMenu,
       attributes: ['csubmenu', 'xsubmenu'],
     });
-    const result = submenu.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -278,10 +278,10 @@ const getSubMenu = async (getSubMenu) => {
 
 const getUser = async () => {
   try {
-    const user = await Users.findAll({
+    const items = await Users.findAll({
       attributes: ['cusuario', 'xusuario'],
     });
-    const result = user.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -291,10 +291,10 @@ const getUser = async () => {
 
 const getPark = async () => {
   try {
-    const park = await Park.findAll({
+    const items = await Park.findAll({
       attributes: ['plan_adquirido', 'xcompania'],
     });
-    const result = park.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -305,11 +305,11 @@ const getPark = async () => {
 const getState = async (getState) => {
   console.log(getState)
   try {
-    const estado = await State.findAll({
+    const items = await State.findAll({
       where: getState,
       attributes: ['cestado', 'xdescripcion_l'],
     });
-    const result = estado.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -319,11 +319,11 @@ const getState = async (getState) => {
 
 const getCity = async (getCity) => {
   try {
-    const ciudad = await City.findAll({
+    const items = await City.findAll({
       where: getCity,
       attributes: ['cciudad', 'xdescripcion_l'],
     });
-    const result = ciudad.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     console.log(error.message)
@@ -333,11 +333,11 @@ const getCity = async (getCity) => {
 
 const getBrand = async (getBrand) => {
   try {
-    const marca = await Brand.findAll({
+    const items = await Brand.findAll({
       where: getBrand,
       attributes: [[sequelize.fn('DISTINCT', sequelize.col('xmarca')), 'xmarca']]
     });
-    const result = marca.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -346,11 +346,11 @@ const getBrand = async (getBrand) => {
 
 const getModel = async (getModel) => {
   try {
-    const modelo = await Model.findAll({
+    const items = await Model.findAll({
       where: getModel,
       attributes: [[sequelize.fn('DISTINCT', sequelize.col('xmodelo')), 'xmodelo']]
     });
-    const result = modelo.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -359,11 +359,11 @@ const getModel = async (getModel) => {
 
 const getVersion = async (getVersion) => {
   try {
-    const versions = await Version.findAll({
+    const items = await Version.findAll({
       where: getVersion,
       attributes: ['xversion', 'npasajero', 'xclasificacion', 'id', 'xclase_rcv', 'msum', 'ctarifa_exceso', 'xuso', 'npesovacio', 'ncapcarga'],
     });
-    const result = versions.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -372,11 +372,11 @@ const getVersion = async (getVersion) => {
 
 const getColor = async (getColor) => {
   try {
-    const colores = await Color.findAll({
+    const items = await Color.findAll({
       where: {cpais: getColor.cpais},
       attributes: ['ccolor', 'xcolor'],
     });
-    const result = colores.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };
@@ -385,11 +385,11 @@ const getColor = async (getColor) => {
 
 const getRates = async (getRates) => {
   try {
-    const tarifa = await Rates.findAll({
+    const items = await Rates.findAll({
       where: {ccompania: getRates.ccompania},
       attributes: ['ctarifa_exceso', 'xgrupo'],
     });
-    const result = tarifa.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
     return { error: error.message };

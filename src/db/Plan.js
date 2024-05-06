@@ -1,4 +1,5 @@
 import sql from "mssql";
+import insert from "../utilities/insert.js";
 
 const sqlConfig = {
   user: process.env.USER_BD,
@@ -13,34 +14,11 @@ const sqlConfig = {
 }
 
 const createPlan = async(data) => {
-  var keys = Object.keys(data)
-  var valuesAndTypes = Object.values(data)
-  var values = []
-  var i = 0
-
-  for (const value of valuesAndTypes) {
-    const valueSplited = value.split('[]')
-    const type = valueSplited[1].split('=')[1]
-    if(type == 'extern' || type == 'noDB') {
-      keys.splice(i, 1)
-      i--
-    } else if(valueSplited[0] == '') {
-      values.push('null')
-    }else if(type == 'text'){
-      values.push(`'${valueSplited[0]}'`)
-    } else if(type == 'number' || type == 'boolean') {
-      values.push(valueSplited[0])
-    }
-    i++
-  }
-
-  keys = keys.join(',')
-  values = values.join(',')
-
+  const rData = insert.formatData(data)
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    INSERT INTO MAPLANES (${keys}) values (${values});SELECT SCOPE_IDENTITY() AS cplan
+    INSERT INTO MAPLANES (${rData.keys}) values (${rData.values});SELECT SCOPE_IDENTITY() AS cplan
     `)
     await pool.close();
     return { 

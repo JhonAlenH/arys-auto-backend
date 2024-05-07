@@ -15,7 +15,7 @@ const sqlConfig = {
 
 const createMoneda = async(data) => {
 
-  const rData = insert.formatData(data)
+  const rData = insert.formatCreateData(data)
 
   try {
     let pool = await sql.connect(sqlConfig);
@@ -30,9 +30,28 @@ const createMoneda = async(data) => {
     return { error: error.message };
   }
 }
+const editMoneda = async(id, data) => {
+  console.log(id);
+
+  const rData = insert.formatEditData(data)
+  
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`
+    UPDATE MAMONEDAS SET ${rData} WHERE cmoneda = ${parseInt(id)}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 
 
 export default {
-  createMoneda
+  createMoneda,
+  editMoneda
 }
 

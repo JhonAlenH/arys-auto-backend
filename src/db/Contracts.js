@@ -147,6 +147,7 @@ const createMembership = async (createMembership) => {
       return { result: result };
   }
   catch (error) {
+    console.log(error.message)
       return { error: error.message };
   }
 }

@@ -25,7 +25,8 @@ const searchContracts = async (req, res) => {
             ccontratoflota: item.ccontratoflota,
             xnombre: item.xnombre + ' ' + item.xapellido,
             xvehiculo: item.xmarca,
-            xplaca: item.xplaca
+            xplaca: item.xplaca,
+            xestatusgeneral: item.xestatusgeneral,
         });
     });
 

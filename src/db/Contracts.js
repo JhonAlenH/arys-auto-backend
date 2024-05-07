@@ -41,7 +41,7 @@ const Vehicle = sequelize.define('suVpropietario', {
 const searchContracts = async () => {
     try {
       const contract = await Search.findAll({
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion'],
+        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xestatusgeneral'],
       });
       const contracts = contract.map((item) => item.get({ plain: true }));
       return contracts;
@@ -191,9 +191,15 @@ const detailMembership = async (detailMembership) => {
         'xmoneda',
         'cplan',
         'xplan',
+        'xestatusgeneral',
+        'xclase_rcv',
+        'icedula',
+        'xcedula',
+        'xtelefono',
+        'xdireccion',
+        'xcorreo',
       ],
     });
-
     return contract ? contract.get({ plain: true }) : null;;
   } catch (error) {
     console.log(error.message)

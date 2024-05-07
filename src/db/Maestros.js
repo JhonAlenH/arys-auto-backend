@@ -155,6 +155,32 @@ const getAseguradoras = async() => {
     return { error: error.message };
   }
 }
+const getMoneda = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig)
+    let result = await pool.request().query(`SELECT * from MAMONEDAS WHERE cmoneda = ${parseInt(id)}`)
+
+    const keys = Object.keys(result.recordset[0])
+    const values = Object.values(result.recordset[0])
+    let resultLowerCase = {}
+    let i = 0
+    for (const key of keys) {
+      const lowerKey = key.toLowerCase()
+      resultLowerCase[lowerKey] = values[i]
+      i++
+    }
+    result.recordset[0] = resultLowerCase
+    
+    await pool.close();
+    return { 
+      result: result.recordset[0]
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+
 
 export default {
   getMaMonedas,
@@ -167,5 +193,6 @@ export default {
   getAseguradoras,
   getMaCiudades,
   getMaEstados,
-  getStatus
+  getStatus,
+  getMoneda
 }

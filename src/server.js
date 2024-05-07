@@ -15,6 +15,7 @@ import v1ValrepRouter from './v1/valrepRoutes.js';
 import v1UserRouter from './v1/userRoutes.js';
 import v1ServicesRouter from './v1/serviciosRoutes.js';
 import v1EventsRouter from './v1/eventsRoutes.js';
+import v1MonedasRouter from './v1/monedasRoutes.js';
 
 
 const { diskStorage } = multer;
@@ -47,6 +48,8 @@ app.use("/api/v1/valrep", v1ValrepRouter);
 app.use("/api/v1/user", v1UserRouter);
 app.use("/api/v1/services", v1ServicesRouter);
 app.use("/api/v1/events", v1EventsRouter);
+app.use("/api/v1/monedas", v1MonedasRouter);
+
 
 
 
@@ -118,6 +121,7 @@ app.post('/api/upload/image', document_upload.array('image'),(req, res , err) =>
 
     return res.status(400).json({  status: false, code: 400, message: error.message  });
   }
+  console.log(object);
 
   res.json({  status: true, uploadedFile: files  });
 });

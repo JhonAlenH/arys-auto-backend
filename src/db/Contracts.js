@@ -15,6 +15,7 @@ const sqlConfig = {
 }
 
 const Search = sequelize.define('suVcontratos', {});
+const SearchCompany = sequelize.define('macompania', {});
 const Contract = sequelize.define('sucontratoflota', {}, { tableName: 'sucontratoflota' });
 const Detail = sequelize.define('suVcontratos', {
   ccontratoflota: {
@@ -23,6 +24,7 @@ const Detail = sequelize.define('suVcontratos', {
     allowNull: true,
   },
 });
+
 const TypeService = sequelize.define('maVtiposerpl', {}, { tableName: 'maVtiposerpl' });
 const Propietary = sequelize.define('suVpropietario', {  
   ccontratoflota: {
@@ -38,12 +40,23 @@ const Vehicle = sequelize.define('suVpropietario', {
 },}, { tableName: 'suVpropietario' });
 
 
-const searchContracts = async () => {
-    try {
-      const contract = await Search.findAll({
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion'],
-      });
-      const contracts = contract.map((item) => item.get({ plain: true }));
+const searchContracts = async (code) => {
+  try {
+    let contract
+    console.log(code);
+      if(code != 1){
+        contract = await Search.findAll({
+          where: {
+            ccompania: code
+          },
+          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania'],
+        });
+      } else {
+        contract = await Search.findAll({
+          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+        });
+      }
+      let contracts = contract.map((item) => item.get({ plain: true }));
       return contracts;
     } catch (error) {
       return { error: error.message };

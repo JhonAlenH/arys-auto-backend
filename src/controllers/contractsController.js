@@ -2,7 +2,7 @@ import contractsService from '../service/contractsService.js';
 
 const searchContracts = async (req, res) => {
     let contractList = []
-    const contracts = await contractsService.searchContracts();
+    const contracts = await contractsService.searchContracts(req.body.ccompania);
     if (contracts.permissionError) {
         return res
             .status(403)
@@ -25,7 +25,13 @@ const searchContracts = async (req, res) => {
             ccontratoflota: item.ccontratoflota,
             xnombre: item.xnombre + ' ' + item.xapellido,
             xvehiculo: item.xmarca,
-            xplaca: item.xplaca
+            xplaca: item.xplaca,
+            xmarca: item.xmarca,
+            xmodelo: item.xmodelo,
+            xversion: item.xversion,
+            ccompania: item.ccompania,
+            xcompania: item.xcompania,
+            xestatusgeneral: item.xestatusgeneral[0],
         });
     });
 

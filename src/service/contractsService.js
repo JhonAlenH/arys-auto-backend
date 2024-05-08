@@ -1,7 +1,7 @@
 import Contracts from '../db/Contracts.js';
 
-const searchContracts = async () => {
-    const contracts = await Contracts.searchContracts();
+const searchContracts = async (ccompania) => {
+    const contracts = await Contracts.searchContracts(ccompania);
     if (contracts.error) {
         return {
             error: contracts.error

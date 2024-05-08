@@ -15,6 +15,7 @@ const sqlConfig = {
 }
 
 const Search = sequelize.define('suVcontratos', {});
+const SearchCompany = sequelize.define('macompania', {});
 const Contract = sequelize.define('sucontratoflota', {}, { tableName: 'sucontratoflota' });
 const Detail = sequelize.define('suVcontratos', {
   ccontratoflota: {
@@ -23,6 +24,7 @@ const Detail = sequelize.define('suVcontratos', {
     allowNull: true,
   },
 });
+
 const TypeService = sequelize.define('maVtiposerpl', {}, { tableName: 'maVtiposerpl' });
 const Propietary = sequelize.define('suVpropietario', {  
   ccontratoflota: {
@@ -38,13 +40,42 @@ const Vehicle = sequelize.define('suVpropietario', {
 },}, { tableName: 'suVpropietario' });
 
 
-const searchContracts = async () => {
-    try {
-      const contract = await Search.findAll({
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xestatusgeneral'],
-      });
-      const contracts = contract.map((item) => item.get({ plain: true }));
+const searchContracts = async (code) => {
+  try {
+    let contract
+    console.log(code);
+      if(code != 1){
+        contract = await Search.findAll({
+          where: {
+            ccompania: code
+          },
+          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania'],
+        });
+      } else {
+        contract = await Search.findAll({
+          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+        });
+      }
+      let contracts = contract.map((item) => item.get({ plain: true }));
       return contracts;
+    } catch (error) {
+      return { error: error.message };
+    }
+};
+
+const searchContractsBy = async (filters, ccompania) => {
+  try {
+    let pool = await sql.connect(sqlConfig)
+
+    const filtersFormated = filters.map( item => `${item.key} = ${item.value}`).join('AND ')
+
+    let result
+    if(ccompania != 1){
+      result = await pool.request().query(`SELECT ccontratoflota, xnombre, xapellido, xplaca, xmarca, xmodelo, xversion, ccompania, xcompania, xestatusgeneral FROM suVcontratos WHERE ccompania = ${parseInt(ccompania)} AND ${filtersFormated}`)
+    } else {
+      result = await pool.request().query(`SELECT ccontratoflota, xnombre, xapellido, xplaca, xmarca, xmodelo, xversion, ccompania, xcompania, xestatusgeneral FROM suVcontratos WHERE ${filtersFormated}`)
+    }
+    return result.recordset;
     } catch (error) {
       return { error: error.message };
     }
@@ -225,12 +256,13 @@ const detailMembershipService = async (detailMembershipService) => {
 };
 
 export default {
-    searchContracts,
-    searchPropietary,
-    searchVehicle,
-    typeServicePlan,
-    createMembership,
-    searchContractIndividual,
-    detailMembership,
-    detailMembershipService
+  searchContracts,
+  searchPropietary,
+  searchVehicle,
+  typeServicePlan,
+  createMembership,
+  searchContractIndividual,
+  detailMembership,
+  detailMembershipService,
+  searchContractsBy
 }

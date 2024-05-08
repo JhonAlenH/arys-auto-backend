@@ -3,10 +3,10 @@ import Order from '../db/Order.js';
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.getOrders();
-    if (newPlan.error) {
-      return res.status(newPlan.code).send({
+    if (orders.error) {
+      return res.status(orders.code).send({
         status: false,
-        message: newPlan.error
+        message: orders.error
       });
     }
     res.status(201).send({

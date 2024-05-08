@@ -33,7 +33,6 @@ const searchContracts = async (req, res) => {
             ccompania: item.ccompania,
             xcompania: item.xcompania,
             xestatusgeneral: item.xestatusgeneral[0],
-        });
     });
 
     return res

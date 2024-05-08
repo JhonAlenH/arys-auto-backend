@@ -290,6 +290,26 @@ const getTargetBank = async (getTargetBank) => {
     return targetBank;
 }
 
+const getNotificationType = async (getNotificationType) => {
+    const notificationtype = await Valrep.getNotificationType(getNotificationType);
+    if (notificationtype.error) {
+        return {
+            error: notificationtype.error
+        }
+    }
+    return notificationtype;
+}
+
+const getClaimCause = async (getClaimCause) => {
+    const claim = await Valrep.getClaimCause(getClaimCause);
+    if (claim.error) {
+        return {
+            error: claim.error
+        }
+    }
+    return claim;
+}
+
 export default {
     getTrade,
     getCoin,
@@ -319,5 +339,7 @@ export default {
     getTakers,
     getTypeOfPayment,
     getBank,
-    getTargetBank
+    getTargetBank,
+    getNotificationType,
+    getClaimCause
 }

@@ -14,6 +14,7 @@ import v1ContractsRouter from './v1/contractsRoutes.js';
 import v1ValrepRouter from './v1/valrepRoutes.js';
 import v1UserRouter from './v1/userRoutes.js';
 import v1ServicesRouter from './v1/serviciosRoutes.js';
+import v1EventsRouter from './v1/eventsRoutes.js';
 import v1MonedasRouter from './v1/monedasRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
 
@@ -47,6 +48,7 @@ app.use("/api/v1/contracts", v1ContractsRouter);
 app.use("/api/v1/valrep", v1ValrepRouter);
 app.use("/api/v1/user", v1UserRouter);
 app.use("/api/v1/services", v1ServicesRouter);
+app.use("/api/v1/events", v1EventsRouter);
 app.use("/api/v1/monedas", v1MonedasRouter);
 app.use("/api/v1/menus", v1MenusRouter);
 

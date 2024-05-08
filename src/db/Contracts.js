@@ -178,6 +178,7 @@ const createMembership = async (createMembership) => {
       return { result: result };
   }
   catch (error) {
+    console.log(error.message)
       return { error: error.message };
   }
 }
@@ -222,9 +223,15 @@ const detailMembership = async (detailMembership) => {
         'xmoneda',
         'cplan',
         'xplan',
+        'xestatusgeneral',
+        'xclase_rcv',
+        'icedula',
+        'xcedula',
+        'xtelefono',
+        'xdireccion',
+        'xcorreo',
       ],
     });
-
     return contract ? contract.get({ plain: true }) : null;;
   } catch (error) {
     console.log(error.message)

@@ -22,6 +22,8 @@ const Takers = sequelize.define('MATOMADORES', {});
 const TypeOfPayment = sequelize.define('MATIPOPAGO', {}, { tableName: 'MATIPOPAGO' });
 const Bank = sequelize.define('MABANCO', {}, { tableName: 'MABANCO' });
 const TargetBank = sequelize.define('MABANCO_DESTINO', {}, { tableName: 'MABANCO_DESTINO' });
+const NotificationType = sequelize.define('MATIPONOTIFICACION', {}, { tableName: 'MATIPONOTIFICACION' });
+const ClaimCause = sequelize.define('MACAUSASINIESTRO', {}, { tableName: 'MACAUSASINIESTRO' });
 
 const Rol = sequelize.define('serol', {
   crol: {
@@ -533,6 +535,38 @@ const getTargetBank = async (getTargetBank) => {
   }
 };
 
+const getNotificationType = async (getNotificationType) => {
+  try {
+    const items = await NotificationType.findAll({
+      where: {
+        cpais: getNotificationType.cpais,
+        ccompania: getNotificationType.ccompania
+      },
+      attributes: ['ctiponotificacion', 'xtiponotificacion'],
+    });
+    const notificationtype = items.map((item) => item.get({ plain: true }));
+    return notificationtype;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getClaimCause = async (getClaimCause) => {
+  try {
+    const items = await ClaimCause.findAll({
+      where: {
+        cpais: getClaimCause.cpais,
+        ccompania: getClaimCause.ccompania
+      },
+      attributes: ['ccausasiniestro', 'xcausasiniestro'],
+    });
+    const claim = items.map((item) => item.get({ plain: true }));
+    return claim;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
   getTrade,
   getCoin,
@@ -562,5 +596,7 @@ export default {
   getTakers,
   getTypeOfPayment,
   getBank,
-  getTargetBank
+  getTargetBank,
+  getNotificationType,
+  getClaimCause
 };

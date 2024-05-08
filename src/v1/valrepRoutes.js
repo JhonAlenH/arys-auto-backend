@@ -35,5 +35,7 @@ router
     .post("/type-of-payment", valrepController.getTypeOfPayment)
     .post("/bank",  valrepController.getBank)
     .post("/target-bank",  valrepController.getTargetBank)
+    .post("/notification-type",  valrepController.getNotificationType)
+    .post("/claim-cause",  valrepController.getClaimCause)
     
 export default router;

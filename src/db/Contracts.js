@@ -63,6 +63,24 @@ const searchContracts = async (code) => {
     }
 };
 
+const searchContractsBy = async (filters, ccompania) => {
+  try {
+    let pool = await sql.connect(sqlConfig)
+
+    const filtersFormated = filters.map( item => `${item.key} = ${item.value}`).join('AND ')
+
+    let result
+    if(ccompania != 1){
+      result = await pool.request().query(`SELECT ccontratoflota, xnombre, xapellido, xplaca, xmarca, xmodelo, xversion, ccompania, xcompania, xestatusgeneral FROM suVcontratos WHERE ccompania = ${parseInt(ccompania)} AND ${filtersFormated}`)
+    } else {
+      result = await pool.request().query(`SELECT ccontratoflota, xnombre, xapellido, xplaca, xmarca, xmodelo, xversion, ccompania, xcompania, xestatusgeneral FROM suVcontratos WHERE ${filtersFormated}`)
+    }
+    return result.recordset;
+    } catch (error) {
+      return { error: error.message };
+    }
+};
+
 const searchPropietary = async (searchPropietary) => {
   try {
     const propietary = await Propietary.findOne({
@@ -231,12 +249,13 @@ const detailMembershipService = async (detailMembershipService) => {
 };
 
 export default {
-    searchContracts,
-    searchPropietary,
-    searchVehicle,
-    typeServicePlan,
-    createMembership,
-    searchContractIndividual,
-    detailMembership,
-    detailMembershipService
+  searchContracts,
+  searchPropietary,
+  searchVehicle,
+  typeServicePlan,
+  createMembership,
+  searchContractIndividual,
+  detailMembership,
+  detailMembershipService,
+  searchContractsBy
 }

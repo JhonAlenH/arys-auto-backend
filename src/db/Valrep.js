@@ -3,6 +3,7 @@ import sequelize from '../config/database.js';
 
 const Trade = sequelize.define('maramos', {});
 const Coin = sequelize.define('mamonedas', {});
+const Pais = sequelize.define('mapais', {}, { tableName: 'mapais' });
 const Client = sequelize.define('maclient', {}, { tableName: 'maclient' });
 const Broker = sequelize.define('MACORREDORES_WEB', {}, { tableName: 'MACORREDORES_WEB' });
 const Departament = sequelize.define('sedepartamento', {}, { tableName: 'sedepartamento' });

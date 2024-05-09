@@ -819,6 +819,62 @@ const getTargetBank = async (req, res) => {
         });
 }
 
+const getNotificationType = async (req, res) => {
+    const notificationtype = await valrepService.getNotificationType(req.body);
+    if (notificationtype.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: notificationtype.permissionError
+            });
+    }
+    if (notificationtype.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: notificationtype.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                notificationtype: notificationtype
+            }
+        });
+}
+
+const getClaimCause = async (req, res) => {
+    const claim = await valrepService.getClaimCause(req.body);
+    if (claim.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: claim.permissionError
+            });
+    }
+    if (claim.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: claim.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                claim: claim
+            }
+        });
+}
+
 export default {
     getTrade,
     getCoin,
@@ -848,5 +904,7 @@ export default {
     getTakers,
     getTypeOfPayment,
     getBank,
-    getTargetBank
+    getTargetBank,
+    getNotificationType,
+    getClaimCause
 }

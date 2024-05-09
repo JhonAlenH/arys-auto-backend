@@ -14,7 +14,7 @@ const sqlConfig = {
 }
 
 const createPlan = async(data) => {
-  const rData = insert.formatData(data)
+  const rData = insert.formatCreateData(data)
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`

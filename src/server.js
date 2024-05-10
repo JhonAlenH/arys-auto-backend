@@ -17,6 +17,7 @@ import v1ServicesRouter from './v1/serviciosRoutes.js';
 import v1EventsRouter from './v1/eventsRoutes.js';
 import v1MonedasRouter from './v1/monedasRoutes.js';
 import v1PaisesRouter from './v1/paisesRoutes.js';
+import v1MetodopagoRouter from './v1/metodologiapagoRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
 
 
@@ -52,11 +53,8 @@ app.use("/api/v1/services", v1ServicesRouter);
 app.use("/api/v1/events", v1EventsRouter);
 app.use("/api/v1/monedas", v1MonedasRouter);
 app.use("/api/v1/paises", v1PaisesRouter);
+app.use("/api/v1/metodopago", v1MetodopagoRouter);
 app.use("/api/v1/menus", v1MenusRouter);
-
-
-
-
 
 
 

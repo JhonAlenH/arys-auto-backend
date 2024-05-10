@@ -15,24 +15,24 @@ const sqlConfig = {
   }
 }
 
-const Search = sequelize.define('mapais', {});
+const Search = sequelize.define('mametodologiapago', {});
 
-const searchPaises = async () => {
+const searchMetodologiapago = async () => {
   try {
-    const pa = await Search.findAll({
-      attributes: ['cpais', 'xpais'],
+    const mp = await Search.findAll({
+      attributes: ['cmetodologiapago', 'xmetodologiapago','cpais','ccompania'],
     });
-    const country = pa.map((item) => item.get({ plain: true }));
-    return country;
+    const metpag = me.map((item) => item.get({ plain: true }));
+    return metpag;
   } catch (error) {
     console.log(error.messagec)
     return { error: error.message };
   }
 };
-const searchPaisById = async (id) => {
+const searchMetodologiapagoById = async (id) => {
   try {
     let pool = await sql.connect(sqlConfig);
-    let result = await pool.request().query(`SELECT cpais, xpais from MAPAIS WHERE cpais = ${parseInt(id)}`)
+    let result = await pool.request().query(`SELECT cmetodologiapago, xmetodologiapago, cpais, ccompania from MAMETODOLOGIAPAGO WHERE cmetodologiapago = ${parseInt(id)}`)
     await pool.close();
     return { 
       result: result.recordset[0]
@@ -44,14 +44,14 @@ const searchPaisById = async (id) => {
 };
 
 
-const createPais = async(data) => {
+const createMetodologiapago = async(data) => {
 
   const rData = insert.formatCreateData(data)
 
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    INSERT INTO MAPAIS (${rData.keys}) VALUES (${rData.values})`)
+    INSERT INTO MAMETODOLOGIAPAGO (${rData.keys}) VALUES (${rData.values})`)
     await pool.close();
     return { 
       result: result
@@ -62,14 +62,14 @@ const createPais = async(data) => {
   }
 }
 
-const updatePais = async(id, data) => {
+const updateMetodologiapago = async(id, data) => {
 
   const rData = insert.formatEditData(data)
 
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    UPDATE MAPAIS SET ${rData} where cpais = ${id}`)
+    UPDATE MAMETODOLOGIAPAGO SET ${rData} where cmetodologiapago = ${id}`)
     await pool.close();
     return { 
       result: result
@@ -81,8 +81,8 @@ const updatePais = async(id, data) => {
 }
 
 export default {
-  createPais,
-  searchPaises,
-  updatePais,
-  searchPaisById
+  createMetodologiapago,
+  searchMetodologiapago,
+  updateMetodologiapago,
+  searchMetodologiapagoById
 }

@@ -1,33 +1,23 @@
 import Paises from '../db/Pais.js';
 
 const searchPaises = async (req, res) => {
-  const result = {}
-  result.recordset = await Paises.searchPaises(req.body);
-  if (result.recordset.permissionError) {
-    return res
-        .status(403)
-        .send({
-            status: false,
-            message: result.recordset.permissionError
-        });
+  try {
+    const paises = await Paises.searchPaises();
+    if (paises.error) {
+      return res.status(paises.code).send({
+        status: false,
+        message: paises.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Paises Obtenidos',
+      data: paises
+    });
+  } catch (error){
+
   }
-  if (result.recordset.error) {
-      return res
-          .status(500)
-          .send({
-              status: false,
-              message: result.recordset.error
-          });
-  }
-  console.log(result)
-  return res
-      .status(200)
-      .send({
-          status: true,
-          data: {
-              result
-          }
-      });    
 }
 
 const createPais = async (req, res) => {

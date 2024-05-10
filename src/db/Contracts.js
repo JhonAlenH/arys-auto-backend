@@ -40,19 +40,22 @@ const Vehicle = sequelize.define('suVpropietario', {
 },}, { tableName: 'suVpropietario' });
 
 
-const searchContracts = async (code) => {
+const searchContracts = async (code, idcompania) => {
   try {
     let contract
-    console.log(code);
-      if(code != 1){
+    console.log(idcompania);
+      if(idcompania != 1){
+        if(!code.ccompania){
+          code.ccompania = idcompania
+        }
+        console.log('code', code.ccompania);
         contract = await Search.findAll({
-          where: {
-            ccompania: code
-          },
-          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral'],
+          where: code,
+          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral','xcompania'],
         });
       } else {
         contract = await Search.findAll({
+          where: code,
           attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
         });
       }
@@ -63,23 +66,7 @@ const searchContracts = async (code) => {
     }
 };
 
-const searchContractsBy = async (filters, ccompania) => {
-  try {
-    let pool = await sql.connect(sqlConfig)
 
-    const filtersFormated = filters.map( item => `${item.key} = ${item.value}`).join('AND ')
-
-    let result
-    if(ccompania != 1){
-      result = await pool.request().query(`SELECT ccontratoflota, xnombre, xapellido, xplaca, xmarca, xmodelo, xversion, ccompania, xcompania, xestatusgeneral FROM suVcontratos WHERE ccompania = ${parseInt(ccompania)} AND ${filtersFormated}`)
-    } else {
-      result = await pool.request().query(`SELECT ccontratoflota, xnombre, xapellido, xplaca, xmarca, xmodelo, xversion, ccompania, xcompania, xestatusgeneral FROM suVcontratos WHERE ${filtersFormated}`)
-    }
-    return result.recordset;
-    } catch (error) {
-      return { error: error.message };
-    }
-};
 
 const searchPropietary = async (searchPropietary) => {
   try {
@@ -264,5 +251,4 @@ export default {
   searchContractIndividual,
   detailMembership,
   detailMembershipService,
-  searchContractsBy
 }

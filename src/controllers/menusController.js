@@ -1,7 +1,6 @@
 import Menus from '../db/Menus.js';
 
 const getAdminMenus = async (req, res) => {
-  console.log('empieza');
   try {
     const menus = await Menus.getMenus(1);
     if (menus.error) {

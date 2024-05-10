@@ -3,7 +3,8 @@ import Contracts from '../db/Contracts.js';
 
 const searchContracts = async (req, res) => {
     let contractList = []
-    const contracts = await contractsService.searchContracts(req.body.ccompania);
+    console.log(req.params.id);
+    const contracts = await contractsService.searchContracts(req.body, req.params.id);
     if (contracts.permissionError) {
         return res
             .status(403)
@@ -43,48 +44,6 @@ const searchContracts = async (req, res) => {
             data: {
                 contracts: contractList
             }
-        });
-}
-const searchContractsBy = async (req, res) => {
-    let contractList = []
-    const contracts = await Contracts.searchContractsBy(req.body, req.params.ccompania);
-    if (contracts.permissionError) {
-        return res
-            .status(403)
-            .send({
-                status: false,
-                message: contracts.permissionError
-            });
-    }
-    if (contracts.error) {
-        return res
-            .status(500)
-            .send({
-                status: false,
-                message: contracts.error
-            });
-    }
-
-    contracts.forEach((item) => {
-        contractList.push({
-            ccontratoflota: item.ccontratoflota,
-            xnombre: item.xnombre + ' ' + item.xapellido,
-            xvehiculo: item.xmarca,
-            xplaca: item.xplaca,
-            xmarca: item.xmarca,
-            xmodelo: item.xmodelo,
-            xversion: item.xversion,
-            ccompania: item.ccompania,
-            xcompania: item.xcompania,
-            xestatusgeneral: item.xestatusgeneral[0],
-        });
-    });
-
-    return res
-        .status(200)
-        .send({
-            status: true,
-            data: contractList
         });
 }
 
@@ -237,5 +196,4 @@ export default {
     typeServicePlan,
     createMembership,
     detailMembership,
-    searchContractsBy
 }

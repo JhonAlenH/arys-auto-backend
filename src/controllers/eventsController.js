@@ -2,7 +2,7 @@ import eventsService from '../service/eventsService.js';
 
 const searchEvents = async (req, res) => {
     let eventsList = []
-    const events = await eventsService.searchEvents();
+    const events = await eventsService.searchEvents(req.body.ccompania);
     if (events.permissionError) {
         return res
             .status(403)

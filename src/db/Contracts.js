@@ -49,7 +49,7 @@ const searchContracts = async (code) => {
           where: {
             ccompania: code
           },
-          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania'],
+          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral'],
         });
       } else {
         contract = await Search.findAll({

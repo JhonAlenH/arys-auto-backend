@@ -1,7 +1,7 @@
 import Events from '../db/Events.js';
 
-const searchEvents = async () => {
-    const events = await Events.searchEvents();
+const searchEvents = async (code) => {
+    const events = await Events.searchEvents(code);
     if (events.error) {
         return {
             error: events.error

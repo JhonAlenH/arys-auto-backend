@@ -17,11 +17,23 @@ const sqlConfig = {
 const Search = sequelize.define('evVnotificaciones', {});
 
 
-const searchEvents = async () => {
+const searchEvents = async (code) => {
+  console.log(code)
     try {
-      const event = await Search.findAll({
-        attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro'],
-      });
+      let event
+      if(code != 1){
+        event = await Search.findAll({
+          where: {
+            ccompania: code
+          },
+          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro'],
+        });
+      }else{
+        event = await Search.findAll({
+          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro'],
+        });
+      }
+
       const events = event.map((item) => item.get({ plain: true }));
       return events;
     } catch (error) {

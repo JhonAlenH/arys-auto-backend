@@ -32,7 +32,7 @@ const searchContracts = async (req, res) => {
             xversion: item.xversion,
             ccompania: item.ccompania,
             xcompania: item.xcompania,
-            xestatusgeneral: item.xestatusgeneral[0],
+            xestatusgeneral: item.xestatusgeneral,
         });
     })
 

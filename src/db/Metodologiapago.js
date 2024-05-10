@@ -22,8 +22,8 @@ const searchMetodologiapago = async () => {
     const mp = await Search.findAll({
       attributes: ['cmetodologiapago', 'xmetodologiapago','cpais','ccompania'],
     });
-    const metpag = me.map((item) => item.get({ plain: true }));
-    return metpag;
+    const result = me.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.messagec)
     return { error: error.message };

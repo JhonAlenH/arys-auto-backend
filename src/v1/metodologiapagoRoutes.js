@@ -5,10 +5,10 @@ import metodologiapagoController from '../controllers/metodologiapagoController.
 const router = express.Router();
 
 router
-    .get("/search", metodologiapagoController.searchMetodopago)
-    .post("/create", metodologiapagoController.createMetodopago)
-    .get("/get/:id", metodologiapagoController.searchMetodopago)
-    .post("/edit/:id", metodologiapagoController.updateMetodopago)
+    .get("/search", metodologiapagoController.searchMetodologiapago)
+    .post("/create", metodologiapagoController.createMetodologiapago)
+    // .get("/get/:id", metodologiapagoController.getMetodologiapago)
+    .post("/edit/:id", metodologiapagoController.updateMetodologiapago)
     // .post("/disable", metodologiapagoController.disableMetodopago)
 
     

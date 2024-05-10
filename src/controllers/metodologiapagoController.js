@@ -1,23 +1,23 @@
 import Metodologiapago from '../db/Metodologiapago.js';
 
 const searchMetodologiapago = async (req, res) => {
-    try {
-    const paises = await Paises.searchPaises();
-    if (paises.error) {
-        return res.status(paises.code).send({
-        status: false,
-        message: paises.error
-        });
-        
-    }
-    res.status(201).send({
-        status: true, 
-        message: 'Paises Obtenidos',
-        data: paises
-    });
-    } catch (error){
+  try {
+  const paises = await Metodologiapago.searchMetodologiapago();
+  if (paises.error) {
+      return res.status(paises.code).send({
+      status: false,
+      message: paises.error
+      });
+      
+  }
+  res.status(201).send({
+      status: true, 
+      message: 'Paises Obtenidos',
+      data: paises
+  });
+  } catch (error){
 
-    } 
+  } 
 }
 
 const createMetodologiapago = async (req, res) => {
@@ -62,7 +62,6 @@ const updateMetodologiapago = async (req, res) => {
 
 export default {
   createMetodologiapago,
-  searchMetodologiapago,
   searchMetodologiapago,
   updateMetodologiapago
 }

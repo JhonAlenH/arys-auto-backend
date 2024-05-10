@@ -63,9 +63,7 @@ const searchPlans = async (ccompania) => {
     SELECT id, xplan, cplan, mcosto FROM MAPLANES WHERE ccompania = ${ccompania};
     `)
     await pool.close();
-    return { 
-      result: result
-    };
+    return result.recordset;
   } catch (error) {
     console.log(error.message)
     return { error: error.message };

@@ -19,11 +19,11 @@ const Search = sequelize.define('mapais', {});
 
 const searchPaises = async () => {
   try {
-    const pa = await Search.findAll({
+    const items = await Search.findAll({
       attributes: ['cpais', 'xpais'],
     });
-    const country = pa.map((item) => item.get({ plain: true }));
-    return country;
+    const result = items.map((item) => item.get({ plain: true }));
+    return result;
   } catch (error) {
     console.log(error.messagec)
     return { error: error.message };

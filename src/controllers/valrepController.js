@@ -29,31 +29,28 @@ const getTrade = async (req, res) => {
 }
 
 const getCoin = async (req, res) => {
-    const result = {}
-    result.recordset = await valrepService.getCoin(req.body);
-    if (result.recordset.permissionError) {
+    const coins = await valrepService.getCoin(req.body);
+    if (coins.permissionError) {
         return res
             .status(403)
             .send({
                 status: false,
-                message: result.recordset.permissionError
+                message: coins.permissionError
             });
     }
-    if (result.recordset.error) {
+    if (coins.error) {
         return res
             .status(500)
             .send({
                 status: false,
-                message: result.recordset.error
+                message: coins.error
             });
     }
     return res
         .status(200)
         .send({
             status: true,
-            data: {
-                result
-            }
+            data: coins
         });
 }
 

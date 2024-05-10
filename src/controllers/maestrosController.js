@@ -3,7 +3,7 @@ import Maestros from '../db/Maestros.js';
 const getMaMonedas = async (req, res) => {
   try {
     const gettedMonedas = await Maestros.getMaMonedas();
-    // console.log(gettedMonedas.result.recordset)
+    console.log(gettedMonedas.result.recordset)
     if (gettedMonedas.error) {
       return res.status(gettedMonedas.code).send({
         status: false,

@@ -80,6 +80,40 @@ const searchPlanServices = async(cplan) => {
       return { error: error.message };
   }
 }
+const getServicesAndTypes = async(ccompania) => {
+  try {
+
+    let pool = await sql.connect(sqlConfig)
+    let result = await pool.request().query(`SELECT * from suVServicioTipos WHERE ccompania = ${ccompania};`)
+
+    let j = 0
+    for (const record of result.recordset) {
+      const keys = Object.keys(record)
+      const values = Object.values(record)
+      let resultLowerCase = {}
+      let i = 0
+      for (const key of keys) {
+        const lowerKey = key.toLowerCase()
+        resultLowerCase[lowerKey] = values[i]
+        i++
+      }
+      result.recordset[j] = resultLowerCase
+      j++ 
+    };
+
+    await pool.close();
+    
+    if (result.rowsAffected < 1) {
+        return false;
+    }
+    await pool.close();
+    return result.recordset;
+  }
+  catch (error) {
+      console.log(error.message)
+      return { error: error.message };
+  }
+}
 
 const linkServicios = async(services, cplan) => {
   
@@ -120,6 +154,7 @@ export default {
   linkServicios,
   getTypeServices,
   getServicesByType,
-  searchPlanServices
+  searchPlanServices,
+  getServicesAndTypes
 }
 

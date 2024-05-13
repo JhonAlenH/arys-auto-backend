@@ -14,7 +14,7 @@ const sqlConfig = {
 const getMaMonedas = async() => {
   try {
     let pool = await sql.connect(sqlConfig);
-    let result = await pool.request().query('SELECT cmoneda, xdescripcion from MAMONEDAS')
+    let result = await pool.request().query('SELECT cmoneda, xdescripcion, xmoneda from MAMONEDAS')
     await pool.close();
     return { 
       result: result

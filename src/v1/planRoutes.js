@@ -6,7 +6,7 @@ const router = express.Router();
 
 router
     .post("/create", planController.createPlan)
-    .get("/search", planController.searchPlans)
+    .get("/search/:ccompania", planController.searchPlans)
     .get("/:id", planController.searchPlanInfo)
 
     

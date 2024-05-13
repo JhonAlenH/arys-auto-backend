@@ -6,6 +6,7 @@ const router = express.Router();
 
 router
     .get("/getTypeServices/:id", serviciosController.getTypeServices)
+    .get("/getServicesByType/:id", serviciosController.getServicesByType)
 
     
 export default router;

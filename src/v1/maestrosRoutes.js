@@ -15,5 +15,6 @@ router
     .get("/aseguradoras", maestrosController.getAseguradoras)
     .get("/ciudades/:estado/:pais", maestrosController.getMaCiudades)
     .get("/estados/:pais", maestrosController.getMaEstados)
+    .post("/replacement", maestrosController.getMaRepuestos)
     
 export default router;

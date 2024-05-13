@@ -180,6 +180,19 @@ const getMoneda = async(id) => {
     return { error: error.message };
   }
 }
+const getMaRepuestos = async(getMaRepuestos) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT crepuesto, xrepuesto from MAREPUESTO where cpais = ${getMaRepuestos.cpais} and ccompania = ${getMaRepuestos.ccompania}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 
 
 export default {
@@ -194,5 +207,6 @@ export default {
   getMaCiudades,
   getMaEstados,
   getStatus,
-  getMoneda
+  getMoneda,
+  getMaRepuestos
 }

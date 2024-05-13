@@ -255,6 +255,33 @@ const getMoneda = async (req, res) => {
   }
 }
 
+const getMaRepuestos = async (req, res) => {
+  try {
+    const gettedRepuestos = await Maestros.getMaRepuestos(req.body);
+    // console.log(gettedPaises.result)
+    if (gettedRepuestos.error) {
+      return res.status(gettedPaises.code).send({
+        status: false,
+        message: gettedPaises.error
+      });
+    }
+    const formatData = gettedRepuestos.result.recordset.map(item => {
+      return{
+        text: item.xrepuesto,
+        value: `${item.crepuesto}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Repuestos Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
 
 export default {
   getMaMonedas,
@@ -266,5 +293,6 @@ export default {
   getAseguradoras,
   getMaCiudades,
   getMaEstados,
-  getMoneda
+  getMoneda,
+  getMaRepuestos
 }

@@ -7,7 +7,7 @@ const router = express.Router();
 router
 
     .get("/trade",valrepController.getTrade)
-    .get("/coin", valrepController.getCoin)
+    .get("/coin/:ccompania", valrepController.getCoin)
     .post("/client", valrepController.getClient)
     .post("/brokers", valrepController.getBrokers)
     .post("/departament", valrepController.getDepartament)

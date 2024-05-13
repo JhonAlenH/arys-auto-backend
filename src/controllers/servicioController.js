@@ -59,7 +59,44 @@ const getTypeServices = async (req, res) => {
     
   }
 }
+const getServicesByType = async(req, res) => {
+  const ccompania = req.params.id
+  try {
+    const serviceTypes = await Servicio.getServicesAndTypes(ccompania);
+    if (serviceTypes.error) {
+      return res.status(serviceTypes.code).send({
+        status: false,
+        message: serviceTypes.error
+      });
+    }
+    
+    let finalData = []
+    serviceTypes.map(item => {
+      if(finalData.length > 0) {
+        const findedTypeIndex = finalData.findIndex(itemData => itemData.value == item.ctiposervicio)
+        if(findedTypeIndex != -1) {
+          finalData[findedTypeIndex].values.push({text: item.xservicio.toUpperCase(), value: item.cservicio, key: item.ctiposervicio})
+        } else {
+          finalData.push({text: item.xtiposervicio, value: item.ctiposervicio, values: [{text: item.xservicio.toUpperCase(),value: item.cservicio, key: item.ctiposervicio}]})
+        }
+      } else {
+        
+        finalData.push({text: item.xtiposervicio, value: item.ctiposervicio, values: [{text: item.xservicio.toUpperCase(), value: item.cservicio, key: item.ctiposervicio}]})
+      }
+    })
+
+    res.status(201).send({
+      status: true, 
+      message: 'Servicios Obtenidos',
+      data: [...finalData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
 
 export default {
   getTypeServices,
+  getServicesByType
 }

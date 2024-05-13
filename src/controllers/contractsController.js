@@ -163,30 +163,32 @@ const searchVehicle = async (req, res) => {
 
 const detailMembership = async (req, res) => {
     const detail = await contractsService.detailMembership(req.body);
-    if (detail.permissionError) {
+    if(detail){
+        if (detail.permissionError) {
+            return res
+                .status(403)
+                .send({
+                    status: false,
+                    message: detail.permissionError
+                });
+        }
+        if (detail.error) {
+            return res
+                .status(500)
+                .send({
+                    status: false,
+                    message: detail.error
+                });
+        }
+        const service = await contractsService.detailMembershipService(detail.cplan);
         return res
-            .status(403)
+            .status(200)
             .send({
-                status: false,
-                message: detail.permissionError
+                status: true,
+                detail: detail,
+                service: service
             });
     }
-    if (detail.error) {
-        return res
-            .status(500)
-            .send({
-                status: false,
-                message: detail.error
-            });
-    }
-    const service = await contractsService.detailMembershipService(detail.cplan);
-    return res
-        .status(200)
-        .send({
-            status: true,
-            detail: detail,
-            service: service
-        });
 }
 
 export default {

@@ -53,7 +53,7 @@ app.use("/api/v1/services", v1ServicesRouter);
 app.use("/api/v1/events", v1EventsRouter);
 app.use("/api/v1/monedas", v1MonedasRouter);
 app.use("/api/v1/paises", v1PaisesRouter);
-app.use("/api/v1/metodopago", v1MetodopagoRouter);
+app.use("/api/v1/metodologiapago", v1MetodopagoRouter);
 app.use("/api/v1/menus", v1MenusRouter);
 
 
@@ -61,6 +61,7 @@ app.use("/api/v1/menus", v1MenusRouter);
 const PORT = process.env.PORT || 3000; 
 
 const DOCUMENTS_PATH = './public/documents';
+const IMAGES_PATH = './public/images';
 
 app.get('/api/get-document/:filename', (req, res) => {
   const filename = req.params.filename;
@@ -89,7 +90,25 @@ const document_storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
+const image_storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, IMAGES_PATH);
+  },
 
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
+
+let image_upload = multer({
+    storage: image_storage,
+    limits: {
+      fileSize: 35000000
+    },
+    fileFilter(req, file, cb) {
+      cb(null, true);
+    }
+});
 let document_upload = multer({
     storage: document_storage,
     limits: {
@@ -115,15 +134,16 @@ app.post('/api/upload/documents', document_upload.array('xdocumentos', 5), (req,
   res.json({ data: { status: true, uploadedFile: files } });
 });
 
-app.post('/api/upload/image', document_upload.array('image'),(req, res , err) => {
-  const files = req.file;
+app.post('/api/upload/image', image_upload.array('image'),(req, res , err) => {
+  const files = req.body;
+  console.log(files);
   if (!files || files.length === 0) {
     const error = new Error('Please upload at least one file');
     error.httpStatusCode = 400;
 
     return res.status(400).json({  status: false, code: 400, message: error.message  });
   }
-  console.log(object);
+  // console.log(object);
 
   res.json({  status: true, uploadedFile: files  });
 });

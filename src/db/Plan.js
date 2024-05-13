@@ -59,9 +59,17 @@ const searchPlanInfo = async (id) => {
 const searchPlans = async (ccompania) => {
   try {
     let pool = await sql.connect(sqlConfig);
-    let result = await pool.request().query(`
-    SELECT id, xplan, cplan, mcosto FROM MAPLANES WHERE ccompania = ${ccompania};
-    `)
+    let result
+    if(ccompania == 1){
+      result = await pool.request().query(`
+      SELECT id, xplan, cplan, mcosto, cmoneda FROM MAPLANES;
+      `)
+    } else {
+      result = await pool.request().query(`
+      SELECT id, xplan, cplan, mcosto, cmoneda FROM MAPLANES WHERE ccompania = ${ccompania};
+      `)
+      
+    }
     await pool.close();
     return result.recordset;
   } catch (error) {

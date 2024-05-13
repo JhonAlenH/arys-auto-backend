@@ -57,12 +57,15 @@ const searchContractIndividual = async () => {
 
 const detailMembership = async (detailMembership) => {
     const detail = await Contracts.detailMembership(detailMembership);
-    if (detail.error) {
-        return {
-            error: detail.error
+    if(detail){
+
+        if (detail.error) {
+            return {
+                error: detail.error
+            }
         }
+        return detail;
     }
-    return detail;
 }
 
 const detailMembershipService = async (detailMembershipService) => {

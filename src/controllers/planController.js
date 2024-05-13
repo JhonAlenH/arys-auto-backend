@@ -1,3 +1,4 @@
+import Maestros from '../db/Maestros.js';
 import Plan from '../db/Plan.js';
 import Servicio from '../db/Servicio.js';
 
@@ -56,7 +57,7 @@ const searchPlanInfo = async (req, res) => {
   }
 }
 const searchPlans = async (req, res) => {
-  const ccompania = 1
+  const ccompania = req.params.ccompania
   try {
     const plans = await Plan.searchPlans(ccompania);
     // console.log(plans)
@@ -65,6 +66,13 @@ const searchPlans = async (req, res) => {
         status: false,
         message: plans.error
       });
+    }
+    const monedas = await Maestros.getMaMonedas();
+    console.log(monedas.result.recordset);
+    
+    for (const plan of plans) {
+      const gettedMoneda = monedas.result.recordset.find(moneda => moneda.cmoneda == plan.cmoneda)
+      plan.mcosto = `${plan.mcosto.toFixed(2)} ${gettedMoneda.xmoneda}`;
     }
     res.status(201).send({
       status: true, 

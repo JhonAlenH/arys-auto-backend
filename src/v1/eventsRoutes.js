@@ -6,6 +6,6 @@ const router = express.Router();
 
 router
 
-    .post("/search", eventsController.searchEvents)
+    .post("/search/:ccompania/:cpais", eventsController.searchEvents)
 
 export default router;

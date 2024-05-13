@@ -40,22 +40,21 @@ const Vehicle = sequelize.define('suVpropietario', {
 },}, { tableName: 'suVpropietario' });
 
 
-const searchContracts = async (code, idcompania) => {
+const searchContracts = async (body, idcompania) => {
   try {
     let contract
     console.log(idcompania);
       if(idcompania != 1){
-        if(!code.ccompania){
-          code.ccompania = idcompania
+        if(!body.ccompania){
+          body.ccompania = idcompania
         }
-        console.log('code', code.ccompania);
         contract = await Search.findAll({
-          where: code,
+          where: body,
           attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral','xcompania'],
         });
       } else {
         contract = await Search.findAll({
-          where: code,
+          where: body,
           attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
         });
       }

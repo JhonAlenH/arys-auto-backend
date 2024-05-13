@@ -5,7 +5,7 @@ import metodologiapagoController from '../controllers/metodologiapagoController.
 const router = express.Router();
 
 router
-    .get("/search", metodologiapagoController.searchMetodologiapago)
+    .get("/search/:ccompania", metodologiapagoController.searchMetodologiapago)
     .post("/create", metodologiapagoController.createMetodologiapago)
     // .get("/get/:id", metodologiapagoController.getMetodologiapago)
     .post("/edit/:id", metodologiapagoController.updateMetodologiapago)

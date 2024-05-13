@@ -15,17 +15,17 @@ const sqlConfig = {
   }
 }
 
-const Search = sequelize.define('mametodologiapago', {});
+const Search = sequelize.define('mametodologiapago', {},{tableName: 'mametodologiapago'});
 
 const searchMetodologiapago = async () => {
   try {
-    const mp = await Search.findAll({
+    const items = await Search.findAll({
       attributes: ['cmetodologiapago', 'xmetodologiapago','cpais','ccompania'],
     });
-    const result = me.map((item) => item.get({ plain: true }));
+    const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {
-    console.log(error.messagec)
+    console.log(error.message)
     return { error: error.message };
   }
 };

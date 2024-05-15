@@ -41,7 +41,33 @@ const searchEvents = async (req, res) => {
             }
         });
 }
+const getEvent = async (req, res) => {
+    const event = await eventsService.getEvent(req.params.id);
+    if (event.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: event.permissionError
+            });
+    }
+    if (event.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: event.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: event
+        });
+}
 
 export default {
     searchEvents,
+    getEvent
 }

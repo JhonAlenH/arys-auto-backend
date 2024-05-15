@@ -17,6 +17,10 @@ import v1ServicesRouter from './v1/serviciosRoutes.js';
 import v1EventsRouter from './v1/eventsRoutes.js';
 import v1MonedasRouter from './v1/monedasRoutes.js';
 import v1PaisesRouter from './v1/paisesRoutes.js';
+import v1BancosRouter from './v1/bancosRoutes.js';
+import v1ProveedoresRouter from './v1/proveedoresRoutes.js';
+import v1PropietariosRouter from './v1/propietariosRoutes.js';
+import v1CompaniasRouter from './v1/companiasRoutes.js';
 import v1MetodopagoRouter from './v1/metodologiapagoRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
 
@@ -53,6 +57,10 @@ app.use("/api/v1/services", v1ServicesRouter);
 app.use("/api/v1/events", v1EventsRouter);
 app.use("/api/v1/monedas", v1MonedasRouter);
 app.use("/api/v1/paises", v1PaisesRouter);
+app.use("/api/v1/bancos", v1BancosRouter);
+app.use("/api/v1/proveedores", v1ProveedoresRouter);
+app.use("/api/v1/propietarios", v1PropietariosRouter);
+app.use("/api/v1/companias", v1CompaniasRouter);
 app.use("/api/v1/metodologiapago", v1MetodopagoRouter);
 app.use("/api/v1/menus", v1MenusRouter);
 

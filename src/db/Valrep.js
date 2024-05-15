@@ -25,6 +25,8 @@ const Bank = sequelize.define('MABANCO', {}, { tableName: 'MABANCO' });
 const TargetBank = sequelize.define('MABANCO_DESTINO', {}, { tableName: 'MABANCO_DESTINO' });
 const NotificationType = sequelize.define('MATIPONOTIFICACION', {}, { tableName: 'MATIPONOTIFICACION' });
 const ClaimCause = sequelize.define('MACAUSASINIESTRO', {}, { tableName: 'MACAUSASINIESTRO' });
+const TracingType = sequelize.define('MATIPOSEGUIMIENTO', {}, { tableName: 'MATIPOSEGUIMIENTO' });
+const TracingMotive = sequelize.define('MAMOTIVOSEGUIMIENTO', {}, { tableName: 'MAMOTIVOSEGUIMIENTO' });
 
 const Rol = sequelize.define('serol', {
   crol: {
@@ -568,6 +570,38 @@ const getClaimCause = async (getClaimCause) => {
   }
 };
 
+const getTracingType = async (getTracingType) => {
+  try {
+    const resultado = await TracingType.findAll({
+      where: {
+        cpais: getTracingType.cpais,
+        ccompania: getTracingType.ccompania
+      },
+      attributes: ['ctiposeguimiento', 'xtiposeguimiento'],
+    });
+    const result = resultado.map((item) => item.get({ plain: true }));
+    return result;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getTracingMotive = async (getTracingMotive) => {
+  try {
+    const resultado = await TracingMotive.findAll({
+      where: {
+        cpais: getTracingMotive.cpais,
+        ccompania: getTracingMotive.ccompania
+      },
+      attributes: ['cmotivoseguimiento', 'xmotivoseguimiento'],
+    });
+    const result = resultado.map((item) => item.get({ plain: true }));
+    return result;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
   getTrade,
   getCoin,
@@ -599,5 +633,7 @@ export default {
   getBank,
   getTargetBank,
   getNotificationType,
-  getClaimCause
+  getClaimCause,
+  getTracingType,
+  getTracingMotive
 };

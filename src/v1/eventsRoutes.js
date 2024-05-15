@@ -7,5 +7,6 @@ const router = express.Router();
 router
 
     .post("/search/:ccompania/:cpais", eventsController.searchEvents)
+    .post("/get:id", eventsController.getEvent)
 
 export default router;

@@ -10,6 +10,7 @@ router
     .get("/companias", maestrosController.getMaCompanias)
     .get("/compania/:id", maestrosController.getMaCompania)
     .get("/paises", maestrosController.getMaPaises)
+    .get("/estatus", maestrosController.getMaEstatus)
     .get("/bancos", maestrosController.getMaBancos)
     .get("/proveedores", maestrosController.getMaProveedores)
     .get("/propietarios", maestrosController.getMaPropietarios)

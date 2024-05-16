@@ -306,8 +306,85 @@ const getMaRepuestos = async (req, res) => {
     
   }
 }
-
-
+const getMaBancos = async (req, res) => {
+  try {
+    const gettedRepuestos = await Maestros.getMaBancos(req.body);
+    // console.log(gettedPaises.result)
+    if (gettedRepuestos.error) {
+      return res.status(gettedPaises.code).send({
+        status: false,
+        message: gettedPaises.error
+      });
+    }
+    const formatData = gettedRepuestos.result.recordset.map(item => {
+      return{
+        text: item.xrepuesto,
+        value: `${item.crepuesto}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Repuestos Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const getMaProveedores = async (req, res) => {
+  try {
+    const gettedProveedores = await Maestros.getMaProveedores(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedProveedores.error) {
+      return res.status(gettedProveedores.code).send({
+        status: false,
+        message: gettedProveedores.error
+      });
+    }
+    const formatData = gettedProveedores.result.recordset.map(item => {
+      return{
+        text: item.xnombre,
+        value: `${item.cproveedor}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Proveedores Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const getMaPropietarios = async (req, res) => {
+  try {
+    const gettedProveedores = await Maestros.getMaPropietarios(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedProveedores.error) {
+      return res.status(gettedProveedores.code).send({
+        status: false,
+        message: gettedProveedores.error
+      });
+    }
+    const formatData = gettedProveedores.result.recordset.map(item => {
+      return{
+        text: item.xnombre,
+        value: `${item.cproveedor}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Proveedores Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+ 
 export default {
   getMaMonedas,
   getMaEstatus,
@@ -320,5 +397,9 @@ export default {
   getMaCiudades,
   getMaEstados,
   getMoneda,
-  getMaRepuestos
+  getMaRepuestos,
+  getMaBancos,
+  getMaProveedores,
+  getMaPropietarios,
+  getMaCompanias,
 }

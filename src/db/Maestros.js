@@ -206,7 +206,46 @@ const getMaRepuestos = async(getMaRepuestos) => {
     return { error: error.message };
   }
 }
+const getMaBancos = async(getMaBancos) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT cbanco, xbanco from MABANCO where cbanco = ${getMaBancos.cbanco}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 
+const getMaProveedores = async() => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query('SELECT cproveedor, xnombre from MAPROVEEDORES')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+const getMaPropietarios = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT cpropietario, xnombre,xapellido,cestadocivil,csexo,fnacimiento,icedula,xcedula,xdireccion,xemail from TRPROPIETARIO where cpropietario = ${id.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 
 export default {
   getMaMonedas,
@@ -220,6 +259,8 @@ export default {
   getMaCiudades,
   getMaEstados,
   getStatus,
+  getMaPropietarios,
+  getMaProveedores,
   getMoneda,
   getMaRepuestos,
   getMaEstatus

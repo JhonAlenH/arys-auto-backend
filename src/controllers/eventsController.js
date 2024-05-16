@@ -41,7 +41,50 @@ const searchEvents = async (req, res) => {
             }
         });
 }
+const getEvent = async (req, res) => {
+    const event = await eventsService.getEvent(req.params.id);
+    if (event.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: event.permissionError
+            });
+    }
+    if (event.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: event.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: event
+        });
+}
+
+const createEvents = async (req, res) => {
+    const event = await eventsService.createEvents(req.body);
+    console.log(event)
+    if (event.error) {
+        return res.status(event.code).send({
+          status: false,
+          message: event.error
+        });
+      }
+      res.status(201).send({
+        status: true, 
+        message: 'La notificación ha sido creada exitosamente!',
+        data: event
+      });
+}
 
 export default {
     searchEvents,
+    getEvent,
+    createEvents
 }

@@ -37,6 +37,19 @@ const getMaCompanias = async() => {
     return { error: error.message };
   }
 }
+const getMaEstatus = async() => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query('SELECT cestatusgeneral, xestatusgeneral from MAESTATUSGENERAL')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 const getMaCompania = async(id) => {
   try {
     let pool = await sql.connect(sqlConfig);
@@ -208,5 +221,6 @@ export default {
   getMaEstados,
   getStatus,
   getMoneda,
-  getMaRepuestos
+  getMaRepuestos,
+  getMaEstatus
 }

@@ -2,7 +2,7 @@ import Proveedores from '../db/Proveedores.js';
 
 const searchProveedores = async (req, res) => {
   try {
-    const proveedores = await Proveedores.searchProveedores();
+    const proveedores = await Proveedores.searchProveedores(req.body);
     if (proveedores.error) {
       return res.status(proveedores.code).send({
         status: false,

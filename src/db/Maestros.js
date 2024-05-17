@@ -233,6 +233,61 @@ const getMaPropietarios = async(id) => {
     return { error: error.message };
   }
 }
+const getMaParentescos = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT cparentesco, xparentesco,cpais from MAPARENTESCO where cparentesco = ${id.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+
+const getMaEstadocivil = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT cestadocivil, xestadocivil,cpais from MAESTADOCIVIL where cestadocivil = ${id.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+
+const getMaMarcas = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT id, cmarca,xmarca, cmodelo,xmodelo,cversion, xversion,xtrans,xmotor,qano, npasajero from MAINMA where id = ${id.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+
+const getMaVehiculos = async(id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT cvehiculopropietario, ccompania, cmarca,cmodelo,cversion, xmarca,xmodelo,xversion,xplaca,xclase,fano,ccolor,nkilometraje,xserialcarroceria,xserialmotor,cpais,cmoneda,xcolor from TRVEHICULOPROPIETARIO where cvehiculopropietario = ${id.toString()}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 
 export default {
   getMaMonedas,
@@ -248,6 +303,10 @@ export default {
   getStatus,
   getMaPropietarios,
   getMaProveedores,
+  getMaParentescos,
+  getMaEstadocivil,
+  getMaVehiculos,
+  getMaMarcas,
   getMoneda,
   getMaRepuestos
 }

@@ -81,7 +81,6 @@ const updateBancos = async (req, res) => {
 export default {
   createBancos,
   searchBancos,
-  searchBancos,
   searchBanco,
   updateBancos
 }

@@ -59,6 +59,7 @@ const searchContracts = async (body, idcompania) => {
         });
       }
       let contracts = contract.map((item) => item.get({ plain: true }));
+      console.log(contracts);
       return contracts;
     } catch (error) {
       return { error: error.message };
@@ -210,7 +211,7 @@ const detailMembership = async (detailMembership) => {
         'cplan',
         'xplan',
         'xestatusgeneral',
-        'xclase_rcv',
+        'xclasificacion',
         'icedula',
         'xcedula',
         'xtelefono',

@@ -17,11 +17,13 @@ const sqlConfig = {
 
 const Search = sequelize.define('maproveedores', {}, {tableName: 'maproveedores'});
 
-const searchProveedores = async () => {
+const searchProveedores = async (body) => {
   try {
     const items = await Search.findAll({
+      where: body,
       attributes: ['cproveedor', 'xnombre', 'xdireccion', 'xdocidentidad', 'cpais', 'cestado', 'cciudad', 'xcorreo', 'xtelefonocelular', 'xtelefono', 'xobservacion', 'ccompania', 'cestatusgeneral'],
     });
+    
     const result = items.map((item) => item.get({ plain: true }));
     return result;
   } catch (error) {

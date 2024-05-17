@@ -20,6 +20,26 @@ const searchMetodologiapago = async (req, res) => {
   } 
 }
 
+const searchMetodologiapago1 = async (req, res) => {
+  try {
+    const findedMetodologiapago = await Metodologiapago.searchMetodologiapagoById(req.params.id);
+    if (findedMetodologiapago.error) {
+      return res.status(findedMetodologiapago.code).send({
+        status: false,
+        message: findedMetodologiapago.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Metodologia de Pago Obtenido',
+      data: findedMetodologiapago
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
 const createMetodologiapago = async (req, res) => {
   try {
     const createdMetodologiapago = await Metodologiapago.createMetodologiapago(req.body);
@@ -63,5 +83,6 @@ const updateMetodologiapago = async (req, res) => {
 export default {
   createMetodologiapago,
   searchMetodologiapago,
+  searchMetodologiapago1,
   updateMetodologiapago
 }

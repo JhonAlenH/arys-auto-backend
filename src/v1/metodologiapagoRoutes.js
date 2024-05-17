@@ -7,9 +7,7 @@ const router = express.Router();
 router
     .get("/search/:ccompania", metodologiapagoController.searchMetodologiapago)
     .post("/create", metodologiapagoController.createMetodologiapago)
-    // .get("/get/:id", metodologiapagoController.getMetodologiapago)
+    .get("/get/:id", metodologiapagoController.searchMetodologiapago1)
     .post("/edit/:id", metodologiapagoController.updateMetodologiapago)
-    // .post("/disable", metodologiapagoController.disableMetodopago)
-
     
 export default router;

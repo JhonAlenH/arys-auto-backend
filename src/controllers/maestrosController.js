@@ -384,6 +384,141 @@ const getMaPropietarios = async (req, res) => {
     
   }
 }
+
+const getMaParentescos = async (req, res) => {
+  try {
+    const gettedParentescos = await Maestros.getMaParentescos(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedParentescos.error) {
+      return res.status(gettedParentescos.code).send({
+        status: false,
+        message: gettedParentescos.error
+      });
+    }
+    const formatData = gettedParentescos.result.recordset.map(item => {
+      return{
+        text: item.xparentesco,
+        value: `${item.cparentesco}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Proveedores Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
+const getMaEstadocivil = async (req, res) => {
+  try {
+    const gettedEstadocivil = await Maestros.getMaEstadocivil(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedEstadocivil.error) {
+      return res.status(gettedEstadocivil.code).send({
+        status: false,
+        message: gettedEstadocivil.error
+      });
+    }
+    const formatData = gettedEstadocivil.result.recordset.map(item => {
+      return{
+        text: item.ctipodocidentidad,
+        value: `${item.ctipodocidentidad}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Documentos Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
+const getMaTipodocidentidad = async (req, res) => {
+  try {
+    const gettedTipodocidentidad = await Maestros.getMaTipodocidentidad(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedTipodocidentidad.error) {
+      return res.status(gettedTipodocidentidad.code).send({
+        status: false,
+        message: gettedTipodocidentidad.error
+      });
+    }
+    const formatData = gettedTipodocidentidad.result.recordset.map(item => {
+      return{
+        text: item.xtipodocidentidad,
+        value: `${item.ctipodocidentidad}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Documentos Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
+const getMaMarcas = async (req, res) => {
+  try {
+    const gettedMarcas = await Maestros.getMaMarcas(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedMarcas.error) {
+      return res.status(gettedMarcas.code).send({
+        status: false,
+        message: gettedMarcas.error
+      });
+    }
+    const formatData = gettedMarcas.result.recordset.map(item => {
+      return{
+        text: item.xmarca,
+        value: `${item.id}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Marcas Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
+const getMaVehiculos = async (req, res) => {
+  try {
+    const gettedVehiculos = await Maestros.getMaVehiculos(req.body);
+    // console.log(gettedProveedores.result)
+    if (gettedVehiculos.error) {
+      return res.status(gettedVehiculos.code).send({
+        status: false,
+        message: gettedVehiculos.error
+      });
+    }
+    const formatData = gettedVehiculos.result.recordset.map(item => {
+      return{
+        text: item.cvehiculopropietario,
+        value: `${item.id}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Vehículos Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
  
 export default {
   getMaMonedas,
@@ -399,7 +534,13 @@ export default {
   getMoneda,
   getMaRepuestos,
   getMaBancos,
+  getMaMarcas,
   getMaProveedores,
   getMaPropietarios,
-  getMaCompanias,
+  getMaParentescos,
+  getMaEstadocivil,
+  getMaVehiculos,
+  getMaTipodocidentidad,
+  getMaProveedores,
+  getMaPropietarios,
 }

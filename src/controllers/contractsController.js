@@ -3,7 +3,6 @@ import Contracts from '../db/Contracts.js';
 
 const searchContracts = async (req, res) => {
     let contractList = []
-    console.log(req.params.id);
     const contracts = await contractsService.searchContracts(req.body, req.params.id);
     if (contracts.permissionError) {
         return res
@@ -21,21 +20,23 @@ const searchContracts = async (req, res) => {
                 message: contracts.error
             });
     }
+    if(contracts.length > 0){
 
-    contracts.forEach((item) => {
-        contractList.push({
-            ccontratoflota: item.ccontratoflota,
-            xnombre: item.xnombre + ' ' + item.xapellido,
-            xvehiculo: item.xmarca,
-            xplaca: item.xplaca,
-            xmarca: item.xmarca,
-            xmodelo: item.xmodelo,
-            xversion: item.xversion,
-            ccompania: item.ccompania,
-            xcompania: item.xcompania,
-            xestatusgeneral: item.xestatusgeneral,
-        });
-    })
+        contracts.forEach((item) => {
+            contractList.push({
+                ccontratoflota: item.ccontratoflota,
+                xnombre: item.xnombre + ' ' + item.xapellido,
+                xvehiculo: item.xmarca,
+                xplaca: item.xplaca,
+                xmarca: item.xmarca,
+                xmodelo: item.xmodelo,
+                xversion: item.xversion,
+                ccompania: item.ccompania,
+                xcompania: item.xcompania,
+                xestatusgeneral: item.xestatusgeneral,
+            });
+        })
+    }
 
     return res
         .status(200)

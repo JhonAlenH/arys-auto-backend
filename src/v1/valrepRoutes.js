@@ -37,5 +37,7 @@ router
     .post("/target-bank",  valrepController.getTargetBank)
     .post("/notification-type",  valrepController.getNotificationType)
     .post("/claim-cause",  valrepController.getClaimCause)
+    .post("/tracing-type",  valrepController.getTracingType)
+    .post("/tracing-motive",  valrepController.getTracingMotive)
     
 export default router;

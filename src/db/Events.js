@@ -1,6 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 import sql from "mssql";
+import insert from "../utilities/insert.js";
 
 const sqlConfig = {
     user: process.env.USER_BD,
@@ -69,7 +70,35 @@ const getEvent = async (id) => {
   }
 };
 
+const createEvents = async(data) => {
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  try {
+    let pool = await sql.connect(sqlConfig);
+    const request = pool.request();
+    
+    // Construir la consulta SQL dinámicamente
+    const placeholders = Array.from({ length: keys.length }, (_, i) => `@${i + 1}`).join(',');
+    const query = `INSERT INTO EVNOTIFICACION (${keys.join(',')}) VALUES (${placeholders})`;
+
+    // Ejecutar la consulta SQL con los valores adecuados
+    keys.forEach((key, index) => {
+      request.input((index + 1).toString(), values[index]);
+    });
+
+    const event = await request.query(query);
+
+    await pool.close();
+    return event;
+  } catch (error) {
+    console.log(error.message);
+    return { error: error.message }; // Devolver un objeto con el mensaje de error
+  }
+}
+
 export default {
     searchEvents,
-    getEvent
+    getEvent,
+    createEvents
 }

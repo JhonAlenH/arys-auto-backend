@@ -19,8 +19,15 @@ const getEvent = async (id) => {
     return event;
 }
 
+const createEvents = async (createEvents) => {
+    const event = await Events.createEvents(createEvents);
+
+    return event;
+}
+
 
 export default {
     searchEvents,
-    getEvent
+    getEvent,
+    createEvents
 }

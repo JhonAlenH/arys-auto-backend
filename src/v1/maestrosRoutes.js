@@ -18,6 +18,7 @@ router
     .get("/tipodocidentidad", maestrosController.getMaTipodocidentidad)
     .get("/propietarios", maestrosController.getMaPropietarios)
     .get("/parentescos", maestrosController.getMaParentescos)
+    .get("/estatus", maestrosController.getMaEstatus)
     .get("/metPago", maestrosController.getMaMetsPago)
     .get("/servicios", maestrosController.getServicios)
     .get("/aseguradoras", maestrosController.getAseguradoras)

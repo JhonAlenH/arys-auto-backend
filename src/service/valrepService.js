@@ -310,6 +310,26 @@ const getClaimCause = async (getClaimCause) => {
     return claim;
 }
 
+const getTracingType = async (getTracingType) => {
+    const claim = await Valrep.getTracingType(getTracingType);
+    if (claim.error) {
+        return {
+            error: claim.error
+        }
+    }
+    return claim;
+}
+
+const getTracingMotive = async (getTracingMotive) => {
+    const claim = await Valrep.getTracingMotive(getTracingMotive);
+    if (claim.error) {
+        return {
+            error: claim.error
+        }
+    }
+    return claim;
+}
+
 export default {
     getTrade,
     getCoin,
@@ -341,5 +361,7 @@ export default {
     getBank,
     getTargetBank,
     getNotificationType,
-    getClaimCause
+    getClaimCause,
+    getTracingType,
+    getTracingMotive
 }

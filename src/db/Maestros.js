@@ -37,6 +37,19 @@ const getMaCompanias = async() => {
     return { error: error.message };
   }
 }
+const getMaEstatus = async() => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query('SELECT cestatusgeneral, xestatusgeneral from MAESTATUSGENERAL')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 const getMaCompania = async(id) => {
   try {
     let pool = await sql.connect(sqlConfig);
@@ -206,7 +219,6 @@ const getMaBancos = async(getMaBancos) => {
     return { error: error.message };
   }
 }
-
 const getMaProveedores = async() => {
   try {
     let pool = await sql.connect(sqlConfig);
@@ -308,5 +320,6 @@ export default {
   getMaVehiculos,
   getMaMarcas,
   getMoneda,
-  getMaRepuestos
+  getMaRepuestos,
+  getMaEstatus
 }

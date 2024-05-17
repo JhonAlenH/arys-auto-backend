@@ -67,7 +67,24 @@ const getEvent = async (req, res) => {
         });
 }
 
+const createEvents = async (req, res) => {
+    const event = await eventsService.createEvents(req.body);
+    console.log(event)
+    if (event.error) {
+        return res.status(event.code).send({
+          status: false,
+          message: event.error
+        });
+      }
+      res.status(201).send({
+        status: true, 
+        message: 'La notificación ha sido creada exitosamente!',
+        data: event
+      });
+}
+
 export default {
     searchEvents,
-    getEvent
+    getEvent,
+    createEvents
 }

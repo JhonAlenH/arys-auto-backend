@@ -872,6 +872,62 @@ const getClaimCause = async (req, res) => {
         });
 }
 
+const getTracingType = async (req, res) => {
+    const result = await valrepService.getTracingType(req.body);
+    if (result.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: result.permissionError
+            });
+    }
+    if (result.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: result.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                result: result
+            }
+        });
+}
+
+const getTracingMotive = async (req, res) => {
+    const result = await valrepService.getTracingMotive(req.body);
+    if (result.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: result.permissionError
+            });
+    }
+    if (result.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: result.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                result: result
+            }
+        });
+}
+
 export default {
     getTrade,
     getCoin,
@@ -903,5 +959,7 @@ export default {
     getBank,
     getTargetBank,
     getNotificationType,
-    getClaimCause
+    getClaimCause,
+    getTracingType,
+    getTracingMotive
 }

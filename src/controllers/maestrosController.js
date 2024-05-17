@@ -52,6 +52,32 @@ const getMaCompanias = async (req, res) => {
     
   }
 }
+const getMaEstatus = async (req, res) => {
+  try {
+    const gettedEstatuses = await Maestros.getMaEstatus();
+    // console.log(gettedEstatuses.result)
+    if (gettedEstatuses.error) {
+      return res.status(gettedEstatuses.code).send({
+        status: false,
+        message: gettedEstatuses.error
+      });
+    }
+    const formatData = gettedEstatuses.result.recordset.map(item => {
+      return{
+        text: item.xestatusgeneral,
+        value: `${item.cestatusgeneral}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Compañias Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
 const getMaCompania = async (req, res) => {
   try {
     const gettedCompania = await Maestros.getMaCompania(req.params.id);
@@ -254,7 +280,6 @@ const getMoneda = async (req, res) => {
     
   }
 }
-
 const getMaRepuestos = async (req, res) => {
   try {
     const gettedRepuestos = await Maestros.getMaRepuestos(req.body);
@@ -494,10 +519,10 @@ const getMaVehiculos = async (req, res) => {
     
   }
 }
-
  
 export default {
   getMaMonedas,
+  getMaEstatus,
   getMaCompanias,
   getMaCompania,
   getMaPaises,
@@ -516,5 +541,6 @@ export default {
   getMaEstadocivil,
   getMaVehiculos,
   getMaTipodocidentidad,
-  getMaCompanias,
+  getMaProveedores,
+  getMaPropietarios,
 }

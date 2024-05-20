@@ -69,7 +69,6 @@ const getEvent = async (req, res) => {
 
 const createEvents = async (req, res) => {
     const event = await eventsService.createEvents(req.body);
-    console.log(event)
     if (event.error) {
         return res.status(event.code).send({
           status: false,

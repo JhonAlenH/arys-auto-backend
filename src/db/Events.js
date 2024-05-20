@@ -69,6 +69,32 @@ const getEvent = async (id) => {
     return { error: error.message };
   }
 };
+const getEventDetailed = async (id) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`
+    SELECT * FROM EVNOTIFICACION WHERE cnotificacion = ${id}`)
+    await pool.close();
+    
+    const keys = Object.keys(result.recordset[0])
+    const values = Object.values(result.recordset[0])
+    let resultLowerCase = {}
+    let i = 0
+    for (const key of keys) {
+      const lowerKey = key.toLowerCase()
+      resultLowerCase[lowerKey] = values[i]
+      i++
+    }
+    result.recordset[0] = resultLowerCase
+
+    return { 
+      result: result.recordset
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+};
 
 const createEvents = async(data) => {
   const keys = Object.keys(data);
@@ -100,5 +126,6 @@ const createEvents = async(data) => {
 export default {
     searchEvents,
     getEvent,
+    getEventDetailed,
     createEvents
 }

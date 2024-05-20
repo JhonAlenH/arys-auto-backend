@@ -59,7 +59,6 @@ const searchContracts = async (body, idcompania) => {
         });
       }
       let contracts = contract.map((item) => item.get({ plain: true }));
-      console.log(contracts);
       return contracts;
     } catch (error) {
       return { error: error.message };
@@ -219,7 +218,7 @@ const detailMembership = async (detailMembership) => {
         'xcorreo',
       ],
     });
-    return contract ? contract.get({ plain: true }) : null;;
+    return contract ? contract.get({ plain: true }) : {};
   } catch (error) {
     console.log(error.message)
     return { error: error.message };

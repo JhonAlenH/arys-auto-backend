@@ -366,7 +366,7 @@ const getVersion = async (getVersion) => {
   try {
     const items = await Version.findAll({
       where: getVersion,
-      attributes: ['xversion', 'npasajero', 'xclasificacion', 'id', 'xclase_rcv', 'msum', 'ctarifa_exceso', 'xuso', 'npesovacio', 'ncapcarga'],
+      attributes: ['xversion', 'npasajero', 'xclasificacion', 'id', 'msum', 'ctarifa_exceso', 'xuso', 'npesovacio', 'ncapcarga'],
     });
     const result = items.map((item) => item.get({ plain: true }));
     return result;

@@ -8,7 +8,8 @@ router
 
     .post("/search/:ccompania/:cpais", eventsController.searchEvents)
     .post("/get/:id", eventsController.getEvent)
-    .post("/getDetailed/:id", eventsController.getEventDetailed)
+    .post("/getSeguimientosById/:id", eventsController.getSeguimientosById)
+    .get("/getSeguimientos/:ccompania", eventsController.getSeguimientos)
     .post("/create", eventsController.createEvents)
 
 export default router;

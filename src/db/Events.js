@@ -15,6 +15,8 @@ const sqlConfig = {
     }
 }
 
+const Seguimentos = sequelize.define('evVseguimientoNotificacion', {}, {tableName: 'evVseguimientoNotificacion'});
+
 const Search = sequelize.define('evVnotificaciones', {});
 
 
@@ -69,23 +71,46 @@ const getEvent = async (id) => {
     return { error: error.message };
   }
 };
-const getEventDetailed = async (id) => {
+const getSeguimientos = async (id) => {
+  
+  try {
+    let pool = await sql.connect(sqlConfig);
+    const items = await Seguimentos.findAll({
+      attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento'],
+    });
+    const result = items.map((item) => item.get({ plain: true }));
+    await pool.close();
+
+    return result;
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+};
+const getSeguimientosById = async (id) => {
+  
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    SELECT * FROM EVNOTIFICACION WHERE cnotificacion = ${id}`)
+    SELECT * FROM evVseguimientoNotificacion WHERE cnotificacion = ${id}`)
     await pool.close();
+
+    console.log('id',result);
     
-    const keys = Object.keys(result.recordset[0])
-    const values = Object.values(result.recordset[0])
-    let resultLowerCase = {}
-    let i = 0
-    for (const key of keys) {
-      const lowerKey = key.toLowerCase()
-      resultLowerCase[lowerKey] = values[i]
-      i++
-    }
-    result.recordset[0] = resultLowerCase
+    let j = 0
+    for (const record of result.recordset) {
+      const keys = Object.keys(record)
+      const values = Object.values(record)
+      let resultLowerCase = {}
+      let i = 0
+      for (const key of keys) {
+        const lowerKey = key.toLowerCase()
+        resultLowerCase[lowerKey] = values[i]
+        i++
+      }
+      result.recordset[j] = resultLowerCase
+      j++ 
+    };
 
     return { 
       result: result.recordset
@@ -190,6 +215,7 @@ const createEvents = async (data) => {
 export default {
     searchEvents,
     getEvent,
-    getEventDetailed,
+    getSeguimientosById,
+    getSeguimientos,
     createEvents
 }

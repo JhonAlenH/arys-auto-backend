@@ -67,29 +67,63 @@ const getEvent = async (req, res) => {
             data: event
         });
 }
-const getEventDetailed = async (req, res) => {
-    const event = await Events.getEventDetailed(req.params.id);
-    if (event.permissionError) {
+const getSeguimientosById = async (req, res) => {
+    const seguimientos = await Events.getSeguimientosById(req.params.id);
+    console.log(seguimientos);
+    if (seguimientos.permissionError) {
         return res
             .status(403)
             .send({
                 status: false,
-                message: event.permissionError
+                message: seguimientos.permissionError
             });
     }
-    if (event.error) {
+    if (seguimientos.error) {
         return res
             .status(500)
             .send({
                 status: false,
-                message: event.error
+                message: seguimientos.error
+            });
+    }
+    if (seguimientos.result.length <= 0) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: 'No hay Seguimentos para esta notificacion'
             });
     }
     return res
         .status(200)
         .send({
             status: true,
-            data: event
+            data: seguimientos
+        });
+}
+const getSeguimientos = async (req, res) => {
+    const seguimientos = await Events.getSeguimientos(req.params.body);
+    if (seguimientos.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: seguimientos.permissionError
+            });
+    }
+    if (seguimientos.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: seguimientos.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: seguimientos
         });
 }
 
@@ -111,6 +145,7 @@ const createEvents = async (req, res) => {
 export default {
     searchEvents,
     getEvent,
-    getEventDetailed,
+    getSeguimientosById,
+    getSeguimientos,
     createEvents
 }

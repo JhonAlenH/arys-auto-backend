@@ -125,34 +125,31 @@ const linkServicios = async(services, cplan) => {
     let pool = await sql.connect(sqlConfig);
     const servicesSplittedString = services.split('[]')[0].split(',')
 
-    if(servicesSplittedString.length > 0) {
-      
-    } 
-    
     const servicios = await pool.request().query(`
     DELETE FROM MAPLANES_SERVICIOS WHERE cplan = ${parseInt(cplan)}
     `)
-
-    console.log(servicios);
-
-    const table = new sql.Table('MAPLANES_SERVICIOS');
-    table.columns.add('cplan', sql.Int, {nullable: true});
-    table.columns.add('cservicio', sql.Int, {nullable: true});
-    table.columns.add('ctiposervicio', sql.Int, {nullable: true});
-
-    for (const service of servicesSplittedString) {
-      const splittedServiceInfo =  service.split('?')
-      table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
-    }
+    let result = {message: 'no hay servicios'}
+    if(servicesSplittedString.length > 0 && servicesSplittedString[0]) {      
+  
+      const table = new sql.Table('MAPLANES_SERVICIOS');
+      table.columns.add('cplan', sql.Int, {nullable: true});
+      table.columns.add('cservicio', sql.Int, {nullable: true});
+      table.columns.add('ctiposervicio', sql.Int, {nullable: true});
+  
+      for (const service of servicesSplittedString) {
+        const splittedServiceInfo =  service.split('?')
+        table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
+      }
+      
+      result = await pool.request().bulk(table)
+      
+      if (result.rowsAffected < 1) {
+          return false;
+      }
+      await pool.close();
+    } 
     
-    let result = await pool.request().bulk(table)
 
-    await pool.close();
-    
-    if (result.rowsAffected < 1) {
-        return false;
-    }
-    await pool.close();
     return result;
   }
   catch (error) {

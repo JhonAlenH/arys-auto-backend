@@ -39,7 +39,6 @@ const editPlanInfo = async (req, res) => {
         message: editedPlan.error
       });
     }
-    console.log(editedPlan);
     const linkedServicios = await Servicio.linkServicios(data.cservicio, parseInt(req.params.id));
     if (linkedServicios.error) {
       return res.status(linkedServicios.code).send({
@@ -49,7 +48,7 @@ const editPlanInfo = async (req, res) => {
     }
     res.status(201).send({
       status: true, 
-      message: 'Plan Creado',
+      message: 'Plan Editado',
       data: editedPlan
     });
     

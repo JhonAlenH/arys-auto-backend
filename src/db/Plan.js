@@ -30,6 +30,22 @@ const createPlan = async(data) => {
   }
 
 }
+const editPlan = async(id,data) => {
+  const rData = insert.formatEditData(data)
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`
+    UPDATE MAPLANES SET ${rData} where cplan = ${id}`)
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+
+}
 
 const searchPlanInfo = async (id) => {
   try {
@@ -81,5 +97,6 @@ const searchPlans = async (ccompania) => {
 export default {
   createPlan,
   searchPlans,
-  searchPlanInfo
+  searchPlanInfo,
+  editPlan
 }

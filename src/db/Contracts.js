@@ -43,7 +43,6 @@ const Vehicle = sequelize.define('suVpropietario', {
 const searchContracts = async (body, idcompania) => {
   try {
     let contract
-    console.log(idcompania);
       if(idcompania != 1){
         if(!body.ccompania){
           body.ccompania = idcompania
@@ -59,7 +58,6 @@ const searchContracts = async (body, idcompania) => {
         });
       }
       let contracts = contract.map((item) => item.get({ plain: true }));
-      console.log(contracts);
       return contracts;
     } catch (error) {
       return { error: error.message };
@@ -238,6 +236,7 @@ const detailMembershipService = async (detailMembershipService) => {
     const type = service.map((item) => item.get({ plain: true }));
     return type;
   } catch (error) {
+    console.log(error.message)
     return { error: error.message };
   }
 };

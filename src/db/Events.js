@@ -150,6 +150,21 @@ const createEvents = async (data) => {
       await seguimientoRequest.query(queryS);
     }
 
+    if (cnotificacion && data.repuestos) {
+      const keysS = ['cnotificacion', ...Object.keys(data.seguimiento)];
+      const valuesS = [cnotificacion, ...Object.values(data.seguimiento)];
+      
+      const placeholdersS = keysS.map((_, i) => `@sparam${i + 1}`).join(',');
+      const queryS = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${keysS.join(',')}) VALUES (${placeholdersS})`;
+
+      const seguimientoRequest = pool.request();
+      keysS.forEach((key, index) => {
+        seguimientoRequest.input(`sparam${index + 1}`, valuesS[index]);
+      });
+
+      await seguimientoRequest.query(queryS);
+    }
+
     return event;
   } catch (error) {
     console.error(error.message);

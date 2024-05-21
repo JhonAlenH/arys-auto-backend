@@ -69,7 +69,6 @@ const getEvent = async (req, res) => {
 }
 const getSeguimientosById = async (req, res) => {
     const seguimientos = await Events.getSeguimientosById(req.params.id);
-    console.log(seguimientos);
     if (seguimientos.permissionError) {
         return res
             .status(403)

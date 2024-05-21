@@ -2,6 +2,7 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 import sql from "mssql";
 import insert from "../utilities/insert.js";
+import dayjs from "dayjs";
 
 const sqlConfig = {
     user: process.env.USER_BD,
@@ -21,7 +22,6 @@ const Search = sequelize.define('evVnotificaciones', {});
 
 
 const searchEvents = async (body, ccompania, cpais) => {
-  console.log(body)
     try {
       let event
       if(ccompania != 1){
@@ -74,12 +74,13 @@ const getEvent = async (id) => {
 const getSeguimientos = async (id) => {
   
   try {
-    let pool = await sql.connect(sqlConfig);
     const items = await Seguimentos.findAll({
       attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento'],
     });
     const result = items.map((item) => item.get({ plain: true }));
-    await pool.close();
+    for (const item of result) {
+      item.xfseguimientonotificacion = dayjs(item.fseguimientonotificacion).format('DD/MM/YYYY')
+    }
 
     return result;
   } catch (error) {
@@ -94,8 +95,6 @@ const getSeguimientosById = async (id) => {
     let result = await pool.request().query(`
     SELECT * FROM evVseguimientoNotificacion WHERE cnotificacion = ${id}`)
     await pool.close();
-
-    console.log('id',result);
     
     let j = 0
     for (const record of result.recordset) {
@@ -108,6 +107,7 @@ const getSeguimientosById = async (id) => {
         resultLowerCase[lowerKey] = values[i]
         i++
       }
+      resultLowerCase.xfseguimientonotificacion = dayjs(resultLowerCase.fseguimientonotificacion).format('DD/MM/YYYY')
       result.recordset[j] = resultLowerCase
       j++ 
     };

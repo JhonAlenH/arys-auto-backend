@@ -217,7 +217,7 @@ const detailMembership = async (detailMembership) => {
         'xcorreo',
       ],
     });
-    return contract ? contract.get({ plain: true }) : null;;
+    return contract ? contract.get({ plain: true }) : {};
   } catch (error) {
     console.log(error.message)
     return { error: error.message };

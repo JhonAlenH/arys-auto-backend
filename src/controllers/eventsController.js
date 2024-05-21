@@ -1,4 +1,5 @@
 import eventsService from '../service/eventsService.js';
+import Events from '../db/Events.js';
 
 const searchEvents = async (req, res) => {
     let eventsList = []
@@ -66,6 +67,31 @@ const getEvent = async (req, res) => {
             data: event
         });
 }
+const getEventDetailed = async (req, res) => {
+    const event = await Events.getEventDetailed(req.params.id);
+    if (event.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: event.permissionError
+            });
+    }
+    if (event.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: event.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: event
+        });
+}
 
 const createEvents = async (req, res) => {
     const event = await eventsService.createEvents(req.body);
@@ -85,5 +111,6 @@ const createEvents = async (req, res) => {
 export default {
     searchEvents,
     getEvent,
+    getEventDetailed,
     createEvents
 }

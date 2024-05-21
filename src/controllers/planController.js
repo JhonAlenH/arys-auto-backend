@@ -29,6 +29,33 @@ const createPlan = async (req, res) => {
     
   }
 }
+const editPlanInfo = async (req, res) => {
+  const data = req.body
+  try {
+    const editedPlan = await Plan.editPlan(req.params.id, data);
+    if (editedPlan.error) {
+      return res.status(editedPlan.code).send({
+        status: false,
+        message: editedPlan.error
+      });
+    }
+    const linkedServicios = await Servicio.linkServicios(data.cservicio, parseInt(req.params.id));
+    if (linkedServicios.error) {
+      return res.status(linkedServicios.code).send({
+        status: false,
+        message: linkedServicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Plan Editado',
+      data: editedPlan
+    });
+    
+  } catch (error) {
+    
+  }
+}
 const searchPlanInfo = async (req, res) => {
   try {
     const plan = await Plan.searchPlanInfo(req.params.id);
@@ -44,6 +71,21 @@ const searchPlanInfo = async (req, res) => {
         status: false,
         message: planServices.error
       });
+    }
+    let i = 0
+    plan.result.cservicio = ''
+    if(planServices.length> 0){
+      for (const service of planServices) {     
+        if(typeof service.cservicio == 'number'){
+          plan.result.cservicio += `${service.cservicio}?${service.ctiposervicio}`
+          i++
+          if(i < planServices.length) {
+            plan.result.cservicio += `,`
+          }
+        } else {
+          i++
+        }
+      }
     }
     plan.result.ctiposervicio = planServices
     res.status(201).send({
@@ -68,7 +110,6 @@ const searchPlans = async (req, res) => {
       });
     }
     const monedas = await Maestros.getMaMonedas();
-    console.log(monedas.result.recordset);
     
     for (const plan of plans) {
       const gettedMoneda = monedas.result.recordset.find(moneda => moneda.cmoneda == plan.cmoneda)
@@ -88,5 +129,6 @@ const searchPlans = async (req, res) => {
 export default {
   createPlan,
   searchPlans,
-  searchPlanInfo
+  searchPlanInfo,
+  editPlanInfo
 }

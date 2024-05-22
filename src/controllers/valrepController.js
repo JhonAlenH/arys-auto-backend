@@ -928,6 +928,62 @@ const getTracingMotive = async (req, res) => {
         });
 }
 
+const getContractedService = async (req, res) => {
+    const service = await valrepService.getContractedService(req.params.ccontratoflota);
+    if (service.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: service.permissionError
+            });
+    }
+    if (service.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: service.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                list: service
+            }
+        });
+}
+
+const getAdditionalServices = async (req, res) => {
+    const service = await valrepService.getAdditionalServices(req.body);
+    if (service.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: service.permissionError
+            });
+    }
+    if (service.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: service.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                list: service
+            }
+        });
+}
+
 export default {
     getTrade,
     getCoin,
@@ -961,5 +1017,7 @@ export default {
     getNotificationType,
     getClaimCause,
     getTracingType,
-    getTracingMotive
+    getTracingMotive,
+    getContractedService,
+    getAdditionalServices
 }

@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize, DataTypes, Op } from 'sequelize';
 import sequelize from '../config/database.js';
 
 const Trade = sequelize.define('maramos', {});
@@ -27,6 +27,8 @@ const NotificationType = sequelize.define('MATIPONOTIFICACION', {}, { tableName:
 const ClaimCause = sequelize.define('MACAUSASINIESTRO', {}, { tableName: 'MACAUSASINIESTRO' });
 const TracingType = sequelize.define('MATIPOSEGUIMIENTO', {}, { tableName: 'MATIPOSEGUIMIENTO' });
 const TracingMotive = sequelize.define('MAMOTIVOSEGUIMIENTO', {}, { tableName: 'MAMOTIVOSEGUIMIENTO' });
+const Service = sequelize.define('suVserviciosContratados', {});
+const AdditionalService = sequelize.define('maservicio', {}, { tableName: 'maservicio' });
 
 const Rol = sequelize.define('serol', {
   crol: {
@@ -602,6 +604,44 @@ const getTracingMotive = async (getTracingMotive) => {
   }
 };
 
+const getContractedService = async (ccontratoflota) => {
+  try {
+    const serv = await Service.findAll({
+      where: {ccontratoflota: ccontratoflota},
+      attributes: ['cservicio', 'xservicio'],
+    });
+    const service = serv.map((item) => item.get({ plain: true }));
+    return service;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getAdditionalServices = async (getAdditionalServices) => {
+  try {
+    // Obtener los IDs de cservicio de getAdditionalServices
+    const cservicioIds = getAdditionalServices.cservicio.map(item => item.id);
+
+    // Buscar servicios adicionales donde cservicio no esté en la lista de IDs
+    const serv = await AdditionalService.findAll({
+      where: { 
+        cservicio: { [Op.notIn]: cservicioIds }, // Utilizar Op.notIn para excluir los IDs
+        cpais: getAdditionalServices.cpais, 
+        ccompania: getAdditionalServices.ccompania, 
+      },
+      attributes: ['cservicio', 'xservicio'],
+    });
+
+    // Mapear los servicios adicionales a objetos planos
+    const serviceList = serv.map(item => item.get({ plain: true }));
+
+    return serviceList;
+  } catch (error) {
+    console.log(error.message);
+    return { error: error.message };
+  }
+};
+
 export default {
   getTrade,
   getCoin,
@@ -635,5 +675,7 @@ export default {
   getNotificationType,
   getClaimCause,
   getTracingType,
-  getTracingMotive
+  getTracingMotive,
+  getContractedService,
+  getAdditionalServices
 };

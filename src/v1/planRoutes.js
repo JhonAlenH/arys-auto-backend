@@ -8,6 +8,7 @@ router
     .post("/create", planController.createPlan)
     .get("/search/:ccompania", planController.searchPlans)
     .get("/:id", planController.searchPlanInfo)
+    .post("/edit/:id", planController.editPlanInfo)
 
     
 export default router;

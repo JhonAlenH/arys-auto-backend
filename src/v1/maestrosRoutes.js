@@ -8,6 +8,7 @@ router
     .get("/monedas", maestrosController.getMaMonedas)
     .get("/moneda/:id", maestrosController.getMoneda)
     .get("/companias", maestrosController.getMaCompanias)
+    .get("/estatuses", maestrosController.getMaEstatuses)
     .get("/compania/:id", maestrosController.getMaCompania)
     .get("/paises", maestrosController.getMaPaises)
     .get("/bancos", maestrosController.getMaBancos)

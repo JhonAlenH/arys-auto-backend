@@ -2,6 +2,7 @@ import INMA from '../db/INMA.js';
 import Maestros from '../db/Maestros.js';
 import Plan from '../db/Plan.js';
 import User from '../db/User.js';
+import dayjs from "dayjs";
 
 const getUserInfo = async (id) => {
   const userResult = await User.getOneUserById(id);
@@ -29,14 +30,14 @@ const getUserInfo = async (id) => {
   const result = {...ownerInfo, ...userInfo}
   result.subscription = gettedUserSubscription
 
-  const gettedMetPago = await Maestros.getMaMetPago(gettedUserSubscription.cmetodologiapago)
-  if (ownerResult.error) {
-    return { error: ownerResult.error, code: 500 };
-  }
+  // const gettedMetPago = await Maestros.getMaMetPago(gettedUserSubscription.cmetodologiapago)
+  // if (ownerResult.error) {
+  //   return { error: ownerResult.error, code: 500 };
+  // }
   if (ownerResult.rowsAffected < 1) {
     return { error: "Error", code: 401 };
   }
-  result.subscription.metodologiapago = gettedMetPago.result.recordset[0]
+  // result.subscription.metodologiapago = gettedMetPago.result.recordset[0]
   return result;
 }
 
@@ -45,33 +46,38 @@ const getUserSubscription = async (cpropietario) => {
   if (subscriptionInfo.error) {
     return { error: subscriptionInfo.error, code: 500 };
   }
-  const getPlanInfo = await Plan.searchPlanInfo(subscriptionInfo.recordset[0].cplan)
-  if (getPlanInfo.error) { 
-    return { error: getPlanInfo.error, code: 500 };
+  // const getPlanInfo = await Plan.searchPlanInfo(subscriptionInfo.recordset[0].cplan)
+  // if (getPlanInfo.error) { 
+  //   return { error: getPlanInfo.error, code: 500 };
+  // }
+  for (const sub of subscriptionInfo.recordset) {
+    
+    if (sub.xplan.includes('DIAMANTE')) {
+      sub.xplancolor = 'diamond'
+      sub.xplanicon = 'fa-regular fa-gem'
+    } else if (sub.xplan.includes('GOLD')) {
+      sub.xplancolor = 'gold'
+      sub.xplanicon = 'fa-solid fa-coins'
+    } else if (sub.xplan.includes('PLUS')) {
+      sub.xplancolor = 'plus'
+      sub.xplanicon = 'fa-solid fa-plus'
+    } else if (sub.xplan.includes('BASICO')) {
+      sub.xplancolor = 'basic'
+      sub.xplanicon = 'fa-solid fa-ticket-simple'
+    }
+    sub.xfdesde = dayjs(sub.fdesde).format('DD/MM/YYYY')
+    sub.xfhasta = dayjs(sub.fhasta).format('DD/MM/YYYY')
   }
-  if (getPlanInfo.result.xplan.includes('DIAMANTE')) {
-    getPlanInfo.result.color = 'diamond'
-    getPlanInfo.result.icon = 'fa-regular fa-gem'
-  } else if (getPlanInfo.result.xplan.includes('GOLD')) {
-    getPlanInfo.result.color = 'gold'
-    getPlanInfo.result.icon = 'fa-solid fa-coins'
-  } else if (getPlanInfo.result.xplan.includes('PLUS')) {
-    getPlanInfo.result.color = 'plus'
-    getPlanInfo.result.icon = 'fa-solid fa-plus'
-  } else if (getPlanInfo.result.xplan.includes('BASICO')) {
-    getPlanInfo.result.color = 'basic'
-    getPlanInfo.result.icon = 'fa-solid fa-ticket-simple'
-  }
-  subscriptionInfo.recordset[0].plan = getPlanInfo.result
+  // subscriptionInfo.recordset[0].plan = getPlanInfo.result
 
-  const gettedStatus = await Maestros.getStatus(subscriptionInfo.recordset[0].cestatusgeneral)
-  if (gettedStatus.error) { 
-    return { error: gettedStatus.error, code: 500 };
-  }
+  // const gettedStatus = await Maestros.getStatus(subscriptionInfo.recordset[0].cestatusgeneral)
+  // if (gettedStatus.error) { 
+  //   return { error: gettedStatus.error, code: 500 };
+  // }
 
-  subscriptionInfo.recordset[0].estatusgeneral = gettedStatus.result.recordset[0]
+  // subscriptionInfo.recordset[0].estatusgeneral = gettedStatus.result.recordset[0]
   
-  return subscriptionInfo.recordset[0]
+  return subscriptionInfo.recordset
 }
 const getINMAInfo = async (id_vehiculo) => {
   const gettedINMAInfo = await INMA.getINMAInfo(id_vehiculo)

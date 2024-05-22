@@ -96,45 +96,6 @@ const getEventDetailed = async (id) => {
   }
 };
 
-// const createEvents = async(data) => {
-//   const keys = Object.keys(data);
-//   const values = Object.values(data);
-
-//   console.log(keys)
-//   console.log(values)
-
-//   try {
-//     let pool = await sql.connect(sqlConfig);
-//     const request = pool.request();
-    
-//     // Construir la consulta SQL dinámicamente
-//     const placeholders = Array.from({ length: keys.length }, (_, i) => `@${i + 1}`).join(',');
-//     const query = `INSERT INTO EVNOTIFICACION (${keys.join(',')}) VALUES (${placeholders}) SELECT SCOPE_IDENTITY() AS cnotificacion`;
-
-//     // Ejecutar la consulta SQL con los valores adecuados
-//     keys.forEach((key, index) => {
-//       request.input((index + 1).toString(), values[index]);
-//     });
-
-//     const event = await request.query(query);
-
-//     const cnotificacion = event.recordset[0].cnotificacion;
-
-//     if(cnotificacion){
-//       console.log(cnotificacion)
-//       // if(){
-
-//       // }
-//     }
-
-//     await pool.close();
-//     return event;
-//   } catch (error) {
-//     console.log(error.message);
-//     return { error: error.message }; // Devolver un objeto con el mensaje de error
-//   }
-// }
-
 const createEvents = async (data) => {
   // Extraer las claves y valores del objeto data
   const keys = Object.keys(data);
@@ -164,7 +125,7 @@ const createEvents = async (data) => {
     if (cnotificacion && data.seguimiento) {
       const keysS = ['cnotificacion', ...Object.keys(data.seguimiento)];
       const valuesS = [cnotificacion, ...Object.values(data.seguimiento)];
-      
+
       const placeholdersS = keysS.map((_, i) => `@sparam${i + 1}`).join(',');
       const queryS = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${keysS.join(',')}) VALUES (${placeholdersS})`;
 
@@ -177,18 +138,24 @@ const createEvents = async (data) => {
     }
 
     if (cnotificacion && data.repuestos) {
-      const keysS = ['cnotificacion', ...Object.keys(data.seguimiento)];
-      const valuesS = [cnotificacion, ...Object.values(data.seguimiento)];
-      
-      const placeholdersS = keysS.map((_, i) => `@sparam${i + 1}`).join(',');
-      const queryS = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${keysS.join(',')}) VALUES (${placeholdersS})`;
-
-      const seguimientoRequest = pool.request();
-      keysS.forEach((key, index) => {
-        seguimientoRequest.input(`sparam${index + 1}`, valuesS[index]);
-      });
-
-      await seguimientoRequest.query(queryS);
+      await Promise.all(data.repuestos.map(item => {
+        const repuestoRequest = pool.request()
+          .input('cnotificacion', sql.Int, cnotificacion)
+          .input('crepuesto', sql.Int, parseInt(item.crepuesto))
+          .input('ncantidad', sql.Int, item.ncantidad)
+          .input('xniveldano', sql.NVarChar, item.xniveldano)
+          .input('fcreacion', sql.DateTime, new Date())
+          .input('cusuariocreacion', sql.Int, data.cusuario)
+          .query(`
+            INSERT INTO EVREPUESTONOTIFICACION (
+                cnotificacion, crepuesto, ncantidad, xniveldano, fcreacion, cusuariocreacion
+            )
+            VALUES (
+                @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @fcreacion, @cusuariocreacion
+            );
+          `);
+        return repuestoRequest;
+      }));
     }
 
     return event;

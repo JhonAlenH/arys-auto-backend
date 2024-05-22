@@ -53,8 +53,9 @@ const createProveedores = async(data) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    INSERT INTO MAPROVEEDORES (${rData.keys}) VALUES (${rData.values})`)
+    INSERT INTO MAPROVEEDORES (${rData.keys}) VALUES (${rData.values});SELECT SCOPE_IDENTITY() AS cproveedor`)
     await pool.close();
+    console.log(result);
     return { 
       result: result
     };

@@ -1,4 +1,5 @@
 import Proveedores from '../db/Proveedores.js';
+import Servicio from '../db/Servicio.js';
 
 const searchProveedores = async (req, res) => {
   try {
@@ -22,17 +23,26 @@ const searchProveedores = async (req, res) => {
 
 const createProveedores = async (req, res) => {
   try {
-    const createdProveedores = await Proveedores.createProveedores(req.body);
-    if (createdProveedores.error) {
-      return res.status(createdProveedores.code).send({
+    const createdProveedor = await Proveedores.createProveedores(req.body);
+    if (createdProveedor.error) {
+      return res.status(createdProveedor.code).send({
         status: false,
-        message: createdProveedores.error
+        message: createdProveedor.error
+      });
+    }
+    
+    const linkServiciosProveedor = await Servicio.linkServiciosProveedor(req.body.cservicio, createdProveedor.result.recordset[0].cproveedor)
+
+    if (linkServiciosProveedor.error) {
+      return res.status(linkServiciosProveedor.code).send({
+        status: false,
+        message: linkServiciosProveedor.error
       });
     }
     res.status(201).send({
       status: true, 
       message: 'Proveedor Creado',
-      data: createdProveedores
+      data: createdProveedor
     });
     
   } catch (error) {

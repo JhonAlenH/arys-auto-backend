@@ -52,6 +52,32 @@ const getMaCompanias = async (req, res) => {
     
   }
 }
+const getMaEstatuses = async (req, res) => {
+  try {
+    const gettedEstatus = await Maestros.getMaEstatuses();
+    // console.log(gettedEstatus.result)
+    if (gettedEstatus.error) {
+      return res.status(gettedEstatus.code).send({
+        status: false,
+        message: gettedEstatus.error
+      });
+    }
+    const formatData = gettedEstatus.result.recordset.map(item => {
+      return{
+        text: item.xestatusgeneral,
+        value: `${item.cestatusgeneral}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Compañias Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
 const getMaEstatus = async (req, res) => {
   try {
     const gettedEstatuses = await Maestros.getMaEstatus();
@@ -543,4 +569,5 @@ export default {
   getMaTipodocidentidad,
   getMaProveedores,
   getMaPropietarios,
+  getMaEstatuses,
 }

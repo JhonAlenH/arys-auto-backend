@@ -157,6 +157,44 @@ const linkServicios = async(services, cplan) => {
       return { error: error.message };
   }
 }
+const linkServiciosProveedor = async(services, cproveedor) => {
+  
+  try {
+    let pool = await sql.connect(sqlConfig);
+    const servicesSplittedString = services.split('[]')[0].split(',')
+
+    const servicios = await pool.request().query(`
+    DELETE FROM PRPROVEEDOR_SERVICIO WHERE cproveedor = ${parseInt(cproveedor)}
+    `)
+    let result = {message: 'no hay servicios'}
+    if(servicesSplittedString.length > 0 && servicesSplittedString[0]) {      
+  
+      const table = new sql.Table('PRPROVEEDOR_SERVICIO');
+      table.columns.add('cproveedor', sql.Int, {nullable: false});
+      table.columns.add('cservicio', sql.Int, {nullable: false});
+      table.columns.add('ctiposervicio', sql.Int, {nullable: false});
+  
+      for (const service of servicesSplittedString) {
+        const splittedServiceInfo =  service.split('?')
+        table.rows.add(cproveedor, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
+      }
+      
+      result = await pool.request().bulk(table)
+      
+      if (result.rowsAffected < 1) {
+          return false;
+      }
+      await pool.close();
+    } 
+    
+
+    return result;
+  }
+  catch (error) {
+      console.log(error.message)
+      return { error: error.message };
+  }
+}
 
 
 
@@ -166,6 +204,7 @@ export default {
   getTypeServices,
   getServicesByType,
   searchPlanServices,
-  getServicesAndTypes
+  getServicesAndTypes,
+  linkServiciosProveedor
 }
 

@@ -107,24 +107,25 @@ const getUserSubscription = async (cpropietario) => {
     try {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
-           .input('cpropietario', sql.NVarChar, cpropietario)
-           .query('select * FROM SUCONTRATOFLOTA where cpropietario = @cpropietario')
+           .query(`select * FROM suVcontratos WHERE cpropietario = ${cpropietario}`)
         if (result.rowsAffected < 1) {
             return false;
         }
-        const keys = Object.keys(result.recordset[0])
-        const values = Object.values(result.recordset[0])
-        let resultLowerCase = {}
-        let i = 0
-        for (const key of keys) {
-            const lowerKey = key.toLowerCase()
-            if(lowerKey == 'fdesde' || lowerKey == 'fhasta') {
-                values[i] = dayjs(values[i]).format('DD/MM/YYYY')
+        
+        let j = 0
+        for (const record of result.recordset) {
+            const keys = Object.keys(record)
+            const values = Object.values(record)
+            let resultLowerCase = {}
+            let i = 0
+            for (const key of keys) {
+                const lowerKey = key.toLowerCase()
+                resultLowerCase[lowerKey] = values[i]
+                i++
             }
-            resultLowerCase[lowerKey] = values[i]
-            i++
-        }
-        result.recordset[0] = resultLowerCase
+            result.recordset[j] = resultLowerCase
+            j++ 
+        };
         await pool.close();
         return result;
     }

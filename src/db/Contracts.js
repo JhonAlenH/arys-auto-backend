@@ -225,13 +225,17 @@ const detailMembership = async (detailMembership) => {
 };
 
 const detailMembershipService = async (detailMembershipService) => {
-  console.log(detailMembershipService)
+
   try {
     const service = await TypeService.findAll({
       where: {
         cplan: detailMembershipService
       },
-      attributes: ['cplan', 'ctiposervicio', 'xtiposervicio'],
+      attributes: [
+                    [Sequelize.literal('DISTINCT ctiposervicio'), 'ctiposervicio'],
+                    'cplan', 
+                    'xtiposervicio'
+                  ],
     });
     const type = service.map((item) => item.get({ plain: true }));
     return type;

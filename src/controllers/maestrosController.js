@@ -158,7 +158,7 @@ const getMaPaises = async (req, res) => {
 }
 const getMaCiudades = async (req, res) => {
   try {
-    const gettedCiudades = await Maestros.getMaCiudades(req.params.pais, req.params.estado);
+    const gettedCiudades = await Maestros.getMaCiudades(req.params.estado);
     // console.log(gettedCiudades.result)
     if (gettedCiudades.error) {
       return res.status(gettedCiudades.code).send({
@@ -200,7 +200,7 @@ const getMaEstados = async (req, res) => {
     })
     res.status(201).send({
       status: true, 
-      message: 'Ciudades Obtenidas',
+      message: 'Estados Obtenidos',
       data: [...formatData]
     });
     

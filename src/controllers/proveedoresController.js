@@ -11,6 +11,7 @@ const searchProveedores = async (req, res) => {
       });
       
     }
+
     res.status(201).send({
       status: true, 
       message: 'Proveedores Obtenidos',
@@ -51,17 +52,47 @@ const createProveedores = async (req, res) => {
 }
 const searchProveedor = async (req, res) => {
   try {
-    const findedProveedores = await Proveedores.searchProveedoresById(req.params.id);
-    if (findedProveedores.error) {
-      return res.status(findedProveedores.code).send({
+    const proveedor = await Proveedores.searchProveedoresById(req.params.id);
+    if (proveedor.error) {
+      return res.status(proveedor.code).send({
         status: false,
-        message: findedProveedores.error
+        message: proveedor.error
       });
     }
+
+    const serviciosProveedor = await Servicio.searchProveedorServices(proveedor.result.cproveedor)
+
+    if (serviciosProveedor.error) {
+      return res.status(serviciosProveedor.code).send({
+        status: false,
+        message: serviciosProveedor.error
+      });
+      
+    }
+
+    let i = 0
+    proveedor.result.cservicio = ''
+    if(serviciosProveedor.length> 0){
+      for (const service of serviciosProveedor) {     
+        if(typeof service.cservicio == 'number'){
+          proveedor.result.cservicio += `${service.cservicio}?${service.ctiposervicio}`
+          i++
+          if(i < serviciosProveedor.length) {
+            proveedor.result.cservicio += `,`
+          }
+        } else {
+          i++
+        }
+      }
+    }
+
+    // const providerList = serviciosProveedor
+    proveedor.result.ctiposervicio = serviciosProveedor
+
     res.status(201).send({
       status: true, 
       message: 'Proveedor Obtenido2',
-      data: findedProveedores
+      data: proveedor
     });
     
   } catch (error) {
@@ -77,6 +108,16 @@ const updateProveedores = async (req, res) => {
         message: updatedProveedores.error
       });
     }
+
+    const linkServiciosProveedor = await Servicio.linkServiciosProveedor(req.body.cservicio, req.params.id)
+
+    if (linkServiciosProveedor.error) {
+      return res.status(linkServiciosProveedor.code).send({
+        status: false,
+        message: linkServiciosProveedor.error
+      });
+    }
+    
     res.status(201).send({
       status: true, 
       message: 'Proveedor Actualizado',

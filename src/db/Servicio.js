@@ -52,7 +52,6 @@ const searchPlanServices = async(cplan) => {
     let pool = await sql.connect(sqlConfig)
     let result = await pool.request().query(`SELECT * from MAPLANES_SERVICIOS WHERE cplan = ${cplan};`)
     await pool.close();
-    console.log(result.recordset.length);
 
     if(result.recordset.length > 0){
       let j = 0
@@ -90,7 +89,6 @@ const searchProveedorServices = async(cproveedor) => {
     let pool = await sql.connect(sqlConfig)
     let result = await pool.request().query(`SELECT * from PRPROVEEDOR_SERVICIO WHERE cproveedor = ${cproveedor};`)
     await pool.close();
-    console.log(result.recordset.length);
 
     if(result.recordset.length > 0){
       let j = 0
@@ -162,6 +160,7 @@ const linkServicios = async(services, cplan) => {
   try {
     let pool = await sql.connect(sqlConfig);
     const servicesSplittedString = services.split('[]')[0].split(',')
+    console.log(servicesSplittedString);
 
     const servicios = await pool.request().query(`
     DELETE FROM MAPLANES_SERVICIOS WHERE cplan = ${parseInt(cplan)}
@@ -173,10 +172,11 @@ const linkServicios = async(services, cplan) => {
       table.columns.add('cplan', sql.Int, {nullable: true});
       table.columns.add('cservicio', sql.Int, {nullable: true});
       table.columns.add('ctiposervicio', sql.Int, {nullable: true});
+      table.columns.add('nusos', sql.Int, {nullable: true});
   
       for (const service of servicesSplittedString) {
         const splittedServiceInfo =  service.split('?')
-        table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
+        table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]), parseInt(splittedServiceInfo[2]));
       }
       
       result = await pool.request().bulk(table)

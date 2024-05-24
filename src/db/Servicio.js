@@ -52,7 +52,6 @@ const searchPlanServices = async(cplan) => {
     let pool = await sql.connect(sqlConfig)
     let result = await pool.request().query(`SELECT * from MAPLANES_SERVICIOS WHERE cplan = ${cplan};`)
     await pool.close();
-    console.log(result.recordset.length);
 
     if(result.recordset.length > 0){
       let j = 0
@@ -90,7 +89,6 @@ const searchProveedorServices = async(cproveedor) => {
     let pool = await sql.connect(sqlConfig)
     let result = await pool.request().query(`SELECT * from PRPROVEEDOR_SERVICIO WHERE cproveedor = ${cproveedor};`)
     await pool.close();
-    console.log(result.recordset.length);
 
     if(result.recordset.length > 0){
       let j = 0

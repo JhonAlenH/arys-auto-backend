@@ -162,6 +162,7 @@ const linkServicios = async(services, cplan) => {
   try {
     let pool = await sql.connect(sqlConfig);
     const servicesSplittedString = services.split('[]')[0].split(',')
+    console.log(servicesSplittedString);
 
     const servicios = await pool.request().query(`
     DELETE FROM MAPLANES_SERVICIOS WHERE cplan = ${parseInt(cplan)}
@@ -173,10 +174,11 @@ const linkServicios = async(services, cplan) => {
       table.columns.add('cplan', sql.Int, {nullable: true});
       table.columns.add('cservicio', sql.Int, {nullable: true});
       table.columns.add('ctiposervicio', sql.Int, {nullable: true});
+      table.columns.add('nusos', sql.Int, {nullable: true});
   
       for (const service of servicesSplittedString) {
         const splittedServiceInfo =  service.split('?')
-        table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]));
+        table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]), parseInt(splittedServiceInfo[2]));
       }
       
       result = await pool.request().bulk(table)

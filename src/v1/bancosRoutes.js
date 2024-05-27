@@ -9,6 +9,7 @@ router
     .post("/create", bancosController.createBancos)
     .get("/get/:id", bancosController.searchBanco)
     .post("/edit/:id", bancosController.updateBancos)
+    .get("/getBancos/:cpais", bancosController.searchBancosMaestros)
     // .post("/disable", monedasController.disableMonedas)
 
     

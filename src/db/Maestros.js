@@ -24,6 +24,19 @@ const getMaMonedas = async() => {
     return { error: error.message };
   }
 }
+const getCuentasMaestros = async() => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query('SELECT ctipocuentabancaria, xtipocuentabancaria from MATIPOCUENTABANCARIA')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 const getMaCompanias = async() => {
   try {
     let pool = await sql.connect(sqlConfig);
@@ -335,5 +348,6 @@ export default {
   getMoneda,
   getMaRepuestos,
   getMaEstatus,
-  getMaEstatuses
+  getMaEstatuses,
+  getCuentasMaestros
 }

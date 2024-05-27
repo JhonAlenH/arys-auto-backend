@@ -19,6 +19,31 @@ const searchBancos = async (req, res) => {
 
   }
 }
+const searchBancosMaestros = async (req, res) => {
+  try {
+    const bancos = await Bancos.searchBancosMaestros(req.params.cpais);
+    if (bancos.error) {
+      return res.status(bancos.code).send({
+        status: false,
+        message: bancos.error
+      });
+      
+    }
+    const formatData = bancos.map(item => {
+      return{
+        text: item.xbanco,
+        value: `${item.cbanco}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Bancos Obtenidos',
+      data: formatData
+    });
+  } catch (error){
+
+  }
+}
 
 const createBancos = async (req, res) => {
   try {
@@ -82,5 +107,6 @@ export default {
   createBancos,
   searchBancos,
   searchBanco,
-  updateBancos
+  updateBancos,
+  searchBancosMaestros,
 }

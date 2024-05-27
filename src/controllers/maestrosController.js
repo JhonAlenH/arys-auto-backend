@@ -26,6 +26,32 @@ const getMaMonedas = async (req, res) => {
     
   }
 }
+const getCuentasMaestros = async (req, res) => {
+  try {
+    const gettedCuentas = await Maestros.getCuentasMaestros();
+    // console.log(gettedMonedas.result.recordset)
+    if (gettedCuentas.error) {
+      return res.status(gettedCuentas.code).send({
+        status: false,
+        message: gettedCuentas.error
+      });
+    }
+    const formatData = gettedCuentas.result.recordset.map(item => {
+      return{
+        text: item.xtipocuentabancaria,
+        value: `${item.ctipocuentabancaria}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Tipos de Cuenta Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
 const getMaCompanias = async (req, res) => {
   try {
     const gettedCompanias = await Maestros.getMaCompanias();
@@ -570,4 +596,5 @@ export default {
   getMaProveedores,
   getMaPropietarios,
   getMaEstatuses,
+  getCuentasMaestros
 }

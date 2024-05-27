@@ -6,6 +6,7 @@ const router = express.Router();
 
 router
     .get("/monedas", maestrosController.getMaMonedas)
+    .get("/getCuentasMaestros", maestrosController.getCuentasMaestros)
     .get("/moneda/:id", maestrosController.getMoneda)
     .get("/companias", maestrosController.getMaCompanias)
     .get("/estatuses", maestrosController.getMaEstatuses)

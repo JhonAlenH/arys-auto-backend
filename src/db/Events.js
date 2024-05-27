@@ -30,12 +30,12 @@ const searchEvents = async (body, ccompania, cpais) => {
         }
         event = await Search.findAll({
           where: body,
-          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania', 'bcerrado'],
+          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania', 'bactivo'],
         });
       }else{
         event = await Search.findAll({
           where: body,
-          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania', 'bcerrado'],
+          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania', 'bactivo'],
         });
       }
 

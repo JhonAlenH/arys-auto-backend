@@ -29,6 +29,19 @@ const searchBancos = async () => {
     return { error: error.message };
   }
 };
+const searchBancosMaestros = async (cpais) => {
+  try {
+    const items = await Search.findAll({
+      where: {cpais: cpais},
+      attributes: ['cbanco', 'xbanco', 'cpais'],
+    });
+    const result = items.map((item) => item.get({ plain: true }));
+    return result;
+  } catch (error) {
+    console.log(error.messagec)
+    return { error: error.message };
+  }
+};
 const searchBancosById = async (id) => {
   try {
     let pool = await sql.connect(sqlConfig);
@@ -84,5 +97,6 @@ export default {
   createBancos,
   searchBancos,
   updateBancos,
-  searchBancosById
+  searchBancosById,
+  searchBancosMaestros
 }

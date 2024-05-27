@@ -644,7 +644,6 @@ const getAdditionalServices = async (getAdditionalServices) => {
 };
 
 const getProviderService = async (getProviderService) => {
-  console.log(getProviderService)
   try {
     const proveedores = await ProviderService.findAll({
       where: {

@@ -89,11 +89,11 @@ const getMaPaises = async() => {
     return { error: error.message };
   }
 }
-const getMaCiudades = async(pais, estado) => {
+const getMaCiudades = async(estado) => {
   try {
     let pool = await sql.connect(sqlConfig);
     // console.log(pais)
-    let result = await pool.request().query(`SELECT cciudad, xdescripcion_l from MACIUDADES where cpais = ${pais.toString()} and cestado = ${estado.toString()}`)
+    let result = await pool.request().query(`SELECT cciudad, xdescripcion_l from MACIUDADES where cestado = ${estado.toString()}`)
     await pool.close();
     return { 
       result: result

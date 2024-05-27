@@ -75,9 +75,10 @@ const searchPlanInfo = async (req, res) => {
     let i = 0
     plan.result.cservicio = ''
     if(planServices.length> 0){
-      for (const service of planServices) {     
+      for (const service of planServices) {
         if(typeof service.cservicio == 'number'){
-          plan.result.cservicio += `${service.cservicio}?${service.ctiposervicio}`
+          plan.result.cservicio += `${service.cservicio}?${service.ctiposervicio}?${service.nusos}`
+          
           i++
           if(i < planServices.length) {
             plan.result.cservicio += `,`
@@ -85,6 +86,8 @@ const searchPlanInfo = async (req, res) => {
         } else {
           i++
         }
+        service.other_values = []
+        service.other_values.push({text: 'Usos', key: 'nusos', value: service.nusos})
       }
     }
     plan.result.ctiposervicio = planServices

@@ -42,26 +42,28 @@ const Vehicle = sequelize.define('suVpropietario', {
 
 const searchContracts = async (body, idcompania) => {
   try {
-    let contract
-      if(idcompania != 1){
-        if(!body.ccompania){
-          body.ccompania = idcompania
-        }
-        contract = await Search.findAll({
-          where: body,
-          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral','xcompania'],
-        });
-      } else {
-        contract = await Search.findAll({
-          where: body,
-          attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
-        });
+    let contract;
+    if (idcompania != 1) {
+      if (!body.ccompania) {
+        body.ccompania = idcompania;
       }
-      let contracts = contract.map((item) => item.get({ plain: true }));
-      return contracts;
-    } catch (error) {
-      return { error: error.message };
+      contract = await Search.findAll({
+        where: body,
+        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
+      });
+    } else {
+      contract = await Search.findAll({
+        where: body,
+        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
+      });
     }
+    let contracts = contract.map((item) => item.get({ plain: true }));
+    return contracts;
+  } catch (error) {
+    return { error: error.message };
+  }
 };
 
 

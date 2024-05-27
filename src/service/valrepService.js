@@ -360,6 +360,16 @@ const getProviderService = async (getProviderService) => {
     return provider;
 }
 
+const getStatus = async (getStatus) => {
+    const status = await Valrep.getStatus(getStatus);
+    if (status.error) {
+        return {
+            error: status.error
+        }
+    }
+    return status;
+}
+
 export default {
     getTrade,
     getCoin,
@@ -396,5 +406,6 @@ export default {
     getTracingMotive,
     getContractedService,
     getAdditionalServices,
-    getProviderService
+    getProviderService,
+    getStatus
 }

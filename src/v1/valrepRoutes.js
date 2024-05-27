@@ -41,5 +41,6 @@ router
     .post("/tracing-motive",  valrepController.getTracingMotive)
     .get("/contracted-services/:ccontratoflota", valrepController.getContractedService)
     .post("/additional-services",  valrepController.getAdditionalServices)
+    .post("/provider-service",  valrepController.getProviderService)
     
 export default router;

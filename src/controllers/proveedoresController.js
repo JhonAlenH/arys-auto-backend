@@ -1,3 +1,4 @@
+import Bancos from '../db/Bancos.js';
 import Proveedores from '../db/Proveedores.js';
 import Servicio from '../db/Servicio.js';
 
@@ -38,6 +39,14 @@ const createProveedores = async (req, res) => {
       return res.status(linkServiciosProveedor.code).send({
         status: false,
         message: linkServiciosProveedor.error
+      });
+    }
+    const linkBancosProveedor = await Bancos.linkBancosProveedor(req.body.cbanco, createdProveedor.result.recordset[0].cproveedor)
+
+    if (linkBancosProveedor.error) {
+      return res.status(linkBancosProveedor.code).send({
+        status: false,
+        message: linkBancosProveedor.error
       });
     }
     res.status(201).send({
@@ -85,13 +94,42 @@ const searchProveedor = async (req, res) => {
         }
       }
     }
-
-    // const providerList = serviciosProveedor
     proveedor.result.ctiposervicio = serviciosProveedor
+
+    const bancosProveedor = await Bancos.searchProveedorBancos(proveedor.result.cproveedor)
+
+    if (bancosProveedor.error) {
+      return res.status(bancosProveedor.code).send({
+        status: false,
+        message: bancosProveedor.error
+      });
+      
+    }
+
+    i = 0
+    proveedor.result.cbanco = ''
+    if(bancosProveedor.length> 0){
+      for (const banco of bancosProveedor) {     
+        if(typeof banco.cbanco == 'number'){
+          proveedor.result.cbanco += `${banco.cbanco}?${banco.ctipocuentabancaria}?${banco.xnumerocuenta}`
+          i++
+          if(i < bancosProveedor.length) {
+            proveedor.result.cbanco += `,`
+          }
+        } else {
+          i++
+        }
+        
+        banco.other_values = []
+        banco.other_values.push({text: 'Tipo de Cuenta', key: 'ctipocuentabancaria', value: banco.ctipocuentabancaria})
+        banco.other_values.push({text: 'Numero de Cuenta', key: 'xnumerocuenta', value: banco.xnumerocuenta})
+      }
+    }
+    proveedor.result.cbancos = bancosProveedor
 
     res.status(201).send({
       status: true, 
-      message: 'Proveedor Obtenido2',
+      message: 'Proveedor Obtenido',
       data: proveedor
     });
     
@@ -117,6 +155,17 @@ const updateProveedores = async (req, res) => {
         message: linkServiciosProveedor.error
       });
     }
+
+    console.log(req.params.id);
+
+    const linkBancosProveedor = await Bancos.linkBancosProveedor(req.body.cbanco, req.params.id)
+
+    if (linkBancosProveedor.error) {
+      return res.status(linkBancosProveedor.code).send({
+        status: false,
+        message: linkBancosProveedor.error
+      });
+    }
     
     res.status(201).send({
       status: true, 
@@ -133,5 +182,6 @@ export default {
   createProveedores,
   searchProveedores,
   searchProveedor,
-  updateProveedores
+  updateProveedores,
+  
 }

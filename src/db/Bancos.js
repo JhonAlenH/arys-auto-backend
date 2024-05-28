@@ -93,10 +93,92 @@ const updateBancos = async(id, data) => {
   }
 }
 
+
+const searchProveedorBancos = async(cproveedor) => {
+  try {
+
+    console.log(cproveedor);
+    let pool = await sql.connect(sqlConfig)
+    let result = await pool.request().query(`SELECT * from PRBANCO WHERE cproveedor = ${cproveedor};`)
+    await pool.close();
+
+    if(result.recordset.length > 0){
+      let j = 0
+      for (const record of result.recordset) {
+        const keys = Object.keys(record)
+        const values = Object.values(record)
+        let resultLowerCase = {}
+        let i = 0
+        for (const key of keys) {
+          const lowerKey = key.toLowerCase()
+          resultLowerCase[lowerKey] = values[i]
+          i++
+        }
+        result.recordset[j] = resultLowerCase
+        j++ 
+      };
+    }
+
+    
+    
+    if (result.rowsAffected < 1) {
+        return false;
+    }
+    await pool.close();
+    return result.recordset;
+  }
+  catch (error) {
+      console.log(error.message)
+      return { error: error.message };
+  }
+}
+
+const linkBancosProveedor = async(bancos, cproveedor) => {
+  
+  try {
+    let pool = await sql.connect(sqlConfig);
+    const bancosSplittedString = bancos.split('[]')[0].split(',')
+
+    const bancosAll = await pool.request().query(`
+    DELETE FROM PRBANCO WHERE cproveedor = ${parseInt(cproveedor)}
+    `)
+    let result = {message: 'no hay servicios'}
+    if(bancosSplittedString.length > 0 && bancosSplittedString[0]) {      
+  
+      const table = new sql.Table('PRBANCO');
+      table.columns.add('cproveedor', sql.Int, {nullable: false});
+      table.columns.add('cbanco', sql.Int, {nullable: false});
+      table.columns.add('ctipocuentabancaria', sql.Int, {nullable: true});
+      table.columns.add('xnumerocuenta', sql.VarChar(250), {nullable: true});
+  
+      for (const banco of bancosSplittedString) {
+        const splittedBancoInfo =  banco.split('?')
+        table.rows.add(cproveedor, parseInt(splittedBancoInfo[0]), parseInt(splittedBancoInfo[1]), splittedBancoInfo[2]);
+      }
+      
+      result = await pool.request().bulk(table)
+      
+      if (result.rowsAffected < 1) {
+          return false;
+      }
+      await pool.close();
+    } 
+    
+
+    return result;
+  }
+  catch (error) {
+      console.log(error.message)
+      return { error: error.message };
+  }
+}
+
 export default {
   createBancos,
   searchBancos,
   updateBancos,
   searchBancosById,
-  searchBancosMaestros
+  searchBancosMaestros,
+  searchProveedorBancos,
+  linkBancosProveedor
 }

@@ -19,6 +19,7 @@ const sqlConfig = {
 const Seguimentos = sequelize.define('evVseguimientoNotificacion', {}, {tableName: 'evVseguimientoNotificacion'});
 
 const Search = sequelize.define('evVnotificaciones', {});
+const ServiceOrder = sequelize.define('evVordenServicio', {}, {tableName: 'evVordenServicio'});
 
 
 const searchEvents = async (body, ccompania, cpais) => {
@@ -30,12 +31,12 @@ const searchEvents = async (body, ccompania, cpais) => {
         }
         event = await Search.findAll({
           where: body,
-          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania', 'bactivo'],
+          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania'],
         });
       }else{
         event = await Search.findAll({
           where: body,
-          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania', 'bactivo'],
+          attributes: ['cnotificacion', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'xcausasiniestro', 'ccompania', 'xcompania'],
         });
       }
 
@@ -122,44 +123,37 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  // Extraer las claves y valores del objeto data
-  const keys = Object.keys(data);
-  const values = Object.values(data);
-
-  // Filtrar las claves y valores para eliminar 'seguimiento' y 'repuestos'
-  const filteredKeys = keys.filter(key => key !== 'seguimiento' && key !== 'repuestos');
-  const filteredValues = values.filter((_, index) => keys[index] !== 'seguimiento' && keys[index] !== 'repuestos');
+  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder');
+  const values = keys.map(key => data[key]);
 
   let pool;
   try {
     pool = await sql.connect(sqlConfig);
     const request = pool.request();
 
-    // Construir la consulta SQL dinámicamente
-    const placeholders = filteredKeys.map((_, i) => `@param${i + 1}`).join(',');
-    const query = `INSERT INTO EVNOTIFICACION (${filteredKeys.join(',')}) VALUES (${placeholders}) SELECT SCOPE_IDENTITY() AS cnotificacion`;
+    const placeholders = keys.map((_, i) => `@param${i + 1}`).join(',');
+    const query = `INSERT INTO EVNOTIFICACION (${keys.join(',')}) VALUES (${placeholders}) SELECT SCOPE_IDENTITY() AS cnotificacion`;
 
-    // Ejecutar la consulta SQL con los valores adecuados
-    filteredKeys.forEach((key, index) => {
-      request.input(`param${index + 1}`, filteredValues[index]);
+    keys.forEach((key, index) => {
+      request.input(`param${index + 1}`, values[index]);
     });
 
     const event = await request.query(query);
     const cnotificacion = event.recordset[0].cnotificacion;
 
     if (cnotificacion && data.seguimiento) {
-      const keysS = ['cnotificacion', ...Object.keys(data.seguimiento)];
-      const valuesS = [cnotificacion, ...Object.values(data.seguimiento)];
+      const seguimientoKeys = ['cnotificacion', ...Object.keys(data.seguimiento)];
+      const seguimientoValues = [cnotificacion, ...Object.values(data.seguimiento)];
 
-      const placeholdersS = keysS.map((_, i) => `@sparam${i + 1}`).join(',');
-      const queryS = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${keysS.join(',')}) VALUES (${placeholdersS})`;
+      const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@sparam${i + 1}`).join(',');
+      const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
 
       const seguimientoRequest = pool.request();
-      keysS.forEach((key, index) => {
-        seguimientoRequest.input(`sparam${index + 1}`, valuesS[index]);
+      seguimientoKeys.forEach((key, index) => {
+        seguimientoRequest.input(`sparam${index + 1}`, seguimientoValues[index]);
       });
 
-      await seguimientoRequest.query(queryS);
+      await seguimientoRequest.query(querySeguimiento);
     }
 
     if (cnotificacion && data.repuestos) {
@@ -173,24 +167,60 @@ const createEvents = async (data) => {
           .input('cusuariocreacion', sql.Int, data.cusuario)
           .query(`
             INSERT INTO EVREPUESTONOTIFICACION (
-                cnotificacion, crepuesto, ncantidad, xniveldano, fcreacion, cusuariocreacion
+              cnotificacion, crepuesto, ncantidad, xniveldano, fcreacion, cusuariocreacion
             )
             VALUES (
-                @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @fcreacion, @cusuariocreacion
+              @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @fcreacion, @cusuariocreacion
             );
           `);
         return repuestoRequest;
       }));
     }
 
+    if (cnotificacion && data.serviceOrder) {
+      const serviceOrderKeys = ['cnotificacion', ...Object.keys(data.serviceOrder)];
+      const serviceOrderValues = [cnotificacion, ...Object.values(data.serviceOrder)];
+
+      const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+      const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
+
+      const serviceOrderRequest = pool.request();
+      serviceOrderKeys.forEach((key, index) => {
+        serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+      });
+
+      await serviceOrderRequest.query(queryServiceOrder);
+    }
+
     return event;
   } catch (error) {
     console.error(error.message);
-    return { error: error.message }; // Devolver un objeto con el mensaje de error
+    return { error: error.message };
   } finally {
     if (pool) {
       await pool.close();
     }
+  }
+};
+
+const getServiceOrderById = async (id) => {
+  try {
+    const order = await ServiceOrder.findAll({
+      where: {
+        cnotificacion: id
+      },
+      attributes: [
+        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
+        'xdireccion_proveedor', 'xidentidad_proveedor', 
+        'xcorreo_proveedor', 'xtelefono_proveedor', 
+        'xobservacion', 'itiporeporte'
+      ],
+    });
+    const ordenes = order.map((item) => item.get({ plain: true }));
+    return ordenes;
+  } catch (error) {
+    return { error: error.message };
   }
 };
 
@@ -199,5 +229,6 @@ export default {
     getEvent,
     getSeguimientosById,
     getSeguimientos,
-    createEvents
+    createEvents,
+    getServiceOrderById
 }

@@ -984,6 +984,62 @@ const getAdditionalServices = async (req, res) => {
         });
 }
 
+const getProviderService = async (req, res) => {
+    const provider = await valrepService.getProviderService(req.body);
+    if (provider.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: provider.permissionError
+            });
+    }
+    if (provider.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: provider.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                list: provider
+            }
+        });
+}
+
+const getStatus = async (req, res) => {
+    const status = await valrepService.getStatus(req.body);
+    if (status.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: status.permissionError
+            });
+    }
+    if (status.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: status.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                list: status
+            }
+        });
+}
+
 export default {
     getTrade,
     getCoin,
@@ -1019,5 +1075,7 @@ export default {
     getTracingType,
     getTracingMotive,
     getContractedService,
-    getAdditionalServices
+    getAdditionalServices,
+    getProviderService,
+    getStatus
 }

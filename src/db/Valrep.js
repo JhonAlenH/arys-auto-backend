@@ -29,6 +29,9 @@ const TracingType = sequelize.define('MATIPOSEGUIMIENTO', {}, { tableName: 'MATI
 const TracingMotive = sequelize.define('MAMOTIVOSEGUIMIENTO', {}, { tableName: 'MAMOTIVOSEGUIMIENTO' });
 const Service = sequelize.define('suVserviciosContratados', {});
 const AdditionalService = sequelize.define('maservicio', {}, { tableName: 'maservicio' });
+const ProviderService = sequelize.define('prVproveedoresServicios', {});
+const Status = sequelize.define('MAESTATUSGENERAL', {}, { tableName: 'MAESTATUSGENERAL' });
+
 
 const Rol = sequelize.define('serol', {
   crol: {
@@ -642,6 +645,39 @@ const getAdditionalServices = async (getAdditionalServices) => {
   }
 };
 
+const getProviderService = async (getProviderService) => {
+  try {
+    const proveedores = await ProviderService.findAll({
+      where: {
+        cservicio: getProviderService.cservicio,
+        cpais: getProviderService.cpais,
+        ccompania: getProviderService.ccompania,
+      },
+      attributes: ['cproveedor', 'xnombre'],
+    });
+    const provider = proveedores.map((item) => item.get({ plain: true }));
+    return provider;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getStatus = async (getStatus) => {
+  try {
+    const proveedores = await Status.findAll({
+      where: {
+        cpais: getStatus.cpais,
+        ccompania: getStatus.ccompania,
+      },
+      attributes: ['cestatusgeneral', 'xestatusgeneral'],
+    });
+    const provider = proveedores.map((item) => item.get({ plain: true }));
+    return provider;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
   getTrade,
   getCoin,
@@ -677,5 +713,7 @@ export default {
   getTracingType,
   getTracingMotive,
   getContractedService,
-  getAdditionalServices
+  getAdditionalServices,
+  getProviderService,
+  getStatus
 };

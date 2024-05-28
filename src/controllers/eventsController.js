@@ -167,11 +167,16 @@ const getServiceOrderById = async (req, res) => {
                 message: 'No hay Ordenes de Servicios para esta notificacion'
             });
     }
+    const formattedList = ordenes.map((item) => ({
+        ...item,
+        fsolicitud: item.fsolicitud ? new Date(item.fsolicitud).toLocaleDateString('es-ES') : null,
+        fajuste: item.fajuste ? new Date(item.fajuste).toLocaleDateString('es-ES') : null,
+    }));
     return res
         .status(200)
         .send({
             status: true,
-            data: ordenes
+            data: formattedList
         });
 }
 

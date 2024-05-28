@@ -141,10 +141,45 @@ const createEvents = async (req, res) => {
       });
 }
 
+const getServiceOrderById = async (req, res) => {
+    const ordenes = await Events.getServiceOrderById(req.params.id);
+    if (ordenes.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: ordenes.permissionError
+            });
+    }
+    if (ordenes.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: ordenes.error
+            });
+    }
+    if (ordenes.length <= 0) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: 'No hay Ordenes de Servicios para esta notificacion'
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: ordenes
+        });
+}
+
 export default {
     searchEvents,
     getEvent,
     getSeguimientosById,
     getSeguimientos,
-    createEvents
+    createEvents,
+    getServiceOrderById
 }

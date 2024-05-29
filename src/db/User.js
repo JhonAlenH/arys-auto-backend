@@ -70,7 +70,7 @@ const getOneUserById = async (id) => {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
            .input('id', sql.NVarChar, id)
-           .query('select cusuario, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania, ximagen1, ximagen2 from SEUSUARIO where cusuario = @id')
+           .query('select cusuario, xcedula, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania, ximagen1, ximagen2 from SEUSUARIO where cusuario = @id')
         if (result.rowsAffected < 1) {
             return false;
         }
@@ -83,13 +83,13 @@ const getOneUserById = async (id) => {
     }
 }
 
-const getOwnerInfo = async (id) => {
+const getOwnerInfo = async (cedula) => {
 
     try {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
-           .input('id', sql.NVarChar, id)
-           .query('select cpropietario, icedula, xcedula, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
+           .input('cedula', sql.NVarChar, cedula)
+           .query('select cpropietario, icedula, xcedula, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where xcedula = @cedula')
         if (result.rowsAffected < 1) {
             return false;
         }

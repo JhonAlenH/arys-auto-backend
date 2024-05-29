@@ -65,6 +65,20 @@ const searchContracts = async (body, idcompania) => {
     return { error: error.message };
   }
 };
+const getContractsByUser = async (cusuario) => {
+  try {
+    let contract = await Search.findAll({
+        where: {cusuario: cusuario},
+        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
+      });
+    
+    let contracts = contract.map((item) => item.get({ plain: true }));
+    return contracts;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
 
 
 
@@ -256,4 +270,5 @@ export default {
   searchContractIndividual,
   detailMembership,
   detailMembershipService,
+  getContractsByUser
 }

@@ -180,11 +180,38 @@ const getServiceOrderById = async (req, res) => {
         });
 }
 
+const getServiceOrder = async (req, res) => {
+    const ordenes = await Events.getServiceOrder(req.params.corden);
+    if (ordenes.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: ordenes.permissionError
+            });
+    }
+    if (ordenes.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: ordenes.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: ordenes
+        });
+}
+
 export default {
     searchEvents,
     getEvent,
     getSeguimientosById,
     getSeguimientos,
     createEvents,
-    getServiceOrderById
+    getServiceOrderById,
+    getServiceOrder
 }

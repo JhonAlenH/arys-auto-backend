@@ -20,6 +20,13 @@ const Seguimentos = sequelize.define('evVseguimientoNotificacion', {}, {tableNam
 
 const Search = sequelize.define('evVnotificaciones', {});
 const ServiceOrder = sequelize.define('evVordenServicio', {}, {tableName: 'evVordenServicio'});
+const ServiceOrder2 = sequelize.define('evVordenServicio', {
+  corden: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: true,
+  },
+}, {tableName: 'evVordenServicio'});
 
 
 const searchEvents = async (body, ccompania, cpais) => {
@@ -224,11 +231,34 @@ const getServiceOrderById = async (id) => {
   }
 };
 
+const getServiceOrder = async (corden) => {
+  try {
+    const ordenes = await ServiceOrder2.findOne({
+      where: {
+        corden: corden
+      },
+      attributes: [
+        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
+        'xdireccion_proveedor', 'xidentidad_proveedor', 
+        'xcorreo_proveedor', 'xtelefono_proveedor', 
+        'xobservacion', 'itiporeporte', 'xtelefonosiniestro',
+        'xnombresiniestro', 'xmarca', 'xmodelo', 'xplaca',
+        'xdescripcion', 'cestatusgeneral', 'xestatusgeneral'
+      ],
+    });
+    return ordenes ? ordenes.get({ plain: true }) : {};;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
     searchEvents,
     getEvent,
     getSeguimientosById,
     getSeguimientos,
     createEvents,
-    getServiceOrderById
+    getServiceOrderById,
+    getServiceOrder
 }

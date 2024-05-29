@@ -16,7 +16,7 @@ const getUserInfo = async (id) => {
   if(!userInfo) {
     return { error: "Error", code: 401 };
   }
-  const ownerResult = await User.getOwnerInfo(userInfo.cpropietario.toString());
+  const ownerResult = await User.getOwnerInfo(userInfo.xcedula.toString());
   if (ownerResult.error) {
     return { error: ownerResult.error, code: 500 };
   }
@@ -40,7 +40,6 @@ const getUserInfo = async (id) => {
   // result.subscription.metodologiapago = gettedMetPago.result.recordset[0]
   return result;
 }
-
 const getUserSubscription = async (cpropietario) => {
   const subscriptionInfo = await User.getUserSubscription(cpropietario.toString());
   if (subscriptionInfo.error) {

@@ -76,7 +76,7 @@ const getSeguimientos = async (id) => {
   
   try {
     const items = await Seguimentos.findAll({
-      attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado'],
+      attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
     });
     const result = items.map((item) => item.get({ plain: true }));
     for (const item of result) {

@@ -30,12 +30,13 @@ const getOrders = async() => {
   }
 }
 const getOrdersByUser = async(body) => {
+  console.log(body);
   try {
     const items = await Search.findAll({
       where: {
         ccontratoflota: body
       },
-      attributes: ['corden','cservicio','xservicio','cnotificacion','fsolicitud','fajuste','cproveedor','xproveedor','xdireccion_proveedor','xidentidad_proveedor','xcorreo_proveedor','xtelefono_proveedor','xobservacion','ireporte','xnombresiniestro','xtelefono_siniestro','xmarca','xmodelo','xplaca','ccontratoflota','xdescripcion', 'cestatusgeneral','xestatusgeneral'],
+      attributes: ['corden','cservicio','xservicio','cnotificacion','fsolicitud','fajuste','cproveedor','xproveedor','xobservacion','itiporeporte','xnombresiniestro','xtelefonosiniestro','ccontratoflota','xdescripcion','xestatusgeneral'],
     });
     const result = items.map((item) => item.get({ plain: true }));
     return result;

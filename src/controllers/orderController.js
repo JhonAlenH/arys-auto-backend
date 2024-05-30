@@ -14,7 +14,6 @@ const getOrdersByUser = async (req, res) => {
     }
     // console.log(user.subscription);
     const contractsMapped = user.subscription.map( contract => {return contract.ccontratoflota})
-    console.log(contractsMapped);
     const orders = await Order.getOrdersByUser(contractsMapped);
     if (orders.error) {
       return res.status(orders.code).send({

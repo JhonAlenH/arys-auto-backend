@@ -1,7 +1,7 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize, DataTypes, Op } from 'sequelize';
 import sequelize from '../config/database.js';
 import sql from "mssql";
-import insert from "../utilities/insert.js";
+import moment from 'moment';
 import dayjs from "dayjs";
 
 const sqlConfig = {
@@ -79,12 +79,51 @@ const getEvent = async (id) => {
     return { error: error.message };
   }
 };
-const getSeguimientos = async (id) => {
-  
+const getSeguimientos = async (body) => {
   try {
-    const items = await Seguimentos.findAll({
-      attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
-    });
+    let items = []
+    let keys = Object.keys(body)
+    if(keys.length <= 0) {
+      items = await Seguimentos.findAll({
+        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
+      });
+    } else {
+      let filters = {}
+      var d = new Date()
+      if(body.fseguimientonotificacion == '=') {
+        filters = {
+          [Op.and] : [
+            {fseguimientonotificacion: {
+              [Op.gte]: moment().format('YYYY-MM-DD', 'date')},
+            }, 
+            {fseguimientonotificacion: {
+              [Op.lte]: moment().add(1, 'days').format('YYYY-MM-DD', 'date')},
+            }, 
+          ]
+        }
+        console.log('filtro', filters);
+      } else if (body.fseguimientonotificacion == '>') {
+        filters = {
+          fseguimientonotificacion: {
+            [Op.gte]: moment().add(1, 'days').format('YYYY-MM-DD', 'date')
+          }
+        }
+        console.log('filtro', filters);
+      } else if (body.fseguimientonotificacion == '<') {
+        filters = {
+          fseguimientonotificacion: {
+            [Op.lt]: moment().format('YYYY-MM-DD', 'date')
+          }
+        }
+        console.log('filtro', filters);
+      } else {
+        filters = body
+      }
+      items = await Seguimentos.findAll({
+        where: filters,
+        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
+      });
+    }
     const result = items.map((item) => item.get({ plain: true }));
     for (const item of result) {
       item.xfseguimientonotificacion = dayjs(item.fseguimientonotificacion).format('DD/MM/YYYY')

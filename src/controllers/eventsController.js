@@ -101,7 +101,7 @@ const getSeguimientosById = async (req, res) => {
         });
 }
 const getSeguimientos = async (req, res) => {
-    const seguimientos = await Events.getSeguimientos(req.params.body);
+    const seguimientos = await Events.getSeguimientos(req.body);
     if (seguimientos.permissionError) {
         return res
             .status(403)

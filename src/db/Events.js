@@ -171,7 +171,6 @@ const getSeguimientosById = async (id) => {
 const createEvents = async (data) => {
   const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder');
   const values = keys.map(key => data[key]);
-
   let pool;
   try {
     pool = await sql.connect(sqlConfig);
@@ -221,21 +220,23 @@ const createEvents = async (data) => {
           `);
         return repuestoRequest;
       }));
-    }
+    } 
 
-    if (cnotificacion && data.serviceOrder) {
-      const serviceOrderKeys = ['cnotificacion', ...Object.keys(data.serviceOrder)];
-      const serviceOrderValues = [cnotificacion, ...Object.values(data.serviceOrder)];
+    if (cnotificacion && Array.isArray(data.serviceOrder)) {
+      await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
+        const serviceOrderKeys = ['cnotificacion', ...Object.keys(serviceOrder)];
+        const serviceOrderValues = [cnotificacion, ...Object.values(serviceOrder)];
 
-      const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
-      const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
+        const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+        const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
 
-      const serviceOrderRequest = pool.request();
-      serviceOrderKeys.forEach((key, index) => {
-        serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
-      });
+        const serviceOrderRequest = pool.request();
+        serviceOrderKeys.forEach((key, index) => {
+          serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+        });
 
-      await serviceOrderRequest.query(queryServiceOrder);
+        await serviceOrderRequest.query(queryServiceOrder);
+      }));
     }
 
     return event;

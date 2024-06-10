@@ -14,5 +14,6 @@ router
     .post("/create", eventsController.createEvents)
     .post("/getServiceOrderById/:id", eventsController.getServiceOrderById)
     .get("/getServiceOrder/:corden", eventsController.getServiceOrder)
+    .post("/update", eventsController.updateEvents)
 
 export default router;

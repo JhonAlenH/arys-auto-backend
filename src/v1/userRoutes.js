@@ -8,5 +8,6 @@ router
 
     .get("/club/getUser/:id", userController.getUserInfo)
     .get("/getCarInfo/:inma", userController.getINMAInfo)
+    .post("/edit/:cusuario", userController.editUser)
 
 export default router;

@@ -206,6 +206,21 @@ const getServiceOrder = async (req, res) => {
         });
 }
 
+const updateEvents = async (req, res) => {
+    const update = await eventsService.updateEvents(req.body);
+    if (update.error) {
+        return res.status(update.code).send({
+          status: false,
+          message: update.error
+        });
+      }
+      res.status(201).send({
+        status: true, 
+        message: 'La notificación ha sido modificado exitosamente!',
+        data: update
+      });
+}
+
 export default {
     searchEvents,
     getEvent,
@@ -213,5 +228,6 @@ export default {
     getSeguimientos,
     createEvents,
     getServiceOrderById,
-    getServiceOrder
+    getServiceOrder,
+    updateEvents
 }

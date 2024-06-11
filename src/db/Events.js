@@ -169,7 +169,7 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder');
+  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion');
   const values = keys.map(key => data[key]);
   let pool;
   try {
@@ -250,6 +250,72 @@ const createEvents = async (data) => {
   }
 };
 
+const updateEvents = async (data) => {
+  let pool;
+  try {
+    pool = await sql.connect(sqlConfig);
+    if(Array.isArray(data.serviceOrder)){
+      await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
+        if(serviceOrder.type == 'create'){
+          const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'type');
+          const values = keys.map(key => data[key]);
+
+          const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+          const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
+
+          const serviceOrderRequest = pool.request();
+          serviceOrderKeys.forEach((key, index) => {
+            serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+          });
+
+          await serviceOrderRequest.query(queryServiceOrder);
+        }else{
+          const keys = Object.keys(serviceOrder).filter(key => 
+            key !== 'seguimiento' && 
+            key !== 'repuestos' && 
+            key !== 'type' && 
+            key !== 'xproveedor' &&
+            key !== 'xdireccion_proveedor' &&
+            key !== 'xidentidad_proveedor' &&
+            key !== 'xcorreo_proveedor' &&
+            key !== 'xtelefono_proveedor' &&
+            key !== 'itiporeporte' &&
+            key !== 'corden' &&
+            key !== 'cnotificacion' &&
+            key !== 'xestatusgeneral' &&
+            key !== 'fsolicitud');
+
+          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+
+          const queryUpdate = `UPDATE EVORDENSERVICIO SET ${setClause} WHERE cnotificacion = @cnotificacion AND corden = @corden`;
+
+          const updateRequest = pool.request();
+          keys.forEach((key, index) => {
+            const value = serviceOrder[key];
+            if (value === undefined || value === null) {
+              throw new Error(`Invalid value for parameter 'param${index + 1}': ${value}`);
+            }
+            updateRequest.input(`param${index + 1}`, value);
+          });
+          updateRequest.input('cnotificacion', serviceOrder.cnotificacion);
+          updateRequest.input('corden', serviceOrder.corden);
+
+          await updateRequest.query(queryUpdate);
+        }
+      }));
+    }
+    const update = 'Notificación Modificada Exitosamente'
+    return update;
+  } catch (error) {
+    console.error(error.message);
+    return { error: error.message };
+  } finally {
+    if (pool) {
+      await pool.close();
+    }
+  }
+};
+
 const getServiceOrderById = async (id) => {
   try {
     const order = await ServiceOrder.findAll({
@@ -261,7 +327,8 @@ const getServiceOrderById = async (id) => {
         'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 
-        'xobservacion', 'itiporeporte'
+        'xobservacion', 'itiporeporte', 'cestatusgeneral',
+        'xestatusgeneral'
       ],
     });
     const ordenes = order.map((item) => item.get({ plain: true }));
@@ -300,5 +367,6 @@ export default {
     getSeguimientos,
     createEvents,
     getServiceOrderById,
-    getServiceOrder
+    getServiceOrder,
+    updateEvents
 }

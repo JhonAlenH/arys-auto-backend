@@ -1,5 +1,5 @@
 import userService from '../service/userService.js';
-import Plan from '../db/Plan.js';
+//import Plan from '../db/Plan.js';
 import User from '../db/User.js';
 
 const getUserInfo = async (req, res) => {

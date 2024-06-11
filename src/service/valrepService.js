@@ -220,15 +220,15 @@ const getClass = async (getClass) => {
     return classV;
 }
 
-const getPlan = async (getPlan) => {
-    const plan = await Valrep.getPlan(getPlan);
-    if (plan.error) {
-        return {
-            error: plan.error
-        }
-    }
-    return plan;
-}
+// const getPlan = async (getPlan) => {
+//     const plan = await Valrep.getPlan(getPlan);
+//     if (plan.error) {
+//         return {
+//             error: plan.error
+//         }
+//     }
+//     return plan;
+// }
 
 const getAccesories = async () => {
     const accesories = await Valrep.getAccesories();
@@ -353,7 +353,7 @@ export default {
     getUtilityRechange,
     getUtility,
     getClass,
-    getPlan,
+    // getPlan,
     getAccesories,
     getMethodOfPayment,
     getTakers,

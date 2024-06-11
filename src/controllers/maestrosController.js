@@ -1,57 +1,5 @@
 import Maestros from '../db/Maestros.js';
 
-const getMaMonedas = async (req, res) => {
-  try {
-    const gettedMonedas = await Maestros.getMaMonedas();
-    // console.log(gettedMonedas.result.recordset)
-    if (gettedMonedas.error) {
-      return res.status(gettedMonedas.code).send({
-        status: false,
-        message: gettedMonedas.error
-      });
-    }
-    const formatData = gettedMonedas.result.recordset.map(item => {
-      return{
-        text: item.xdescripcion,
-        value: `${item.cmoneda}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Monedas Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
-const getMaCompanias = async (req, res) => {
-  try {
-    const gettedCompanias = await Maestros.getMaCompanias();
-    // console.log(gettedCompanias.result)
-    if (gettedCompanias.error) {
-      return res.status(gettedCompanias.code).send({
-        status: false,
-        message: gettedCompanias.error
-      });
-    }
-    const formatData = gettedCompanias.result.recordset.map(item => {
-      return{
-        text: item.xcompania,
-        value: `${item.ccompania}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Compañias Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
 const getMaEstatus = async (req, res) => {
   try {
     const gettedEstatuses = await Maestros.getMaEstatus();
@@ -78,61 +26,9 @@ const getMaEstatus = async (req, res) => {
     
   }
 }
-const getMaCompania = async (req, res) => {
-  try {
-    const gettedCompania = await Maestros.getMaCompania(req.params.id);
-    // console.log(gettedCompanias.result)
-    if (gettedCompania.error) {
-      return res.status(gettedCompania.code).send({
-        status: false,
-        message: gettedCompania.error
-      });
-    }
-    const formatData = gettedCompania.result.recordset.map(item => {
-      return{
-        text: item.xcompania,
-        value: `${item.ccompania}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Compañias Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
-const getMaPaises = async (req, res) => {
-  try {
-    const gettedPaises = await Maestros.getMaPaises();
-    // console.log(gettedPaises.result)
-    if (gettedPaises.error) {
-      return res.status(gettedPaises.code).send({
-        status: false,
-        message: gettedPaises.error
-      });
-    }
-    const formatData = gettedPaises.result.recordset.map(item => {
-      return{
-        text: item.xpais.toLowerCase(),
-        value: `${item.cpais}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Países Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
 const getMaCiudades = async (req, res) => {
   try {
-    const gettedCiudades = await Maestros.getMaCiudades(req.params.pais, req.params.estado);
+    const gettedCiudades = await Maestros.getMaCiudades(req.params.estado);
     // console.log(gettedCiudades.result)
     if (gettedCiudades.error) {
       return res.status(gettedCiudades.code).send({
@@ -182,58 +78,6 @@ const getMaEstados = async (req, res) => {
     
   }
 }
-const getMaMetsPago = async (req, res) => {
-  try {
-    const gettedMetsPago = await Maestros.getMaMetsPago();
-    // console.log(gettedMetsPago.result)
-    if (gettedMetsPago.error) {
-      return res.status(gettedMetsPago.code).send({
-        status: false,
-        message: gettedMetsPago.error
-      });
-    }
-    const formatData = gettedMetsPago.result.recordset.map(item => {
-      return{
-        text: item.xmetodologiapago,
-        value: `${item.cmetodologiapago}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Metodologías de Pago Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
-const getServicios = async (req, res) => {
-  try {
-    const gettedServicios = await Maestros.getServicios(58, 1);
-    // console.log(gettedServicios.result)
-    if (gettedServicios.error) {
-      return res.status(gettedServicios.code).send({
-        status: false,
-        message: gettedServicios.error
-      });
-    }
-    const formatData = gettedServicios.result.recordset.map(item => {
-      return{
-        text: item.xservicio,
-        value: `${item.cservicio}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Servicios Obtenidos',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
 const getAseguradoras = async (req, res) => {
   try {
     const gettedAseguradoras = await Maestros.getAseguradoras(58, 1);
@@ -260,26 +104,6 @@ const getAseguradoras = async (req, res) => {
     
   }
 }
-const getMoneda = async (req, res) => {
-  try {
-    const gettedMoneda = await Maestros.getMoneda(req.params.id);
-    console.log(gettedMoneda)
-    if (gettedMoneda.error) {
-      return res.status(gettedMoneda.code).send({
-        status: false,
-        message: gettedMoneda.error
-      });
-    }
-    res.status(201).send({
-      status: true, 
-      message: 'Moneda Obtenida',
-      data: gettedMoneda
-    });
-    
-  } catch (error) {
-    
-  }
-}
 const getMaRepuestos = async (req, res) => {
   try {
     const gettedRepuestos = await Maestros.getMaRepuestos(req.body);
@@ -299,58 +123,6 @@ const getMaRepuestos = async (req, res) => {
     res.status(201).send({
       status: true, 
       message: 'Repuestos Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
-const getMaBancos = async (req, res) => {
-  try {
-    const gettedRepuestos = await Maestros.getMaBancos(req.body);
-    // console.log(gettedPaises.result)
-    if (gettedRepuestos.error) {
-      return res.status(gettedPaises.code).send({
-        status: false,
-        message: gettedPaises.error
-      });
-    }
-    const formatData = gettedRepuestos.result.recordset.map(item => {
-      return{
-        text: item.xrepuesto,
-        value: `${item.crepuesto}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Repuestos Obtenidas',
-      data: [...formatData]
-    });
-    
-  } catch (error) {
-    
-  }
-}
-const getMaProveedores = async (req, res) => {
-  try {
-    const gettedProveedores = await Maestros.getMaProveedores(req.body);
-    // console.log(gettedProveedores.result)
-    if (gettedProveedores.error) {
-      return res.status(gettedProveedores.code).send({
-        status: false,
-        message: gettedProveedores.error
-      });
-    }
-    const formatData = gettedProveedores.result.recordset.map(item => {
-      return{
-        text: item.xnombre,
-        value: `${item.cproveedor}`
-      }
-    })
-    res.status(201).send({
-      status: true, 
-      message: 'Proveedores Obtenidos',
       data: [...formatData]
     });
     
@@ -385,162 +157,1317 @@ const getMaPropietarios = async (req, res) => {
   }
 }
 
-const getMaParentescos = async (req, res) => {
+// Nuevo Modelo
+
+const searchMonedas = async (req, res) => {
+  console.log('Nada')
   try {
-    const gettedParentescos = await Maestros.getMaParentescos(req.body);
-    // console.log(gettedProveedores.result)
-    if (gettedParentescos.error) {
-      return res.status(gettedParentescos.code).send({
+    const monedas = await Maestros.searchMonedas();
+    if (monedas.error) {
+      return res.status(monedas.code).send({
         status: false,
-        message: gettedParentescos.error
+        message: monedas.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Monedas Obtenidas',
+      data: monedas
+    });
+  } catch (error){
+
+  }
+}
+
+const createMonedas = async (req, res) => {
+  try {
+    const createdMonedas = await Maestros.createMonedas(req.body);
+    if (createdMonedas.error) {
+      return res.status(createdMonedas.code).send({
+        status: false,
+        message: createdMonedas.error
       });
     }
-    const formatData = gettedParentescos.result.recordset.map(item => {
-      return{
-        text: item.xparentesco,
-        value: `${item.cparentesco}`
+    res.status(201).send({
+      status: true, 
+      message: 'Moneda Creada',
+      data: createdMonedas
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchMoneda = async (req, res) => {
+  try {
+    const findedMonedas = await Maestros.searchMonedasById(req.params.id);
+    if (findedMonedas.error) {
+      return res.status(findedMonedas.code).send({
+        status: false,
+        message: findedMonedas.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Moneda Obtenida',
+      data: findedMonedas
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateMonedas = async (req, res) => {
+  try {
+    const updatedMonedas = await Maestros.updateMonedas(req.params.id, req.body);
+    if (updatedMonedas.error) {
+      return res.status(updatedMonedas.code).send({
+        status: false,
+        message: updatedMonedas.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Moneda Actualizada',
+      data: updatedMonedas
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchPaises = async (req, res) => {
+  try {
+    const paises = await Maestros.searchPaises();
+    if (paises.error) {
+      return res.status(paises.code).send({
+        status: false,
+        message: paises.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Paises Obtenidos',
+      data: paises
+    });
+  } catch (error){
+
+  }
+}
+
+const createPaises = async (req, res) => {
+  try {
+    const createdPaises = await Maestros.createPaises(req.body);
+    if (createdPaises.error) {
+      return res.status(createdPaises.code).send({
+        status: false,
+        message: createdPaises.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Pais Creado',
+      data: createdPaises
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchPais = async (req, res) => {
+  try {
+    const findedPaises = await Maestros.searchPaisesById(req.params.id);
+  
+    if (findedPaises.error) {
+      return res.status(findedPaises.code).send({
+        status: false,
+        message: findedPaises.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Pais Obtenido',
+      data: findedPaises
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updatePaises = async (req, res) => {
+  try {
+    const updatedPaises = await Maestros.updatePaises(req.params.id, req.body);
+    if (updatedPaises.error) {
+      return res.status(updatedPaises.code).send({
+        status: false,
+        message: updatedPaises.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Pais Actualizado',
+      data: updatedPaises
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchPaisesMaestros = async (req, res) => {
+  try {
+    const paises = await Maestros.searchPaises();
+    if (paises.error) {
+      return res.status(paises.code).send({
+        status: false,
+        message: paises.error
+      });
+      
+    }
+    const formData = paises.map(item => {
+      return {
+        text: item.xpais,
+        value: item.cpais
       }
     })
+    res.status(201).send({
+      status: true, 
+      message: 'Pais Obtenidos',
+      data: formData
+    });
+  } catch (error){
+
+  }
+}
+
+const searchMetodologiapago = async (req, res) => {
+  try {
+  const metodologiapago = await Maestros.searchMetodologiapago();
+  if (metodologiapago.error) {
+      return res.status(metodologiapago.code).send({
+      status: false,
+      message: metodologiapago.error
+      });
+      
+  }
+  res.status(201).send({
+      status: true, 
+      message: 'Metodologia de Pago Obtenida',
+      data: metodologiapago
+  });
+  } catch (error){
+
+  } 
+}
+
+const searchMetodologiapago1 = async (req, res) => {
+  try {
+    const findedMetodologiapago = await Maestros.searchMetodologiapagoById(req.params.id);
+    if (findedMetodologiapago.error) {
+      return res.status(findedMetodologiapago.code).send({
+        status: false,
+        message: findedMetodologiapago.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Metodologia de Pago Obtenido',
+      data: findedMetodologiapago
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
+const createMetodologiapago = async (req, res) => {
+  try {
+    const createdMetodologiapago = await Maestros.createMetodologiapago(req.body);
+    if (createdMetodologiapago.error) {
+      return res.status(createdMetodologiapago.code).send({
+        status: false,
+        message: createdMetodologiapago.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Metodología de Pago Creada Satisfactoriamente',
+      data: createdMetodologiapago
+    });
+    
+  } catch (error) {
+    
+  }
+}
+
+const updateMetodologiapago = async (req, res) => {
+  try {
+    const updatedMetodologiapago = await Maestros.updateMetodologiapago(req.params.id, req.body);
+    if (updatedMetodologiapago.error) {
+      return res.status(updatedMetodologiapago.code).send({
+        status: false,
+        message: updatedMetodologiapago.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Metodologia de pago Actualizada',
+      data: updatedMetodologiapago
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchProveedores = async (req, res) => {
+  try {
+    const proveedores = await Maestros.searchProveedores(req.body);
+    if (proveedores.error) {
+      return res.status(proveedores.code).send({
+        status: false,
+        message: proveedores.error
+      });
+      
+    }
     res.status(201).send({
       status: true, 
       message: 'Proveedores Obtenidos',
-      data: [...formatData]
+      data: proveedores
+    });
+  } catch (error){
+
+  }
+}
+
+const createProveedores = async (req, res) => {
+  try {
+    const createdProveedores = await Maestros.createProveedores(req.body);
+    if (createdProveedores.error) {
+      return res.status(createdProveedores.code).send({
+        status: false,
+        message: createdProveedores.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Proveedor Creado',
+      data: createdProveedores
     });
     
   } catch (error) {
     
   }
 }
-
-const getMaEstadocivil = async (req, res) => {
+const searchProveedor = async (req, res) => {
   try {
-    const gettedEstadocivil = await Maestros.getMaEstadocivil(req.body);
-    // console.log(gettedProveedores.result)
-    if (gettedEstadocivil.error) {
-      return res.status(gettedEstadocivil.code).send({
+    const findedProveedores = await Maestros.searchProveedoresById(req.params.id);
+    if (findedProveedores.error) {
+      return res.status(findedProveedores.code).send({
         status: false,
-        message: gettedEstadocivil.error
+        message: findedProveedores.error
       });
     }
-    const formatData = gettedEstadocivil.result.recordset.map(item => {
-      return{
-        text: item.ctipodocidentidad,
-        value: `${item.ctipodocidentidad}`
+    res.status(201).send({
+      status: true, 
+      message: 'Proveedor Obtenido',
+      data: findedProveedores
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateProveedores = async (req, res) => {
+  console.log('Atualiza Proveedor')
+  try {
+    const updatedProveedores = await Maestros.updateProveedores(req.params.id, req.body);
+    if (updatedProveedores.error) {
+      return res.status(updatedProveedores.code).send({
+        status: false,
+        message: updatedProveedores.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Proveedor Actualizado',
+      data: updatedProveedores
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchBancos = async (req, res) => {
+  console.log('Buasca Bancos 1')
+  try {
+    const bancos = await Maestros.searchBancos(req.body);
+    if (bancos.error) {
+      return res.status(bancos.code).send({
+        status: false,
+        message: bancos.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Bancos Obtenidos',
+      data: bancos
+    });
+  } catch (error){
+
+  }
+}
+
+const createBancos = async (req, res) => {
+  try {
+    const createdBancos = await Maestros.createBancos(req.body);
+    if (createdBancos.error) {
+      return res.status(createdBancos.code).send({
+        status: false,
+        message: createdBancos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Banco Creado',
+      data: createdBancos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchBanco = async (req, res) => {
+  console.log('Buasca Banco')
+  try {
+    const findedBancos = await Maestros.searchBancosById(req.params.id);
+    if (findedBancos.error) {
+      return res.status(findedBancos.code).send({
+        status: false,
+        message: findedBancos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Banco Obtenido',
+      data: findedBancos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateBancos = async (req, res) => {
+  console.log('Actualiza Banco')
+  try {
+    const updatedBancos = await Maestros.updateBancos(req.params.id, req.body);
+    if (updatedBancos.error) {
+      return res.status(updatedBancos.code).send({
+        status: false,
+        message: updatedBancos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Banco Actualizado',
+      data: updatedBancos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchCompanias = async (req, res) => {
+  try {
+    const companias = await Maestros.searchCompanias(req.body);
+    if (companias.error) {
+      return res.status(companias.code).send({
+        status: false,
+        message: companias.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Compañías Obtenidos',
+      data: companias
+    });
+  } catch (error){
+
+  }
+}
+
+const createCompanias = async (req, res) => {
+  try {
+    const createdCompanias = await Maestros.createCompanias(req.body);
+    if (createdCompanias.error) {
+      return res.status(createdCompanias.code).send({
+        status: false,
+        message: createdCompanias.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Compañía Creada',
+      data: createdCompanias
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchCompania = async (req, res) => {
+  try {
+    const findedCompanias = await Maestros.searchCompaniasById(req.params.id);
+    if (findedCompanias.error) {
+      return res.status(findedCompanias.code).send({
+        status: false,
+        message: findedCompanias.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Compania Obtenida',
+      data: findedCompanias
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateCompanias = async (req, res) => {
+  console.log('Actualiza Compañías')
+  try {
+    const updatedCompanias = await Maestros.updateCompanias(req.params.id, req.body);
+    console.log(updatedCompanias)
+    if (updatedCompanias.error) {
+      return res.status(updatedCompanias.code).send({
+        status: false,
+        message: updatedCompanias.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Compania Actualizada',
+      data: updatedCompanias
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchCompaniasMaestros = async (req, res) => {
+  try {
+    const companias = await Maestros.searchCompanias();
+    if (companias.error) {
+      return res.status(companias.code).send({
+        status: false,
+        message: companias.error
+      });      
+    }
+    const formData = companias.map(item => {
+      return {
+        text: item.xcompania,
+        value: item.ccompania
       }
     })
     res.status(201).send({
       status: true, 
-      message: 'Tipo de Documentos Obtenidos',
-      data: [...formatData]
+      message: 'Compañía Obtenida',
+      data: formData
+    });
+  } catch (error){
+
+  }
+}
+const searchClientes = async (req, res) => {
+  console.log('busca cliente')
+  try {
+    const clientes = await Maestros.searchClientes(req.body);
+    if (clientes.error) {
+      return res.status(clientes.code).send({
+        status: false,
+        message: clientes.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Clientes Obtenidos',
+      data: clientes
+    });
+  } catch (error){
+
+  }
+}
+
+const createClientes = async (req, res) => {
+  try {
+    const createdClientes = await Maestros.createClientes(req.body);
+    if (createdClientes.error) {
+      return res.status(createdClientes.code).send({
+        status: false,
+        message: createdClientes.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Cliente Creado',
+      data: createdClientes
     });
     
   } catch (error) {
     
   }
 }
-
-const getMaTipodocidentidad = async (req, res) => {
+const searchCliente = async (req, res) => {
   try {
-    const gettedTipodocidentidad = await Maestros.getMaTipodocidentidad(req.body);
-    // console.log(gettedProveedores.result)
-    if (gettedTipodocidentidad.error) {
-      return res.status(gettedTipodocidentidad.code).send({
+    const findedClientes = await Maestros.searchClientesById(req.params.id);
+    if (findedClientes.error) {
+      return res.status(findedClientes.code).send({
         status: false,
-        message: gettedTipodocidentidad.error
+        message: findedClientes.error
       });
     }
-    const formatData = gettedTipodocidentidad.result.recordset.map(item => {
-      return{
-        text: item.xtipodocidentidad,
-        value: `${item.ctipodocidentidad}`
+    res.status(201).send({
+      status: true, 
+      message: 'Cliente Obtenido',
+      data: findedClientes
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateClientes = async (req, res) => {
+  console.log('Actualiza Clientes aaa')
+  try {
+    const updatedClientes = await Maestros.updateClientes(req.params.id, req.body);
+    console.log(updatedClientes)
+    if (updatedClientes.error) {
+      return res.status(updatedClientes.code).send({
+        status: false,
+        message: updatedClientes.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Cliente Actualizado',
+      data: updatedClientes
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchClientesMaestros = async (req, res) => {
+  try {
+    const clientes = await Maestros.searchClientes();
+    if (clientes.error) {
+      return res.status(clientes.code).send({
+        status: false,
+        message: clientes.error
+      });
+      
+    }
+    const formData = clientes.map(item => {
+      return {
+        text: item.xcliente,
+        value: item.ccliente
       }
     })
     res.status(201).send({
       status: true, 
-      message: 'Tipo de Documentos Obtenidos',
-      data: [...formatData]
+      message: 'Clientes Obtenidos',
+      data: formData
     });
-    
-  } catch (error) {
-    
+  } catch (error){
+
   }
 }
-
-const getMaMarcas = async (req, res) => {
+const searchPropietarios = async (req, res) => {
+  console.log('busca propietario')
   try {
-    const gettedMarcas = await Maestros.getMaMarcas(req.body);
-    // console.log(gettedProveedores.result)
-    if (gettedMarcas.error) {
-      return res.status(gettedMarcas.code).send({
+    const propietarios = await Maestros.searchPropietarios(req.body);
+    if (propietarios.error) {
+      return res.status(propietarios.code).send({
         status: false,
-        message: gettedMarcas.error
+        message: propietarios.error
       });
+      
     }
-    const formatData = gettedMarcas.result.recordset.map(item => {
-      return{
-        text: item.xmarca,
-        value: `${item.id}`
-      }
-    })
     res.status(201).send({
       status: true, 
-      message: 'Marcas Obtenidas',
-      data: [...formatData]
+      message: 'Propietarios Obtenidos',
+      data: propietarios
+    });
+  } catch (error){
+
+  }
+}
+
+const createPropietarios = async (req, res) => {
+  try {
+    const createdPropietarios = await Maestros.createPropietarios(req.body);
+    if (createdPropietarios.error) {
+      return res.status(createdPropietarios.code).send({
+        status: false,
+        message: createdPropietarios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Propietario Creado',
+      data: createdPropietarios
     });
     
   } catch (error) {
     
   }
 }
-
-const getMaVehiculos = async (req, res) => {
+const searchPropietario = async (req, res) => {
   try {
-    const gettedVehiculos = await Maestros.getMaVehiculos(req.body);
-    // console.log(gettedProveedores.result)
-    if (gettedVehiculos.error) {
-      return res.status(gettedVehiculos.code).send({
+    const findedPropietarios = await Maestros.searchPropietariosById(req.params.id);
+    if (findedPropietarios.error) {
+      return res.status(findedPropietarios.code).send({
         status: false,
-        message: gettedVehiculos.error
+        message: findedPropietarios.error
       });
     }
-    const formatData = gettedVehiculos.result.recordset.map(item => {
-      return{
-        text: item.cvehiculopropietario,
-        value: `${item.id}`
-      }
-    })
+    res.status(201).send({
+      status: true, 
+      message: 'Propietario Obtenido',
+      data: findedPropietarios
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updatePropietarios = async (req, res) => {
+  console.log('Actualiza Propietario')
+  try {
+    const updatedPropietarios = await Maestros.updatePropietarios(req.params.id, req.body);
+    console.log(updatedPropietarios)
+    if (updatedPropietarios.error) {
+      return res.status(updatedPropietarios.code).send({
+        status: false,
+        message: updatedPropietarios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Propietario Actualizado',
+      data: updatedPropietarios
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchParentescos = async (req, res) => {
+  console.log('busca parentesco')
+  try {
+    const parentescos = await Maestros.searchParentescos(req.body);
+    if (parentescos.error) {
+      return res.status(parentescos.code).send({
+        status: false,
+        message: parentescos.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Parentescos Obtenidos',
+      data: parentescos
+    });
+  } catch (error){
+
+  }
+}
+
+const createParentescos = async (req, res) => {
+  try {
+    const createdParentescos = await Maestros.createParentescos(req.body);
+    if (createdParentescos.error) {
+      return res.status(createdParentescos.code).send({
+        status: false,
+        message: createdParentescos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Parentesco Creado',
+      data: createdParentescos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchParentesco = async (req, res) => {
+  try {
+    const findedParentescos = await Maestros.searchParentescosById(req.params.id);
+    if (findedParentescos.error) {
+      return res.status(findedParentescos.code).send({
+        status: false,
+        message: findedParentescos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Parentesco Obtenido',
+      data: findedParentescos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateParentescos = async (req, res) => {
+  console.log('Actualiza Parentesco')
+  try {
+    const updatedParentescos = await Maestros.updateParentescos(req.params.id, req.body);
+    console.log(updatedParentescos)
+    if (updatedParentescos.error) {
+      return res.status(updatedParentescos.code).send({
+        status: false,
+        message: updatedParentescos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Parentesco Actualizado',
+      data: updatedParentescos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchEstadocivil = async (req, res) => {
+  try {
+    const estadocivil = await Maestros.searchEstadocivil(req.body);
+    if (estadocivil.error) {
+      return res.status(estadocivil.code).send({
+        status: false,
+        message: estadocivil.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Estado Civil Obtenidos',
+      data: estadocivil
+    });
+  } catch (error){
+
+  }
+}
+
+const createEstadocivil = async (req, res) => {
+  try {
+    const createdEstadocivil = await Maestros.createEstadocivil(req.body);
+    if (createdEstadocivil.error) {
+      return res.status(createdEstadocivil.code).send({
+        status: false,
+        message: createdEstadocivil.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Estado Civil Creado',
+      data: createdEstadocivil
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchEstadocivil1 = async (req, res) => {
+  try {
+    const findedEstadocivil = await Maestros.searchEstadocivilById(req.params.id);
+    if (findedEstadocivil.error) {
+      return res.status(findedEstadocivil.code).send({
+        status: false,
+        message: findedEstadocivil.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Estado Civil Obtenido',
+      data: findedEstadocivil
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateEstadocivil = async (req, res) => {
+  console.log('Actualiza Parentesco')
+  try {
+    const updatedEstadocivil = await Maestros.updateEstadocivil(req.params.id, req.body);
+    console.log(updatedEstadocivil)
+    if (updatedEstadocivil.error) {
+      return res.status(updatedEstadocivil.code).send({
+        status: false,
+        message: updatedEstadocivil.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Estado Civil Actualizado',
+      data: updatedEstadocivil
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchTipodocidentidad = async (req, res) => {
+  try {
+    const tipodocidentidad = await Maestros.searchTipodocidentidad(req.body);
+    if (tipodocidentidad.error) {
+      return res.status(tipodocidentidad.code).send({
+        status: false,
+        message: tipodocidentidad.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Doc. de Identidad Obtenidos',
+      data: tipodocidentidad
+    });
+  } catch (error){
+
+  }
+}
+const createTipodocidentidad = async (req, res) => {
+  try {
+    const createdTipodocidentidad  = await Maestros.createTipodocidentidad (req.body);
+    if (createdTipodocidentidad .error) {
+      return res.status(createdTipodocidentidad .code).send({
+        status: false,
+        message: createdTipodocidentidad .error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de doc. de Identidad Creado',
+      data: createdTipodocidentidad 
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchTipodocidentidad1 = async (req, res) => {
+  try {
+    const findedTipodocidentidad = await Maestros.searchTipodocidentidadById(req.params.id);
+    if (findedTipodocidentidad.error) {
+      return res.status(findedTipodocidentidad.code).send({
+        status: false,
+        message: findedTipodocidentidad.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo Doc. de Identidad Obtenido',
+      data: findedTipodocidentidad
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateTipodocidentidad = async (req, res) => {
+
+  try {
+    const updatedTipodocidentidad = await Maestros.updateTipodocidentidad(req.params.id, req.body);
+    console.log(updatedTipodocidentidad)
+    if (updatedTipodocidentidad.error) {
+      return res.status(updatedTipodocidentidad.code).send({
+        status: false,
+        message: updatedTipodocidentidad.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Doc. de Identidad Actualizado',
+      data: updatedTipodocidentidad
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchTiposervicios = async (req, res) => {
+  console.log('Buscar Tipo Servicios')
+  try {
+    const tiposervicio = await Maestros.searchTiposervicios(req.body);
+    if (tiposervicio.error) {
+      return res.status(tiposervicio.code).send({
+        status: false,
+        message: tiposervicio.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Servicios Obtenidos',
+      data: tiposervicio
+    });
+  } catch (error){
+
+  }
+}
+const createTiposervicios = async (req, res) => {
+  try {
+    const createdTiposervicios  = await Maestros.createTiposervicios (req.body);
+    if (createdTiposervicios .error) {
+      return res.status(createdTiposervicios .code).send({
+        status: false,
+        message: createdTiposervicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Servicio Creado',
+      data: createdTiposervicios 
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchTiposervicio = async (req, res) => {
+  try {
+    const findedTiposervicios = await Maestros.searchTiposerviciosById(req.params.id);
+    if (findedTiposervicios.error) {
+      return res.status(findedTiposervicios.code).send({
+        status: false,
+        message: findedTiposervicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Servicio Obtenido',
+      data: findedTiposervicios
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateTiposervicios = async (req, res) => {
+
+  try {
+    const updateTiposervicios = await Maestros.updateTiposervicios(req.params.id, req.body);
+    console.log(updateTiposervicios)
+    if (updateTiposervicios.error) {
+      return res.status(updateTiposervicios.code).send({
+        status: false,
+        message: updateTiposervicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Tipo de Servicio Actualizado',
+      data: updateTiposervicios
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchServicios = async (req, res) => {
+  console.log('Buscar Servicios')
+  try {
+    const servicio = await Maestros.searchServicios(req.body);
+    if (servicio.error) {
+      return res.status(servicio.code).send({
+        status: false,
+        message: servicio.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Servicios Obtenidos',
+      data: servicio
+    });
+  } catch (error){
+
+  }
+}
+const createServicios = async (req, res) => {
+  try {
+    const createdServicios  = await Maestros.createServicios (req.body);
+    if (createdServicios .error) {
+      return res.status(createdServicios .code).send({
+        status: false,
+        message: createdServicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Servicio Creado',
+      data: createdServicios 
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchServicio = async (req, res) => {
+  try {
+    const findedServicios = await Maestros.searchServiciosById(req.params.id);
+    if (findedServicios.error) {
+      return res.status(findedServicios.code).send({
+        status: false,
+        message: findedServicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Servicio Obtenido',
+      data: findedServicios
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateServicios = async (req, res) => {
+
+  try {
+    const updateServicios = await Maestros.updateServicios(req.params.id, req.body);
+    console.log(updateServicios)
+    if (updateServicios.error) {
+      return res.status(updateServicios.code).send({
+        status: false,
+        message: updateServicios.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Servicio Actualizado',
+      data: updateServicios
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchVehiculos = async (req, res) => {
+
+  try {
+    const vehiculo = await Maestros.searchVehiculos(req.body);
+    if (vehiculo.error) {
+      return res.status(vehiculo.code).send({
+        status: false,
+        message: vehiculo.error
+      });
+      
+    }
     res.status(201).send({
       status: true, 
       message: 'Vehículos Obtenidos',
-      data: [...formatData]
+      data: vehiculo
+    });
+  } catch (error){
+
+  }
+}
+const searchVehiculo = async (req, res) => {
+  try {
+    const findedVehiculos = await Maestros.searchVehiculosById(req.params.id);
+    if (findedVehiculos.error) {
+      return res.status(findedVehiculos.code).send({
+        status: false,
+        message: findedVehiculos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Vehiculo Obtenido',
+      data: findedVehiculos
     });
     
   } catch (error) {
     
   }
 }
- 
+const updateVehiculos = async (req, res) => {
+console.log('Actualizacion Vehiculo')
+  try {
+    const updateVehiculos = await Maestros.updateVehiculos(req.params.id, req.body);
+    if (updateVehiculos.error) {
+      return res.status(updateVehiculos.code).send({
+        status: false,
+        message: updateVehiculos.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Vehiculo Actualizado',
+      data: updateVehiculos
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchMarcas = async (req, res) => {
+  console.log('Buscar Marca')
+  try {
+    const marcas = await Maestros.searchMarcas(req.body);
+    if (marcas.error) {
+      return res.status(marcas.code).send({
+        status: false,
+        message: marcas.error
+      });
+      
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Marcas Obtenidas',
+      data: marcas
+    });
+  } catch (error){
+
+  }
+}
+const createMarcas = async (req, res) => {
+  try {
+    const createdMarcas  = await Maestros.createMarcas (req.body);
+    if (createdMarcas .error) {
+      return res.status(createdMarcas.code).send({
+        status: false,
+        message: createdMarcas.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Marca Creada',
+      data: createdMarcas 
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const searchMarca = async (req, res) => {
+  try {
+    const findedMarcas = await Maestros.searchMarcasById(req.params.id);
+    if (findedMarcas.error) {
+      return res.status(findedMarcas.code).send({
+        status: false,
+        message: findedMarcas.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Marcas Obtenidas',
+      data: findedMarcas
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const updateMarcas = async (req, res) => {
+
+  try {
+    const updateMarcas = await Maestros.updateMarcas(req.params.id, req.body);
+    console.log(updateMarcas)
+    if (updateMarcas.error) {
+      return res.status(updateMarcas.code).send({
+        status: false,
+        message: updateMarcas.error
+      });
+    }
+    res.status(201).send({
+      status: true, 
+      message: 'Marca Actualizada',
+      data: updateMarcas
+    });
+    
+  } catch (error) {
+    
+  }
+}
 export default {
-  getMaMonedas,
   getMaEstatus,
-  getMaCompanias,
-  getMaCompania,
-  getMaPaises,
-  getMaMetsPago,
-  getServicios,
   getAseguradoras,
   getMaCiudades,
   getMaEstados,
-  getMoneda,
   getMaRepuestos,
-  getMaBancos,
-  getMaMarcas,
-  getMaProveedores,
   getMaPropietarios,
-  getMaParentescos,
-  getMaEstadocivil,
-  getMaVehiculos,
-  getMaTipodocidentidad,
-  getMaProveedores,
   getMaPropietarios,
+
+  createMonedas,
+  searchMonedas,
+  searchMoneda,
+  updateMonedas,
+  createPaises,
+  searchPaises,
+  searchPais,
+  updatePaises,
+  searchPaisesMaestros,
+  createMetodologiapago,
+  searchMetodologiapago,
+  searchMetodologiapago1,
+  updateMetodologiapago,
+  createProveedores,
+  searchProveedores,
+  searchProveedor,
+  updateProveedores,
+  createBancos,
+  searchBancos,
+  searchBanco,
+  updateBancos,
+  createCompanias,
+  searchCompanias,
+  searchCompania,
+  updateCompanias,
+  searchCompaniasMaestros,
+  createClientes,
+  searchClientes,
+  searchCliente,
+  updateClientes,
+  searchClientesMaestros,
+  createPropietarios,
+  searchPropietarios,
+  searchPropietario,
+  updatePropietarios,
+  createParentescos,
+  searchParentescos,
+  searchParentesco,
+  updateParentescos,
+  createEstadocivil,
+  searchEstadocivil,
+  searchEstadocivil1,
+  updateEstadocivil,
+  createTipodocidentidad,
+  searchTipodocidentidad,
+  searchTipodocidentidad1,
+  updateTipodocidentidad,
+  createTiposervicios,
+  searchTiposervicios,
+  searchTiposervicio,
+  updateTiposervicios,
+  createServicios,
+  searchServicios,
+  searchServicio,
+  updateServicios,
+  searchVehiculos,
+  searchVehiculo,
+  updateVehiculos,
+  createMarcas,
+  searchMarcas,
+  searchMarca,
+  updateMarcas,
 }

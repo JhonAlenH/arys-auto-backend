@@ -86,6 +86,7 @@ router
     .get("/estatus", maestrosController.getMaEstatus)
     .get("/aseguradoras", maestrosController.getAseguradoras)
     .get("/ciudades/:estado", maestrosController.getMaCiudades)
+    .get("/ciudades/:estado", maestrosController.getMaCiudades)
     .get("/estados/:pais", maestrosController.getMaEstados)
     .post("/replacement", maestrosController.getMaRepuestos)
     

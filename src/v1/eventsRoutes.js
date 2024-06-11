@@ -10,6 +10,10 @@ router
     .post("/get/:id", eventsController.getEvent)
     .post("/getSeguimientosById/:id", eventsController.getSeguimientosById)
     .get("/getSeguimientos/:ccompania", eventsController.getSeguimientos)
+    .post("/getSeguimientos/:ccompania", eventsController.getSeguimientos)
     .post("/create", eventsController.createEvents)
+    .post("/getServiceOrderById/:id", eventsController.getServiceOrderById)
+    .get("/getServiceOrder/:corden", eventsController.getServiceOrder)
+    .post("/update", eventsController.updateEvents)
 
 export default router;

@@ -70,7 +70,7 @@ const getOneUserById = async (id) => {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
            .input('id', sql.NVarChar, id)
-           .query('select cusuario, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania, ximagen1, ximagen2 from SEUSUARIO where cusuario = @id')
+           .query('select cusuario, xcedula, xnombre, xapellido, xemail, cpropietario, xtelefono, ctipo_sistema, ccompania, ximagen1, ximagen2, xcontrasena from SEUSUARIO where cusuario = @id')
         if (result.rowsAffected < 1) {
             return false;
         }
@@ -83,14 +83,40 @@ const getOneUserById = async (id) => {
     }
 }
 
-const getOwnerInfo = async (id) => {
+const getOwnerInfo = async (cedula) => {
 
     try {
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
-           .input('id', sql.NVarChar, id)
-           .query('select cpropietario, icedula, xcedula, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where cpropietario = @id')
+           .input('cedula', sql.NVarChar, cedula)
+           .query('select cpropietario, icedula, xcedula, cestado, cciudad, xdireccion, cpais, xzona_postal from TRPROPIETARIO where xcedula = @cedula')
         if (result.rowsAffected < 1) {
+            return false;
+        }
+        await pool.close();
+        return result;
+    }
+    catch (error) {
+        console.log(error.message)
+        return { error: error.message };
+    }
+}
+const editUserInfo = async (cusuario, body) => {
+    try {
+        let pool = await sql.connect(sqlConfig);
+        let result = await pool.request()
+           .query(`UPDATE TRPROPIETARIO SET xtelefonocasa='${body.xtelefono}', xemail='${body.xemail}' WHERE xcedula = '${body.xcedula}'`)
+        if (result.rowsAffected < 1) {
+            return false;
+        }
+        let result2 = await pool.request()
+           .query(`UPDATE CLCLIENTE SET xtelefono='${body.xtelefono}', xemail='${body.xemail}' WHERE xcedula = '${body.xcedula}'`)
+        if (result2.rowsAffected < 1) {
+            return false;
+        }
+        let result3 = await pool.request()
+           .query(`UPDATE SEUSUARIO SET xtelefono='${body.xtelefono}', xemail='${body.xemail}', xcontrasena='${body.xcontrasena}' WHERE xcedula = '${body.xcedula}'`)
+        if (result3.rowsAffected < 1) {
             return false;
         }
         await pool.close();
@@ -141,5 +167,6 @@ export default {
     getOneUser,
     getOneUserById,
     getOwnerInfo,
-    getUserSubscription
+    getUserSubscription,
+    editUserInfo
 }

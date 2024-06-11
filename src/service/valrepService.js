@@ -330,6 +330,46 @@ const getTracingMotive = async (getTracingMotive) => {
     return claim;
 }
 
+const getContractedService = async (ccontratoflota) => {
+    const service = await Valrep.getContractedService(ccontratoflota);
+    if (service.error) {
+        return {
+            error: service.error
+        }
+    }
+    return service;
+}
+
+const getAdditionalServices = async (getAdditionalServices) => {
+    const service = await Valrep.getAdditionalServices(getAdditionalServices);
+    if (service.error) {
+        return {
+            error: service.error
+        }
+    }
+    return service;
+}
+
+const getProviderService = async (getProviderService) => {
+    const provider = await Valrep.getProviderService(getProviderService);
+    if (provider.error) {
+        return {
+            error: provider.error
+        }
+    }
+    return provider;
+}
+
+const getStatus = async (getStatus) => {
+    const status = await Valrep.getStatus(getStatus);
+    if (status.error) {
+        return {
+            error: status.error
+        }
+    }
+    return status;
+}
+
 export default {
     getTrade,
     getCoin,
@@ -363,5 +403,9 @@ export default {
     getNotificationType,
     getClaimCause,
     getTracingType,
-    getTracingMotive
+    getTracingMotive,
+    getContractedService,
+    getAdditionalServices,
+    getProviderService,
+    getStatus
 }

@@ -1,4 +1,7 @@
 import sql from "mssql";
+import sequelize from '../config/database.js';
+
+const Search = sequelize.define('evVordenServicio', {}, {tableName: 'evVordenServicio'});
 
 const sqlConfig = {
   user: process.env.USER_BD,
@@ -26,6 +29,22 @@ const getOrders = async() => {
     return { error: error.message };
   }
 }
+const getOrdersByUser = async(body) => {
+  try {
+    const items = await Search.findAll({
+      where: {
+        ccontratoflota: body
+      },
+      attributes: ['corden','cservicio','xservicio','cnotificacion','fsolicitud','fajuste','cproveedor','xproveedor','xobservacion','itiporeporte','xnombresiniestro','xtelefonosiniestro','ccontratoflota','xdescripcion','xestatusgeneral'],
+    });
+    const result = items.map((item) => item.get({ plain: true }));
+    return result;
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+  
+}
 
 const getDetailedOrder = async () => {
 
@@ -33,6 +52,7 @@ const getDetailedOrder = async () => {
 
 export default {
   getOrders,
-  getDetailedOrder
+  getDetailedOrder,
+  getOrdersByUser
 }
 

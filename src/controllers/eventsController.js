@@ -101,7 +101,7 @@ const getSeguimientosById = async (req, res) => {
         });
 }
 const getSeguimientos = async (req, res) => {
-    const seguimientos = await Events.getSeguimientos(req.params.body);
+    const seguimientos = await Events.getSeguimientos(req.body);
     if (seguimientos.permissionError) {
         return res
             .status(403)
@@ -141,10 +141,89 @@ const createEvents = async (req, res) => {
       });
 }
 
+const getServiceOrderById = async (req, res) => {
+    const ordenes = await Events.getServiceOrderById(req.params.id);
+    if (ordenes.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: ordenes.permissionError
+            });
+    }
+    if (ordenes.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: ordenes.error
+            });
+    }
+    if (ordenes.length <= 0) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: 'No hay Ordenes de Servicios para esta notificacion'
+            });
+    }
+    console.log(ordenes)
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: ordenes
+        });
+}
+
+const getServiceOrder = async (req, res) => {
+    const ordenes = await Events.getServiceOrder(req.params.corden);
+    if (ordenes.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: ordenes.permissionError
+            });
+    }
+    if (ordenes.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: ordenes.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: ordenes
+        });
+}
+
+const updateEvents = async (req, res) => {
+    const update = await eventsService.updateEvents(req.body);
+    if (update.error) {
+        return res.status(update.code).send({
+          status: false,
+          message: update.error
+        });
+      }
+      res.status(201).send({
+        status: true, 
+        message: 'La notificación ha sido modificado exitosamente!',
+        data: update
+      });
+}
+
 export default {
     searchEvents,
     getEvent,
     getSeguimientosById,
     getSeguimientos,
-    createEvents
+    createEvents,
+    getServiceOrderById,
+    getServiceOrder,
+    updateEvents
 }

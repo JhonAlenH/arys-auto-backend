@@ -6,6 +6,7 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import v1MaestrosRouter from './v1/maestrosRoutes.js';
+import sql from "mssql";
 
 import v1AuthRouter from './v1/authRoutes.js';
 // import v1planRouter from './v1/planRoutes.js';
@@ -17,10 +18,24 @@ import v1EventsRouter from './v1/eventsRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
 
 
+
+
 const { diskStorage } = multer;
 
 const app = express(); 
 dotenv;
+
+const sqlConfig = {
+  user: process.env.USER_BD,
+  password: process.env.PASSWORD_BD,
+  server: process.env.SERVER_BD,
+  database: process.env.NAME_BD,
+  requestTimeout: 60000,
+  options: {
+      encrypt: true,
+      trustServerCertificate: true
+  }
+}
 
 app.use(cors({
   origin: '*',  // o especifica el dominio permitido
@@ -54,11 +69,28 @@ const PORT = process.env.PORT || 3000;
 
 const DOCUMENTS_PATH = './public/documents';
 const IMAGES_PATH = './public/images';
+const IMAGES_PATH2 = '/api/getImage/';
 
 app.get('/api/get-document/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(DOCUMENTS_PATH, filename);
   const absolutePath = path.resolve(filePath);
+
+  fs.access(absolutePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      res.status(404).json({ error: 'Archivo no encontrado' });
+    } else {
+      res.sendFile(absolutePath);
+    }
+  });
+});
+app.get('/api/getImage/:path/:filename', (req, res) => {
+  console.log(IMAGES_PATH + '/' + req.params.path);
+  const filename = req.params.filename;
+  const filePath = path.join(IMAGES_PATH + '/' + req.params.path, filename);
+  const absolutePath = path.resolve(filePath);
+
+  console.log(absolutePath);
 
   fs.access(absolutePath, fs.constants.F_OK, (err) => {
     if (err) {
@@ -84,9 +116,13 @@ const document_storage = multer.diskStorage({
 });
 const image_storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, IMAGES_PATH);
+    const urls = req.url.split('/')
+    let finalUrl = IMAGES_PATH + '/' + urls[5] + '_' + urls[4]
+    if (!fs.existsSync(finalUrl)){
+      fs.mkdirSync(finalUrl);
+    }
+    cb(null, finalUrl);
   },
-
   filename: (req, file, cb) => {
     cb(null, file.originalname);
   }
@@ -126,16 +162,22 @@ app.post('/api/upload/documents', document_upload.array('xdocumentos', 5), (req,
   res.json({ data: { status: true, uploadedFile: files } });
 });
 
-app.post('/api/upload/image', image_upload.array('image'),(req, res , err) => {
+app.post('/api/upload/image/:id/:type', image_upload.array('image'),async(req, res , err) => {
   const files = req.body;
-  console.log(files);
   if (!files || files.length === 0) {
     const error = new Error('Please upload at least one file');
     error.httpStatusCode = 400;
 
     return res.status(400).json({  status: false, code: 400, message: error.message  });
   }
-  // console.log(object);
+  const absolutePath = IMAGES_PATH2 + files.url + '/' + files.fileName;
+  console.log(absolutePath);
 
-  res.json({  status: true, uploadedFile: files  });
+  let pool = await sql.connect(sqlConfig);
+  let result = await pool.request()
+  .query(`UPDATE SEUSUARIO SET ${req.body.dbName} = '${absolutePath}'  where cusuario = ${req.params.id}`)
+  await pool.close();
+  // console.log(object);
+  res.json({  status: true, uploadedFile: absolutePath  });
+
 });

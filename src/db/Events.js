@@ -1,7 +1,7 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize, DataTypes, Op } from 'sequelize';
 import sequelize from '../config/database.js';
 import sql from "mssql";
-import insert from "../utilities/insert.js";
+import moment from 'moment';
 import dayjs from "dayjs";
 
 const sqlConfig = {
@@ -19,6 +19,14 @@ const sqlConfig = {
 const Seguimentos = sequelize.define('evVseguimientoNotificacion', {}, {tableName: 'evVseguimientoNotificacion'});
 
 const Search = sequelize.define('evVnotificaciones', {});
+const ServiceOrder = sequelize.define('evVordenServicio', {}, {tableName: 'evVordenServicio'});
+const ServiceOrder2 = sequelize.define('evVordenServicio', {
+  corden: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: true,
+  },
+}, {tableName: 'evVordenServicio'});
 
 
 const searchEvents = async (body, ccompania, cpais) => {
@@ -71,12 +79,51 @@ const getEvent = async (id) => {
     return { error: error.message };
   }
 };
-const getSeguimientos = async (id) => {
-  
+const getSeguimientos = async (body) => {
   try {
-    const items = await Seguimentos.findAll({
-      attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento'],
-    });
+    let items = []
+    let keys = Object.keys(body)
+    if(keys.length <= 0) {
+      items = await Seguimentos.findAll({
+        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
+      });
+    } else {
+      let filters = {}
+      var d = new Date()
+      if(body.fseguimientonotificacion == '=') {
+        filters = {
+          [Op.and] : [
+            {fseguimientonotificacion: {
+              [Op.gte]: moment().format('YYYY-MM-DD', 'date')},
+            }, 
+            {fseguimientonotificacion: {
+              [Op.lte]: moment().add(1, 'days').format('YYYY-MM-DD', 'date')},
+            }, 
+          ]
+        }
+        console.log('filtro', filters);
+      } else if (body.fseguimientonotificacion == '>') {
+        filters = {
+          fseguimientonotificacion: {
+            [Op.gte]: moment().add(1, 'days').format('YYYY-MM-DD', 'date')
+          }
+        }
+        console.log('filtro', filters);
+      } else if (body.fseguimientonotificacion == '<') {
+        filters = {
+          fseguimientonotificacion: {
+            [Op.lt]: moment().format('YYYY-MM-DD', 'date')
+          }
+        }
+        console.log('filtro', filters);
+      } else {
+        filters = body
+      }
+      items = await Seguimentos.findAll({
+        where: filters,
+        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
+      });
+    }
     const result = items.map((item) => item.get({ plain: true }));
     for (const item of result) {
       item.xfseguimientonotificacion = dayjs(item.fseguimientonotificacion).format('DD/MM/YYYY')
@@ -122,44 +169,36 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  // Extraer las claves y valores del objeto data
-  const keys = Object.keys(data);
-  const values = Object.values(data);
-
-  // Filtrar las claves y valores para eliminar 'seguimiento' y 'repuestos'
-  const filteredKeys = keys.filter(key => key !== 'seguimiento' && key !== 'repuestos');
-  const filteredValues = values.filter((_, index) => keys[index] !== 'seguimiento' && keys[index] !== 'repuestos');
-
+  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion');
+  const values = keys.map(key => data[key]);
   let pool;
   try {
     pool = await sql.connect(sqlConfig);
     const request = pool.request();
 
-    // Construir la consulta SQL dinámicamente
-    const placeholders = filteredKeys.map((_, i) => `@param${i + 1}`).join(',');
-    const query = `INSERT INTO EVNOTIFICACION (${filteredKeys.join(',')}) VALUES (${placeholders}) SELECT SCOPE_IDENTITY() AS cnotificacion`;
+    const placeholders = keys.map((_, i) => `@param${i + 1}`).join(',');
+    const query = `INSERT INTO EVNOTIFICACION (${keys.join(',')}) VALUES (${placeholders}) SELECT SCOPE_IDENTITY() AS cnotificacion`;
 
-    // Ejecutar la consulta SQL con los valores adecuados
-    filteredKeys.forEach((key, index) => {
-      request.input(`param${index + 1}`, filteredValues[index]);
+    keys.forEach((key, index) => {
+      request.input(`param${index + 1}`, values[index]);
     });
 
     const event = await request.query(query);
     const cnotificacion = event.recordset[0].cnotificacion;
 
     if (cnotificacion && data.seguimiento) {
-      const keysS = ['cnotificacion', ...Object.keys(data.seguimiento)];
-      const valuesS = [cnotificacion, ...Object.values(data.seguimiento)];
+      const seguimientoKeys = ['cnotificacion', ...Object.keys(data.seguimiento)];
+      const seguimientoValues = [cnotificacion, ...Object.values(data.seguimiento)];
 
-      const placeholdersS = keysS.map((_, i) => `@sparam${i + 1}`).join(',');
-      const queryS = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${keysS.join(',')}) VALUES (${placeholdersS})`;
+      const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@sparam${i + 1}`).join(',');
+      const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
 
       const seguimientoRequest = pool.request();
-      keysS.forEach((key, index) => {
-        seguimientoRequest.input(`sparam${index + 1}`, valuesS[index]);
+      seguimientoKeys.forEach((key, index) => {
+        seguimientoRequest.input(`sparam${index + 1}`, seguimientoValues[index]);
       });
 
-      await seguimientoRequest.query(queryS);
+      await seguimientoRequest.query(querySeguimiento);
     }
 
     if (cnotificacion && data.repuestos) {
@@ -173,24 +212,151 @@ const createEvents = async (data) => {
           .input('cusuariocreacion', sql.Int, data.cusuario)
           .query(`
             INSERT INTO EVREPUESTONOTIFICACION (
-                cnotificacion, crepuesto, ncantidad, xniveldano, fcreacion, cusuariocreacion
+              cnotificacion, crepuesto, ncantidad, xniveldano, fcreacion, cusuariocreacion
             )
             VALUES (
-                @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @fcreacion, @cusuariocreacion
+              @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @fcreacion, @cusuariocreacion
             );
           `);
         return repuestoRequest;
+      }));
+    } 
+
+    if (cnotificacion && Array.isArray(data.serviceOrder)) {
+      await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
+        const serviceOrderKeys = ['cnotificacion', ...Object.keys(serviceOrder)];
+        const serviceOrderValues = [cnotificacion, ...Object.values(serviceOrder)];
+
+        const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+        const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
+
+        const serviceOrderRequest = pool.request();
+        serviceOrderKeys.forEach((key, index) => {
+          serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+        });
+
+        await serviceOrderRequest.query(queryServiceOrder);
       }));
     }
 
     return event;
   } catch (error) {
     console.error(error.message);
-    return { error: error.message }; // Devolver un objeto con el mensaje de error
+    return { error: error.message };
   } finally {
     if (pool) {
       await pool.close();
     }
+  }
+};
+
+const updateEvents = async (data) => {
+  let pool;
+  try {
+    pool = await sql.connect(sqlConfig);
+    if(Array.isArray(data.serviceOrder)){
+      await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
+        if(serviceOrder.type == 'create'){
+          const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'type');
+          const values = keys.map(key => data[key]);
+
+          const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+          const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
+
+          const serviceOrderRequest = pool.request();
+          serviceOrderKeys.forEach((key, index) => {
+            serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+          });
+
+          await serviceOrderRequest.query(queryServiceOrder);
+        }else{
+          const keys = Object.keys(serviceOrder).filter(key => 
+            key !== 'seguimiento' && 
+            key !== 'repuestos' && 
+            key !== 'type' && 
+            key !== 'xproveedor' &&
+            key !== 'xdireccion_proveedor' &&
+            key !== 'xidentidad_proveedor' &&
+            key !== 'xcorreo_proveedor' &&
+            key !== 'xtelefono_proveedor' &&
+            key !== 'itiporeporte' &&
+            key !== 'corden' &&
+            key !== 'cnotificacion' &&
+            key !== 'xestatusgeneral' &&
+            key !== 'fsolicitud');
+
+          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+
+          const queryUpdate = `UPDATE EVORDENSERVICIO SET ${setClause} WHERE cnotificacion = @cnotificacion AND corden = @corden`;
+
+          const updateRequest = pool.request();
+          keys.forEach((key, index) => {
+            const value = serviceOrder[key];
+            if (value === undefined || value === null) {
+              throw new Error(`Invalid value for parameter 'param${index + 1}': ${value}`);
+            }
+            updateRequest.input(`param${index + 1}`, value);
+          });
+          updateRequest.input('cnotificacion', serviceOrder.cnotificacion);
+          updateRequest.input('corden', serviceOrder.corden);
+
+          await updateRequest.query(queryUpdate);
+        }
+      }));
+    }
+    const update = 'Notificación Modificada Exitosamente'
+    return update;
+  } catch (error) {
+    console.error(error.message);
+    return { error: error.message };
+  } finally {
+    if (pool) {
+      await pool.close();
+    }
+  }
+};
+
+const getServiceOrderById = async (id) => {
+  try {
+    const order = await ServiceOrder.findAll({
+      where: {
+        cnotificacion: id
+      },
+      attributes: [
+        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
+        'xdireccion_proveedor', 'xidentidad_proveedor', 
+        'xcorreo_proveedor', 'xtelefono_proveedor', 
+        'xobservacion', 'itiporeporte', 'cestatusgeneral',
+        'xestatusgeneral'
+      ],
+    });
+    const ordenes = order.map((item) => item.get({ plain: true }));
+    return ordenes;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getServiceOrder = async (corden) => {
+  try {
+    const ordenes = await ServiceOrder2.findOne({
+      where: {
+        corden: corden
+      },
+      attributes: [
+        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
+        'xdireccion_proveedor', 'xidentidad_proveedor', 
+        'xcorreo_proveedor', 'xtelefono_proveedor', 
+        'xobservacion', 'itiporeporte', 'xtelefonosiniestro',
+        'xnombresiniestro', 'xmarca', 'xmodelo', 'xplaca',
+        'xdescripcion', 'cestatusgeneral', 'xestatusgeneral'
+      ],
+    });
+    return ordenes ? ordenes.get({ plain: true }) : {};;
+  } catch (error) {
+    return { error: error.message };
   }
 };
 
@@ -199,5 +365,8 @@ export default {
     getEvent,
     getSeguimientosById,
     getSeguimientos,
-    createEvents
+    createEvents,
+    getServiceOrderById,
+    getServiceOrder,
+    updateEvents
 }

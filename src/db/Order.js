@@ -30,7 +30,6 @@ const getOrders = async() => {
   }
 }
 const getOrdersByUser = async(body) => {
-  console.log(body);
   try {
     const items = await Search.findAll({
       where: {

@@ -9,12 +9,26 @@ import v1MaestrosRouter from './v1/maestrosRoutes.js';
 import sql from "mssql";
 
 import v1AuthRouter from './v1/authRoutes.js';
-// import v1planRouter from './v1/planRoutes.js';
+import v1MaestrosRouter from './v1/maestrosRoutes.js';
+import v1planRouter from './v1/planRoutes.js';
 import v1orderRouter from './v1/orderRoutes.js';
 import v1ContractsRouter from './v1/contractsRoutes.js';
 import v1ValrepRouter from './v1/valrepRoutes.js';
 import v1UserRouter from './v1/userRoutes.js';
+import v1ServicesRouter from './v1/serviciosRoutes.js';
 import v1EventsRouter from './v1/eventsRoutes.js';
+import v1MonedasRouter from './v1/monedasRoutes.js';
+import v1PaisesRouter from './v1/paisesRoutes.js';
+import v1BancosRouter from './v1/bancosRoutes.js';
+import v1ProveedoresRouter from './v1/proveedoresRoutes.js';
+import v1PropietariosRouter from './v1/propietariosRoutes.js';
+import v1ParentescosRouter from './v1/parentescosRoutes.js';
+import v1EstadocivilRouter from './v1/estadocivilRoutes.js';
+import v1MarcasRouter from './v1/marcasRoutes.js';
+import v1VehiculosRouter from './v1/vehiculosRoutes.js';
+import v1TipodocidentidadRouter from './v1/tipodocidentidadRoutes.js';
+import v1CompaniasRouter from './v1/companiasRoutes.js';
+import v1MetodopagoRouter from './v1/metodologiapagoRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
 
 
@@ -55,12 +69,25 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use("/api/v1/auth", v1AuthRouter);
 app.use("/api/v1/maestros", v1MaestrosRouter);
-// app.use("/api/v1/plan", v1planRouter);
+app.use("/api/v1/plan", v1planRouter);
 app.use("/api/v1/orders", v1orderRouter);
 app.use("/api/v1/contracts", v1ContractsRouter);
 app.use("/api/v1/valrep", v1ValrepRouter);
 app.use("/api/v1/user", v1UserRouter);
+app.use("/api/v1/services", v1ServicesRouter);
 app.use("/api/v1/events", v1EventsRouter);
+app.use("/api/v1/monedas", v1MonedasRouter);
+app.use("/api/v1/paises", v1PaisesRouter);
+app.use("/api/v1/bancos", v1BancosRouter);
+app.use("/api/v1/proveedores", v1ProveedoresRouter);
+app.use("/api/v1/propietarios", v1PropietariosRouter);
+app.use("/api/v1/parentescos", v1ParentescosRouter);
+app.use("/api/v1/estadocivil", v1EstadocivilRouter);
+app.use("/api/v1/marcas", v1MarcasRouter);
+app.use("/api/v1/vehiculos", v1VehiculosRouter);
+app.use("/api/v1/tipodocidentidad", v1TipodocidentidadRouter);
+app.use("/api/v1/companias", v1CompaniasRouter);
+app.use("/api/v1/metodologiapago", v1MetodopagoRouter);
 app.use("/api/v1/menus", v1MenusRouter);
 
 

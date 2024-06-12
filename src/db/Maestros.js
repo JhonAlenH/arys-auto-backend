@@ -24,10 +24,36 @@ const getMaMonedas = async() => {
     return { error: error.message };
   }
 }
+const getCuentasMaestros = async() => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query('SELECT ctipocuentabancaria, xtipocuentabancaria from MATIPOCUENTABANCARIA')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
 const getMaCompanias = async() => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query('SELECT ccompania, xcompania from MACOMPANIA')
+    await pool.close();
+    return { 
+      result: result
+    };
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+}
+const getMaEstatuses = async() => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query('SELECT cestatusgeneral, xestatusgeneral from MAESTATUSGENERAL')
     await pool.close();
     return { 
       result: result
@@ -76,11 +102,11 @@ const getMaPaises = async() => {
     return { error: error.message };
   }
 }
-const getMaCiudades = async(pais, estado) => {
+const getMaCiudades = async(estado) => {
   try {
     let pool = await sql.connect(sqlConfig);
     // console.log(pais)
-    let result = await pool.request().query(`SELECT cciudad, xdescripcion_l from MACIUDADES where cpais = ${pais.toString()} and cestado = ${estado.toString()}`)
+    let result = await pool.request().query(`SELECT cciudad, xdescripcion_l from MACIUDADES where cestado = ${estado.toString()}`)
     await pool.close();
     return { 
       result: result
@@ -321,5 +347,7 @@ export default {
   getMaMarcas,
   getMoneda,
   getMaRepuestos,
-  getMaEstatus
+  getMaEstatus,
+  getMaEstatuses,
+  getCuentasMaestros
 }

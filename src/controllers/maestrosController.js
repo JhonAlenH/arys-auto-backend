@@ -26,6 +26,32 @@ const getMaMonedas = async (req, res) => {
     
   }
 }
+const getCuentasMaestros = async (req, res) => {
+  try {
+    const gettedCuentas = await Maestros.getCuentasMaestros();
+    // console.log(gettedMonedas.result.recordset)
+    if (gettedCuentas.error) {
+      return res.status(gettedCuentas.code).send({
+        status: false,
+        message: gettedCuentas.error
+      });
+    }
+    const formatData = gettedCuentas.result.recordset.map(item => {
+      return{
+        text: item.xtipocuentabancaria,
+        value: `${item.ctipocuentabancaria}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Tipos de Cuenta Obtenidos',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
 const getMaCompanias = async (req, res) => {
   try {
     const gettedCompanias = await Maestros.getMaCompanias();
@@ -40,6 +66,32 @@ const getMaCompanias = async (req, res) => {
       return{
         text: item.xcompania,
         value: `${item.ccompania}`
+      }
+    })
+    res.status(201).send({
+      status: true, 
+      message: 'Compañias Obtenidas',
+      data: [...formatData]
+    });
+    
+  } catch (error) {
+    
+  }
+}
+const getMaEstatuses = async (req, res) => {
+  try {
+    const gettedEstatus = await Maestros.getMaEstatuses();
+    // console.log(gettedEstatus.result)
+    if (gettedEstatus.error) {
+      return res.status(gettedEstatus.code).send({
+        status: false,
+        message: gettedEstatus.error
+      });
+    }
+    const formatData = gettedEstatus.result.recordset.map(item => {
+      return{
+        text: item.xestatusgeneral,
+        value: `${item.cestatusgeneral}`
       }
     })
     res.status(201).send({
@@ -132,7 +184,7 @@ const getMaPaises = async (req, res) => {
 }
 const getMaCiudades = async (req, res) => {
   try {
-    const gettedCiudades = await Maestros.getMaCiudades(req.params.pais, req.params.estado);
+    const gettedCiudades = await Maestros.getMaCiudades(req.params.estado);
     // console.log(gettedCiudades.result)
     if (gettedCiudades.error) {
       return res.status(gettedCiudades.code).send({
@@ -174,7 +226,7 @@ const getMaEstados = async (req, res) => {
     })
     res.status(201).send({
       status: true, 
-      message: 'Ciudades Obtenidas',
+      message: 'Estados Obtenidos',
       data: [...formatData]
     });
     
@@ -543,4 +595,6 @@ export default {
   getMaTipodocidentidad,
   getMaProveedores,
   getMaPropietarios,
+  getMaEstatuses,
+  getCuentasMaestros
 }

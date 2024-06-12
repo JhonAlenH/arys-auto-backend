@@ -22,7 +22,7 @@ router
     .get("/metPago", maestrosController.getMaMetsPago)
     .get("/servicios", maestrosController.getServicios)
     .get("/aseguradoras", maestrosController.getAseguradoras)
-    .get("/ciudades/:estado", maestrosController.getMaCiudades)
+    .get("/ciudades/:estado/:pais", maestrosController.getMaCiudades)
     .get("/estados/:pais", maestrosController.getMaEstados)
     .post("/replacement", maestrosController.getMaRepuestos)
     

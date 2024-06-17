@@ -161,6 +161,39 @@ const getUserSubscription = async (cpropietario) => {
     }
 }
 
+const getUserDocuments = async (cusuario) => {
+
+    try {
+        let pool = await sql.connect(sqlConfig);
+        let result = await pool.request()
+           .query(`select * FROM SEUSUARIODOCUMENTOS WHERE cusuario = ${cusuario}`)
+        if (result.rowsAffected < 1) {
+            return false;
+        }
+        
+        let j = 0
+        for (const record of result.recordset) {
+            const keys = Object.keys(record)
+            const values = Object.values(record)
+            let resultLowerCase = {}
+            let i = 0
+            for (const key of keys) {
+                const lowerKey = key.toLowerCase()
+                resultLowerCase[lowerKey] = values[i]
+                i++
+            }
+            result.recordset[j] = resultLowerCase
+            j++ 
+        };
+        await pool.close();
+        return result.recordset;
+    }
+    catch (error) {
+        console.log(error.message)
+        return { error: error.message };
+    }
+}
+
 export default {
     verifyIfUsernameExists,
     verifyIfPasswordMatchs,
@@ -168,5 +201,6 @@ export default {
     getOneUserById,
     getOwnerInfo,
     getUserSubscription,
-    editUserInfo
+    editUserInfo,
+    getUserDocuments
 }

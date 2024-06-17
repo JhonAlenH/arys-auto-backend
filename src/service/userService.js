@@ -1,6 +1,6 @@
-//import INMA from '../db/INMA.js';
+import INMA from '../db/INMA.js';
 import Maestros from '../db/Maestros.js';
-//import Plan from '../db/Plan.js';
+import Plan from '../db/Plan.js';
 import User from '../db/User.js';
 import dayjs from "dayjs";
 
@@ -27,13 +27,21 @@ const getUserInfo = async (id) => {
   
   const gettedUserSubscription = await getUserSubscription(ownerInfo.cpropietario)
   
+  
+
+  const gettedDocuments = await User.getUserDocuments(userInfo.cusuario)
+  if (gettedDocuments.error) {
+    return { error: gettedDocuments.error, code: 500 };
+  }
+
   const result = {...ownerInfo, ...userInfo}
   result.subscription = gettedUserSubscription
+  if(gettedDocuments) {
+    result.documents = gettedDocuments
+  } else {
+    result.documents = []
+  }
 
-  // const gettedMetPago = await Maestros.getMaMetPago(gettedUserSubscription.cmetodologiapago)
-  // if (ownerResult.error) {
-  //   return { error: ownerResult.error, code: 500 };
-  // }
   if (ownerResult.rowsAffected < 1) {
     return { error: "Error", code: 401 };
   }
@@ -78,23 +86,23 @@ const getUserSubscription = async (cpropietario) => {
   
   return subscriptionInfo.recordset
 }
-// const getINMAInfo = async (id_vehiculo) => {
-//   const gettedINMAInfo = await INMA.getINMAInfo(id_vehiculo)
-//   if (gettedINMAInfo.error) { 
-//     return { error: gettedINMAInfo.error, code: 500 };
-//   }
+const getINMAInfo = async (id_vehiculo) => {
+  const gettedINMAInfo = await INMA.getINMAInfo(id_vehiculo)
+  if (gettedINMAInfo.error) { 
+    return { error: gettedINMAInfo.error, code: 500 };
+  }
   
-//   const gettedColor = await INMA.getColor(gettedINMAInfo.ccolor.toString())
-//   if (gettedColor.error) { 
-//     return { error: gettedColor.error, code: 500 };
-//   }
-//   gettedINMAInfo.color = gettedColor
-//   return gettedINMAInfo
-// }
+  const gettedColor = await INMA.getColor(gettedINMAInfo.ccolor.toString())
+  if (gettedColor.error) { 
+    return { error: gettedColor.error, code: 500 };
+  }
+  gettedINMAInfo.color = gettedColor
+  return gettedINMAInfo
+}
 
 
 export default {
   getUserInfo,
   getUserSubscription,
-// getINMAInfo,
+  getINMAInfo,
 }

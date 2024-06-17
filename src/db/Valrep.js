@@ -31,6 +31,7 @@ const Service = sequelize.define('suVserviciosContratados', {});
 const AdditionalService = sequelize.define('maservicio', {}, { tableName: 'maservicio' });
 const ProviderService = sequelize.define('prVproveedoresServicios', {});
 const Status = sequelize.define('MAESTATUSGENERAL', {}, { tableName: 'MAESTATUSGENERAL' });
+const ReplacementEvents = sequelize.define('evVrepuestos', {});
 
 
 const Rol = sequelize.define('serol', {
@@ -678,6 +679,21 @@ const getStatus = async (getStatus) => {
   }
 };
 
+const getReplacementEvents = async (getReplacementEvents) => {
+  try {
+    const repuestos = await ReplacementEvents.findAll({
+      where: {
+        cnotificacion: getReplacementEvents.cnotificacion,
+      },
+      attributes: ['crepuesto', 'xrepuesto'],
+    });
+    const replacement = repuestos.map((item) => item.get({ plain: true }));
+    return replacement;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
   getTrade,
   getCoin,
@@ -715,5 +731,6 @@ export default {
   getContractedService,
   getAdditionalServices,
   getProviderService,
-  getStatus
+  getStatus,
+  getReplacementEvents
 };

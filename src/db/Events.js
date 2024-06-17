@@ -224,8 +224,10 @@ const createEvents = async (data) => {
 
     if (cnotificacion && Array.isArray(data.serviceOrder)) {
       await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
-        const serviceOrderKeys = ['cnotificacion', ...Object.keys(serviceOrder)];
-        const serviceOrderValues = [cnotificacion, ...Object.values(serviceOrder)];
+        const filteredServiceOrder = Object.entries(serviceOrder).filter(([key]) => key !== 'type' && key !== 'cnotificacion');
+          
+        const serviceOrderKeys = ['cnotificacion', ...filteredServiceOrder.map(([key]) => key)];
+        const serviceOrderValues = [cnotificacion, ...filteredServiceOrder.map(([, value]) => value)];
 
         const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
         const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
@@ -257,19 +259,20 @@ const updateEvents = async (data) => {
     if(Array.isArray(data.serviceOrder)){
       await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
         if(serviceOrder.type == 'create'){
-          const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'type');
-          const values = keys.map(key => data[key]);
+          const serviceOrderKeys = Object.keys(serviceOrder).filter(key => key !== 'type');
+          const serviceOrderValues = serviceOrderKeys.map(key => serviceOrder[key]);
 
           const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+
           const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
 
           const serviceOrderRequest = pool.request();
           serviceOrderKeys.forEach((key, index) => {
-            serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+              serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
           });
 
           await serviceOrderRequest.query(queryServiceOrder);
-        }else{
+        }else if(serviceOrder.type == 'update'){
           const keys = Object.keys(serviceOrder).filter(key => 
             key !== 'seguimiento' && 
             key !== 'repuestos' && 
@@ -284,7 +287,6 @@ const updateEvents = async (data) => {
             key !== 'cnotificacion' &&
             key !== 'xestatusgeneral' &&
             key !== 'fsolicitud');
-
           const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
 
           const queryUpdate = `UPDATE EVORDENSERVICIO SET ${setClause} WHERE cnotificacion = @cnotificacion AND corden = @corden`;

@@ -1040,6 +1040,34 @@ const getStatus = async (req, res) => {
         });
 }
 
+const getReplacementEvents = async (req, res) => {
+    const replacement = await valrepService.getReplacementEvents(req.body);
+    if (replacement.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: replacement.permissionError
+            });
+    }
+    if (replacement.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: replacement.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: {
+                list: replacement
+            }
+        });
+}
+
 export default {
     getTrade,
     getCoin,
@@ -1077,5 +1105,6 @@ export default {
     getContractedService,
     getAdditionalServices,
     getProviderService,
-    getStatus
+    getStatus,
+    getReplacementEvents
 }

@@ -370,6 +370,16 @@ const getStatus = async (getStatus) => {
     return status;
 }
 
+const getReplacementEvents = async (getReplacementEvents) => {
+    const replacement = await Valrep.getReplacementEvents(getReplacementEvents);
+    if (replacement.error) {
+        return {
+            error: replacement.error
+        }
+    }
+    return replacement;
+}
+
 export default {
     getTrade,
     getCoin,
@@ -407,5 +417,6 @@ export default {
     getContractedService,
     getAdditionalServices,
     getProviderService,
-    getStatus
+    getStatus,
+    getReplacementEvents
 }

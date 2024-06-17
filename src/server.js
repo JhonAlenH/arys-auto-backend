@@ -194,11 +194,11 @@ app.post('/api/upload/document/:id/:type', document_upload.array('file', 5), asy
     return res.status(400).json({ data: { status: false, code: 400, message: error.message } });
   }
   const absolutePath = DOCUMENTS_PATH2 + files.url + '/' + files.fileName;
-  console.log(`SELECT * FROM SEUSUARIODOCUMENTOS where xrutadocumento = '${absolutePath}' AND cusuario = ${req.params.id}`);
 
   let pool = await sql.connect(sqlConfig);
   if (req.params.type == 'user') {
     let result = await pool.request()
+    .query(`SELECT * FROM SEUSUARIODOCUMENTOS where xrutadocumento = '${absolutePath}' AND cusuario = ${req.params.id}`)
     if(result.recordset.length > 0) {
       let result2 = await pool.request()
       // .query(`UPDATE SEUSUARIODOCUMENTOS SET xrutadocumento = '${absolutePath}', xtipodocumento = '${files.dbName}' where cusuario = ${req.params.id}`)
@@ -213,8 +213,10 @@ app.post('/api/upload/document/:id/:type', document_upload.array('file', 5), asy
 
   res.json({ data: { status: true, uploadedFile: files } });
 });
-app.post('/api/upload/documents/:id/:type', document_upload.array('file', 5), async (req, res) => {
-  const files = req.files;
+app.post('/api/upload/documents/:id/:type', document_upload.array('files', 5), async (req, res) => {
+  const files = req.body;
+  const filesArray = JSON.parse(files.filesArray)
+  
 
   if (!files || files.length === 0) {
     const error = new Error('Please upload at least one file');
@@ -222,17 +224,15 @@ app.post('/api/upload/documents/:id/:type', document_upload.array('file', 5), as
     console.log(error.message)
     return res.status(400).json({ data: { status: false, code: 400, message: error.message } });
   }
-  // const absolutePath = DOCUMENTS_PATH2 + files.url + '/' + files.fileName;
-  // console.log(absolutePath);
-
-  let pool = await sql.connect(sqlConfig);
-  if (req.params.type == 'user') {
-  let result = await pool.request()
-    .query(`UPDATE SEUSUARIO SET ${req.body.dbName} = '${absolutePath}'  where cusuario = ${req.params.id}`)
-    await pool.close();
+  for (const file of filesArray) {
+    const absolutePath = DOCUMENTS_PATH2 + files.url + '/' + file;
+    let pool = await sql.connect(sqlConfig);
+    if (req.params.type == 'user') {
+    let result = await pool.request()
+    .query(`INSERT INTO SEUSUARIODOCUMENTOS (xrutadocumento, xtipodocumento, cusuario) VALUES ('${absolutePath}','${files.dbName}', ${req.params.id})`)
+      await pool.close();
+    }
   }
-
-//   const uploadedFiles = files.map(file => ({ filename: file.filename }));
 
   res.json({ data: { status: true, uploadedFile: files } });
 });

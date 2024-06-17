@@ -330,7 +330,7 @@ const getServiceOrderById = async (id) => {
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 
         'xobservacion', 'itiporeporte', 'cestatusgeneral',
-        'xestatusgeneral'
+        'xestatusgeneral', 'crepuesto', 'xrepuesto'
       ],
     });
     const ordenes = order.map((item) => item.get({ plain: true }));
@@ -353,7 +353,8 @@ const getServiceOrder = async (corden) => {
         'xcorreo_proveedor', 'xtelefono_proveedor', 
         'xobservacion', 'itiporeporte', 'xtelefonosiniestro',
         'xnombresiniestro', 'xmarca', 'xmodelo', 'xplaca',
-        'xdescripcion', 'cestatusgeneral', 'xestatusgeneral'
+        'xdescripcion', 'cestatusgeneral', 'xestatusgeneral', 
+        'crepuesto', 'xrepuesto'
       ],
     });
     return ordenes ? ordenes.get({ plain: true }) : {};;

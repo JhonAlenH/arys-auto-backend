@@ -199,13 +199,10 @@ app.post('/api/upload/document/:id/:type', document_upload.array('file', 5), asy
   let pool = await sql.connect(sqlConfig);
   if (req.params.type == 'user') {
     let result = await pool.request()
-    .query(`SELECT * FROM SEUSUARIODOCUMENTOS where xrutadocumento = '${absolutePath}' AND cusuario = ${req.params.id}`)
     if(result.recordset.length > 0) {
-      console.log('actualizar');
       let result2 = await pool.request()
       // .query(`UPDATE SEUSUARIODOCUMENTOS SET xrutadocumento = '${absolutePath}', xtipodocumento = '${files.dbName}' where cusuario = ${req.params.id}`)
     } else {
-      console.log('crear');
       let result2 = await pool.request()
       .query(`INSERT INTO SEUSUARIODOCUMENTOS (xrutadocumento, xtipodocumento, cusuario) VALUES ('${absolutePath}','${files.dbName}', ${req.params.id})`)
     }

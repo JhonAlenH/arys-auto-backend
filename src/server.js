@@ -94,12 +94,13 @@ app.use("/api/v1/menus", v1MenusRouter);
 const PORT = process.env.PORT || 3000; 
 
 const DOCUMENTS_PATH = './public/documents';
+const DOCUMENTS_PATH2 = '/api/getDocument/';
 const IMAGES_PATH = './public/images';
 const IMAGES_PATH2 = '/api/getImage/';
 
-app.get('/api/get-document/:filename', (req, res) => {
+app.get('/api/getDocument/:path/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(DOCUMENTS_PATH, filename);
+  const filePath = path.join(DOCUMENTS_PATH + '/' + req.params.path, filename);
   const absolutePath = path.resolve(filePath);
 
   fs.access(absolutePath, fs.constants.F_OK, (err) => {
@@ -110,13 +111,18 @@ app.get('/api/get-document/:filename', (req, res) => {
     }
   });
 });
+app.post('/api/getDocument/:path/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(DOCUMENTS_PATH + '/' + req.params.path, filename);
+  const absolutePath = path.resolve(filePath);
+  const bName = path.basename(absolutePath)
+  res.send({name: bName})
+});
+
 app.get('/api/getImage/:path/:filename', (req, res) => {
-  console.log(IMAGES_PATH + '/' + req.params.path);
   const filename = req.params.filename;
   const filePath = path.join(IMAGES_PATH + '/' + req.params.path, filename);
   const absolutePath = path.resolve(filePath);
-
-  console.log(absolutePath);
 
   fs.access(absolutePath, fs.constants.F_OK, (err) => {
     if (err) {
@@ -133,7 +139,12 @@ app.listen(PORT, () => {
 
 const document_storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, DOCUMENTS_PATH);
+    const urls = req.url.split('/')
+    let finalUrl = DOCUMENTS_PATH + '/' + urls[5] + '_' + urls[4]
+    if (!fs.existsSync(finalUrl)){
+      fs.mkdirSync(finalUrl);
+    }
+    cb(null, finalUrl);
   },
 
   filename: (req, file, cb) => {
@@ -173,7 +184,39 @@ let document_upload = multer({
     }
 });
 
-app.post('/api/upload/documents', document_upload.array('xdocumentos', 5), (req, res) => {
+app.post('/api/upload/document/:id/:type', document_upload.array('file', 5), async (req, res) => {
+  const files = req.body;
+
+  if (!files || files.length === 0) {
+    const error = new Error('Please upload at least one file');
+    error.httpStatusCode = 400;
+    console.log(error.message)
+    return res.status(400).json({ data: { status: false, code: 400, message: error.message } });
+  }
+  const absolutePath = DOCUMENTS_PATH2 + files.url + '/' + files.fileName;
+  console.log(`SELECT * FROM SEUSUARIODOCUMENTOS where xrutadocumento = '${absolutePath}' AND cusuario = ${req.params.id}`);
+
+  let pool = await sql.connect(sqlConfig);
+  if (req.params.type == 'user') {
+    let result = await pool.request()
+    .query(`SELECT * FROM SEUSUARIODOCUMENTOS where xrutadocumento = '${absolutePath}' AND cusuario = ${req.params.id}`)
+    if(result.recordset.length > 0) {
+      console.log('actualizar');
+      let result2 = await pool.request()
+      // .query(`UPDATE SEUSUARIODOCUMENTOS SET xrutadocumento = '${absolutePath}', xtipodocumento = '${files.dbName}' where cusuario = ${req.params.id}`)
+    } else {
+      console.log('crear');
+      let result2 = await pool.request()
+      .query(`INSERT INTO SEUSUARIODOCUMENTOS (xrutadocumento, xtipodocumento, cusuario) VALUES ('${absolutePath}','${files.dbName}', ${req.params.id})`)
+    }
+    await pool.close();
+  }
+
+//   const uploadedFiles = files.map(file => ({ filename: file.filename }));
+
+  res.json({ data: { status: true, uploadedFile: files } });
+});
+app.post('/api/upload/documents/:id/:type', document_upload.array('file', 5), async (req, res) => {
   const files = req.files;
 
   if (!files || files.length === 0) {
@@ -181,6 +224,15 @@ app.post('/api/upload/documents', document_upload.array('xdocumentos', 5), (req,
     error.httpStatusCode = 400;
     console.log(error.message)
     return res.status(400).json({ data: { status: false, code: 400, message: error.message } });
+  }
+  // const absolutePath = DOCUMENTS_PATH2 + files.url + '/' + files.fileName;
+  // console.log(absolutePath);
+
+  let pool = await sql.connect(sqlConfig);
+  if (req.params.type == 'user') {
+  let result = await pool.request()
+    .query(`UPDATE SEUSUARIO SET ${req.body.dbName} = '${absolutePath}'  where cusuario = ${req.params.id}`)
+    await pool.close();
   }
 
 //   const uploadedFiles = files.map(file => ({ filename: file.filename }));
@@ -197,12 +249,15 @@ app.post('/api/upload/image/:id/:type', image_upload.array('image'),async(req, r
     return res.status(400).json({  status: false, code: 400, message: error.message  });
   }
   const absolutePath = IMAGES_PATH2 + files.url + '/' + files.fileName;
-  console.log(absolutePath);
 
   let pool = await sql.connect(sqlConfig);
-  let result = await pool.request()
-  .query(`UPDATE SEUSUARIO SET ${req.body.dbName} = '${absolutePath}'  where cusuario = ${req.params.id}`)
-  await pool.close();
+  if (req.params.type == 'user') {
+    let result = await pool.request()
+    .query(`UPDATE SEUSUARIO SET ${req.body.dbName} = '${absolutePath}'  where cusuario = ${req.params.id}`)
+    await pool.close();
+  } else {
+    
+  }
   // console.log(object);
   res.json({  status: true, uploadedFile: absolutePath  });
 

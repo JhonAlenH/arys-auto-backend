@@ -27,13 +27,21 @@ const getUserInfo = async (id) => {
   
   const gettedUserSubscription = await getUserSubscription(ownerInfo.cpropietario)
   
+  
+
+  const gettedDocuments = await User.getUserDocuments(userInfo.cusuario)
+  if (gettedDocuments.error) {
+    return { error: gettedDocuments.error, code: 500 };
+  }
+
   const result = {...ownerInfo, ...userInfo}
   result.subscription = gettedUserSubscription
+  if(gettedDocuments) {
+    result.documents = gettedDocuments
+  } else {
+    result.documents = []
+  }
 
-  // const gettedMetPago = await Maestros.getMaMetPago(gettedUserSubscription.cmetodologiapago)
-  // if (ownerResult.error) {
-  //   return { error: ownerResult.error, code: 500 };
-  // }
   if (ownerResult.rowsAffected < 1) {
     return { error: "Error", code: 401 };
   }

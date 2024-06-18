@@ -183,6 +183,7 @@ const getTrade = async (getTrade) => {
 };
 
 const getCoin = async (getCoin) => {
+  console.log('epa')
   try {
     const items = await Coin.findAll({
       attributes: ['cmoneda', 'xdescripcion', 'xmoneda'],
@@ -612,7 +613,7 @@ const getContractedService = async (ccontratoflota) => {
   try {
     const serv = await Service.findAll({
       where: {ccontratoflota: ccontratoflota},
-      attributes: ['cservicio', 'xservicio'],
+      attributes: ['cservicio', 'xservicio', 'itiporeporte'],
     });
     const service = serv.map((item) => item.get({ plain: true }));
     return service;
@@ -633,7 +634,7 @@ const getAdditionalServices = async (getAdditionalServices) => {
         cpais: getAdditionalServices.cpais, 
         ccompania: getAdditionalServices.ccompania, 
       },
-      attributes: ['cservicio', 'xservicio'],
+      attributes: ['cservicio', 'xservicio', 'itiporeporte'],
     });
 
     // Mapear los servicios adicionales a objetos planos

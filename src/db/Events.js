@@ -359,7 +359,8 @@ const getServiceOrder = async (corden) => {
         'xnombresiniestro', 'xmarca', 'xmodelo', 'xplaca',
         'xdescripcion', 'cestatusgeneral', 'xestatusgeneral', 
         'crepuesto', 'xrepuesto', 'xorigen_grua', 'xdestino_grua',
-        'mmonto_grua', 'cmoneda', 'xmoneda'
+        'mmonto_grua', 'cmoneda', 'xmoneda', 'icedulasiniestro',
+        'xcedulasiniestro', 'xdireccionsiniestro', 'xapellidosiniestro'
       ],
     });
     return ordenes ? ordenes.get({ plain: true }) : {};;

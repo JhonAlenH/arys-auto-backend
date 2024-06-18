@@ -258,52 +258,54 @@ const updateEvents = async (data) => {
     pool = await sql.connect(sqlConfig);
     if(Array.isArray(data.serviceOrder)){
       await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
-        if(serviceOrder.type == 'create'){
+        if (serviceOrder.type == 'create') {
           const serviceOrderKeys = Object.keys(serviceOrder).filter(key => key !== 'type');
-          const serviceOrderValues = serviceOrderKeys.map(key => serviceOrder[key]);
-
+          const serviceOrderValues = serviceOrderKeys.map(key => serviceOrder[key] === '' ? null : serviceOrder[key]);
+      
+          console.log(serviceOrderKeys);
+          console.log(serviceOrderValues);
+      
           const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
-
+      
           const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
-
+      
           const serviceOrderRequest = pool.request();
           serviceOrderKeys.forEach((key, index) => {
               serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
           });
-
+      
           await serviceOrderRequest.query(queryServiceOrder);
-        }else if(serviceOrder.type == 'update'){
+      }else if (serviceOrder.type == 'update') {
           const keys = Object.keys(serviceOrder).filter(key => 
-            key !== 'seguimiento' && 
-            key !== 'repuestos' && 
-            key !== 'type' && 
-            key !== 'xproveedor' &&
-            key !== 'xdireccion_proveedor' &&
-            key !== 'xidentidad_proveedor' &&
-            key !== 'xcorreo_proveedor' &&
-            key !== 'xtelefono_proveedor' &&
-            key !== 'itiporeporte' &&
-            key !== 'corden' &&
-            key !== 'cnotificacion' &&
-            key !== 'xestatusgeneral' &&
-            key !== 'fsolicitud');
+              key !== 'seguimiento' && 
+              key !== 'repuestos' && 
+              key !== 'type' && 
+              key !== 'xproveedor' &&
+              key !== 'xdireccion_proveedor' &&
+              key !== 'xidentidad_proveedor' &&
+              key !== 'xcorreo_proveedor' &&
+              key !== 'xtelefono_proveedor' &&
+              key !== 'itiporeporte' &&
+              key !== 'corden' &&
+              key !== 'cnotificacion' &&
+              key !== 'xestatusgeneral' &&
+              key !== 'fsolicitud'
+          );
+      
           const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
-
+      
           const queryUpdate = `UPDATE EVORDENSERVICIO SET ${setClause} WHERE cnotificacion = @cnotificacion AND corden = @corden`;
-
+      
           const updateRequest = pool.request();
           keys.forEach((key, index) => {
-            const value = serviceOrder[key];
-            if (value === undefined || value === null) {
-              throw new Error(`Invalid value for parameter 'param${index + 1}': ${value}`);
-            }
-            updateRequest.input(`param${index + 1}`, value);
+              const value = serviceOrder[key] === '' ? null : serviceOrder[key];
+              updateRequest.input(`param${index + 1}`, value);
           });
           updateRequest.input('cnotificacion', serviceOrder.cnotificacion);
           updateRequest.input('corden', serviceOrder.corden);
-
+      
           await updateRequest.query(queryUpdate);
-        }
+        } 
       }));
     }
     const update = 'Notificación Modificada Exitosamente'

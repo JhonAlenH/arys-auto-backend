@@ -328,14 +328,14 @@ const updateEvents = async (data) => {
       }));
     }
     if(Array.isArray(data.notas)){
-      let notasKeys = Object.keys(data.notas[0])
+      let notasKeys = Object.keys(data.notas[data.notas.length - 1])
       const notasValues = []
 
-      console.log(notasKeys);
       const indexKey = notasKeys.findIndex(nota => nota == 'type')
-      
+      notasKeys.splice(indexKey, 1)
       await Promise.all(data.notas.map(async (nota) => {
         const notaValues = Object.values(nota)
+        notaValues.splice(indexKey, 1)
         notasValues.push(notaValues)
         let valuesString = ''
         let index = 1

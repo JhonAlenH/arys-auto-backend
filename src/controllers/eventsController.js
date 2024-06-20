@@ -192,7 +192,6 @@ const getServiceOrderById = async (req, res) => {
         });
 }
 const getNotasById = async (req, res) => {
-    console.log('params',req.params);
     const notas = await Events.getNotasById(req.params.id);
     if (notas.permissionError) {
         return res
@@ -218,11 +217,16 @@ const getNotasById = async (req, res) => {
                 message: 'No hay Notas para esta notificacion'
             });
     }
+    const notasM = notas.map(nota => {
+        const notaNew = nota
+        notaNew.type = 'update'
+        return notaNew
+    })
     return res
         .status(200)
         .send({
             status: true,
-            data: notas
+            data: notasM
         });
 }
 

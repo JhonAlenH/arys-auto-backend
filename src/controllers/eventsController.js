@@ -159,23 +159,9 @@ const getServiceOrderById = async (req, res) => {
                 message: ordenes.error
             });
     }
-        // Convertir las fechas de las órdenes al formato dd/mm/yyyy
-        // ordenes.forEach(order => {
-        //     if (order.fajuste) {
-        //         // Convertir la fecha de formato ISO a un objeto Date
-        //         const date = new Date(order.fajuste);
-                
-        //         // Formatear la fecha en dd/mm/yyyy
-        //         const formattedDate = date.toLocaleDateString('es-ES', {
-        //             day: '2-digit',
-        //             month: '2-digit',
-        //             year: 'numeric'
-        //         });
-                
-        //         // Asignar la fecha formateada de vuelta al objeto
-        //         order.fajuste = formattedDate;
-        //     }
-        // });
+
+    
+
     if (ordenes.length <= 0) {
         return res
             .status(500)
@@ -184,11 +170,17 @@ const getServiceOrderById = async (req, res) => {
                 message: 'No hay Ordenes de Servicios para esta notificacion'
             });
     }
+
+    const ordenesM = ordenes.map(orden => {
+        const ordenNew = orden
+        ordenNew.type = 'update'
+        return ordenNew
+    })
     return res
         .status(200)
         .send({
             status: true,
-            data: ordenes
+            data: ordenesM
         });
 }
 const getNotasById = async (req, res) => {

@@ -191,6 +191,40 @@ const getServiceOrderById = async (req, res) => {
             data: ordenes
         });
 }
+const getNotasById = async (req, res) => {
+    console.log('params',req.params);
+    const notas = await Events.getNotasById(req.params.id);
+    if (notas.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: notas.permissionError
+            });
+    }
+    if (notas.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: notas.error
+            });
+    }
+    if (notas.length <= 0) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: 'No hay Notas para esta notificacion'
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: notas
+        });
+}
 
 const getServiceOrder = async (req, res) => {
     const ordenes = await Events.getServiceOrder(req.params.corden);
@@ -241,5 +275,6 @@ export default {
     createEvents,
     getServiceOrderById,
     getServiceOrder,
-    updateEvents
+    updateEvents,
+    getNotasById
 }

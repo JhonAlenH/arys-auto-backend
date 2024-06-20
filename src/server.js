@@ -211,7 +211,7 @@ app.post('/api/upload/document/:id/:type', document_upload.array('file', 5), asy
 
 //   const uploadedFiles = files.map(file => ({ filename: file.filename }));
 
-  res.json({ data: { status: true, uploadedFile: files } });
+  res.json({ data: { status: true, uploadedFile: files, url: absolutePath } });
 });
 app.post('/api/upload/documents/:id/:type', document_upload.array('files', 5), async (req, res) => {
   const files = req.body;
@@ -234,7 +234,7 @@ app.post('/api/upload/documents/:id/:type', document_upload.array('files', 5), a
     }
   }
 
-  res.json({ data: { status: true, uploadedFile: files } });
+  res.json({ data: { status: true, uploadedFile: filesArray } });
 });
 
 app.post('/api/upload/image/:id/:type', image_upload.array('image'),async(req, res , err) => {
@@ -256,6 +256,6 @@ app.post('/api/upload/image/:id/:type', image_upload.array('image'),async(req, r
     
   }
   // console.log(object);
-  res.json({  status: true, uploadedFile: absolutePath  });
+  res.json({  status: true, uploadedFile: files, url: absolutePath  });
 
 });

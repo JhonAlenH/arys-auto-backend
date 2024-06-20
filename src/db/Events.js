@@ -3,6 +3,7 @@ import sequelize from '../config/database.js';
 import sql from "mssql";
 import moment from 'moment';
 import dayjs from "dayjs";
+import insert from "../utilities/insert.js";
 
 const sqlConfig = {
     user: process.env.USER_BD,
@@ -17,6 +18,7 @@ const sqlConfig = {
 }
 
 const Seguimentos = sequelize.define('evVseguimientoNotificacion', {}, {tableName: 'evVseguimientoNotificacion'});
+const Notas = sequelize.define('EVNOTANOTIFICACION', {}, {tableName: 'EVNOTANOTIFICACION'});
 
 const Search = sequelize.define('evVnotificaciones', {});
 const ServiceOrder = sequelize.define('evVordenServicio', {}, {tableName: 'evVordenServicio'});
@@ -128,6 +130,24 @@ const getSeguimientos = async (body) => {
     for (const item of result) {
       item.xfseguimientonotificacion = dayjs(item.fseguimientonotificacion).format('DD/MM/YYYY')
     }
+
+    return result;
+  } catch (error) {
+    console.log(error.message)
+    return { error: error.message };
+  }
+};
+const getNotasById = async (id) => {
+  console.log('idasghdjhasdgjhasdghjasdgjh',id);
+  try {
+    let items = []
+    items = await Notas.findAll({
+      where: {
+        cnotificacion: id
+      },
+      attributes: ['cnotificacion','cnotanotificacion', 'xrutaarchivo', 'xnotanotificacion', 'xnombrenota'],
+    });
+    const result = items.map((item) => item.get({ plain: true }));
 
     return result;
   } catch (error) {
@@ -262,10 +282,9 @@ const updateEvents = async (data) => {
           const serviceOrderKeys = Object.keys(serviceOrder).filter(key => key !== 'type');
           const serviceOrderValues = serviceOrderKeys.map(key => serviceOrder[key] === '' ? null : serviceOrder[key]);
       
-          console.log(serviceOrderKeys);
-          console.log(serviceOrderValues);
-      
           const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+
+          
       
           const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
       
@@ -307,6 +326,38 @@ const updateEvents = async (data) => {
           await updateRequest.query(queryUpdate);
         } 
       }));
+    }
+    if(Array.isArray(data.notas)){
+      let notasKeys = Object.keys(data.notas[data.notas.length - 1])
+      const notasValues = []
+
+      const indexKey = notasKeys.findIndex(nota => nota == 'type')
+      notasKeys.splice(indexKey, 1)
+      await Promise.all(data.notas.map(async (nota) => {
+        const notaValues = Object.values(nota)
+        notaValues.splice(indexKey, 1)
+        notasValues.push(notaValues)
+        let valuesString = ''
+        let index = 1
+        
+        for (let value of notaValues) {
+          if(typeof value == 'string'){
+            valuesString = valuesString + "'" + value + "'"
+          } else { 
+            valuesString = valuesString + value
+          }
+          if(index < notaValues.length) {
+            valuesString = valuesString + ','
+          }
+          index++
+        }
+        if (nota.type == 'create') {
+          let query = `INSERT INTO EVNOTANOTIFICACION (${notasKeys.join(',')}) VALUES (${valuesString})`
+          console.log(query);
+          let pool = await sql.connect(sqlConfig);
+          let result = await pool.request().query(query)
+        }
+      }))
     }
     const update = 'Notificación Modificada Exitosamente'
     return update;
@@ -375,6 +426,7 @@ export default {
     getSeguimientosById,
     getSeguimientos,
     createEvents,
+    getNotasById,
     getServiceOrderById,
     getServiceOrder,
     updateEvents

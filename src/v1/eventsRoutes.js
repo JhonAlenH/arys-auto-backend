@@ -13,6 +13,7 @@ router
     .post("/getSeguimientos/:ccompania", eventsController.getSeguimientos)
     .post("/create", eventsController.createEvents)
     .post("/getServiceOrderById/:id", eventsController.getServiceOrderById)
+    .post("/getNotasById/:id", eventsController.getNotasById)
     .get("/getServiceOrder/:corden", eventsController.getServiceOrder)
     .post("/update", eventsController.updateEvents)
 

@@ -280,6 +280,8 @@ const updateEvents = async (data) => {
       await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
         if (serviceOrder.type == 'create') {
           const serviceOrderKeys = Object.keys(serviceOrder).filter(key => key !== 'type');
+          const xestatusIndex = serviceOrderKeys.findIndex(key=>key == 'xestatusgeneral')
+          serviceOrderKeys.splice(xestatusIndex, 1)
           const serviceOrderValues = serviceOrderKeys.map(key => serviceOrder[key] === '' ? null : serviceOrder[key]);
       
           const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
@@ -287,7 +289,7 @@ const updateEvents = async (data) => {
           
       
           const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
-      
+          
           const serviceOrderRequest = pool.request();
           serviceOrderKeys.forEach((key, index) => {
               serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);

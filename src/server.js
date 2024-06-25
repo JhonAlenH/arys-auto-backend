@@ -6,6 +6,7 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import sql from "mssql";
+import expressWs from 'express-ws'
 
 import v1AuthRouter from './v1/authRoutes.js';
 import v1MaestrosRouter from './v1/maestrosRoutes.js';
@@ -29,13 +30,16 @@ import v1TipodocidentidadRouter from './v1/tipodocidentidadRoutes.js';
 import v1CompaniasRouter from './v1/companiasRoutes.js';
 import v1MetodopagoRouter from './v1/metodologiapagoRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
-
+import WebSocket, { WebSocketServer } from 'ws';
 
 
 
 const { diskStorage } = multer;
 
 const app = express(); 
+
+expressWs(app)
+
 dotenv;
 
 const sqlConfig = {
@@ -133,9 +137,18 @@ app.get('/api/getImage/:path/:filename', (req, res) => {
   });
 });
 
+app.ws('/', function(ws, req) {
+  ws.on('message', function(msg) {
+    console.log(msg);
+  });
+  console.log('socket', req.testing);
+});
+
+
 app.listen(PORT, () => { 
   console.log(`\n API is listening on port ${PORT}`);
 });
+
 
 const document_storage = multer.diskStorage({
   destination: (req, file, cb) => {

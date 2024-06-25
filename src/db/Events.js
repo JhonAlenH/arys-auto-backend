@@ -138,7 +138,6 @@ const getSeguimientos = async (body) => {
   }
 };
 const getNotasById = async (id) => {
-  console.log('idasghdjhasdgjhasdghjasdgjh',id);
   try {
     let items = []
     items = await Notas.findAll({

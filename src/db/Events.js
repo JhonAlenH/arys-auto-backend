@@ -4,6 +4,7 @@ import sql from "mssql";
 import moment from 'moment';
 import dayjs from "dayjs";
 import insert from "../utilities/insert.js";
+import webSocket from '../utilities/webSocket.js';
 
 const sqlConfig = {
     user: process.env.USER_BD,
@@ -357,10 +358,12 @@ const updateEvents = async (data) => {
           console.log(query);
           let pool = await sql.connect(sqlConfig);
           let result = await pool.request().query(query)
+          webSocket.addNotification(`Nuevas notas añadidas a la notificación #${data.cnotificacion}`, `admin/events/notifications/${data.cnotificacion}`)
         }
       }))
     }
     const update = 'Notificación Modificada Exitosamente'
+    
     return update;
   } catch (error) {
     console.error(error.message);

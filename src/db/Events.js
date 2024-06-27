@@ -358,10 +358,10 @@ const updateEvents = async (data) => {
         }
         if (nota.type == 'create') {
           let query = `INSERT INTO EVNOTANOTIFICACION (${notasKeys.join(',')}) VALUES (${valuesString})`
-          console.log(query);
           let pool = await sql.connect(sqlConfig);
           let result = await pool.request().query(query)
-          webSocket.addNotification(`Nuevas notas añadidas a la notificación #${data.cnotificacion}`, `admin/events/notifications/${data.cnotificacion}`)
+          await pool.close();
+          webSocket.addNotification(`Nuevas notas añadidas a la notificación #${data.cnotificacion}`, `admin/events/notifications/${data.cnotificacion}`, 1, 2)
         }
       }))
     }

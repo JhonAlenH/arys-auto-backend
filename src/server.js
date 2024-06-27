@@ -6,6 +6,8 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import sql from "mssql";
+import { Server } from 'socket.io';
+import { createServer } from 'node:http';
 
 import v1AuthRouter from './v1/authRoutes.js';
 import v1MaestrosRouter from './v1/maestrosRoutes.js';
@@ -29,13 +31,18 @@ import v1TipodocidentidadRouter from './v1/tipodocidentidadRoutes.js';
 import v1CompaniasRouter from './v1/companiasRoutes.js';
 import v1MetodopagoRouter from './v1/metodologiapagoRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
-
+import v1NotificationsRouter from './v1/notificationsRoutes.js';
+import webSocketJs from './utilities/webSocket.js';
 
 
 
 const { diskStorage } = multer;
 
-const app = express(); 
+const app = express();
+const {io,server} = webSocketJs.generateWs(app)
+webSocketJs.initState()
+webSocketJs.defineConnection()
+
 dotenv;
 
 const sqlConfig = {
@@ -88,6 +95,7 @@ app.use("/api/v1/tipodocidentidad", v1TipodocidentidadRouter);
 app.use("/api/v1/companias", v1CompaniasRouter);
 app.use("/api/v1/metodologiapago", v1MetodopagoRouter);
 app.use("/api/v1/menus", v1MenusRouter);
+app.use("/api/v1/notificaciones", v1NotificationsRouter);
 
 
 
@@ -133,9 +141,12 @@ app.get('/api/getImage/:path/:filename', (req, res) => {
   });
 });
 
-app.listen(PORT, () => { 
+
+
+server.listen(PORT, () => { 
   console.log(`\n API is listening on port ${PORT}`);
 });
+
 
 const document_storage = multer.diskStorage({
   destination: (req, file, cb) => {

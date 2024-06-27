@@ -30,6 +30,8 @@ const ServiceOrder2 = sequelize.define('evVordenServicio', {
   },
 }, {tableName: 'evVordenServicio'});
 
+const Replacement = sequelize.define('evVrepuestos', {});
+
 
 const searchEvents = async (body, ccompania, cpais) => {
     try {
@@ -276,7 +278,7 @@ const updateEvents = async (data) => {
   let pool;
   try {
     pool = await sql.connect(sqlConfig);
-    if(Array.isArray(data.serviceOrder)){
+    if(Array.isArray(data.serviceOrder) && data.serviceOrder.length > 0){
       await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
         if (serviceOrder.type == 'create') {
           const serviceOrderKeys = Object.keys(serviceOrder).filter(key => key !== 'type');
@@ -312,7 +314,7 @@ const updateEvents = async (data) => {
               key !== 'xestatusgeneral' &&
               key !== 'fsolicitud'
           );
-      
+          console.log(keys)
           const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
       
           const queryUpdate = `UPDATE EVORDENSERVICIO SET ${setClause} WHERE cnotificacion = @cnotificacion AND corden = @corden`;
@@ -329,7 +331,8 @@ const updateEvents = async (data) => {
         } 
       }));
     }
-    if(Array.isArray(data.notas)){
+    if(Array.isArray(data.notas) && data.notas.length > 0){
+      
       let notasKeys = Object.keys(data.notas[data.notas.length - 1])
       const notasValues = []
 
@@ -360,6 +363,62 @@ const updateEvents = async (data) => {
           let result = await pool.request().query(query)
         }
       }))
+    }
+    if(Array.isArray(data.repuestos) && data.repuestos.length > 0){
+      await Promise.all(data.repuestos.map(async (repuestos) => {
+        if (repuestos.type == 'create') {
+          const repuestosKeys = Object.keys(repuestos).filter(key => key !== 'type');
+          const repuestosValues = repuestosKeys.map(key => repuestos[key] === '' ? null : repuestos[key]);
+      
+          const placeholdersRepuestos = repuestosKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+
+          const queryRepuestos = `INSERT INTO EVREPUESTONOTIFICACION (${repuestosKeys.join(',')}) VALUES (${placeholdersRepuestos})`;
+          
+          const RepuestosRequest = pool.request();
+          repuestosKeys.forEach((key, index) => {
+              RepuestosRequest.input(`soparam${index + 1}`, repuestosValues[index]);
+          });
+      
+          await RepuestosRequest.query(queryRepuestos);
+      }else if (repuestos.type == 'update') {
+          const keys = Object.keys(repuestos).filter(key => 
+              key !== 'type' &&
+              key !== 'xrepuesto' &&
+              key !== 'bactivo'
+          );
+          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+      
+          const queryUpdate = `UPDATE EVREPUESTONOTIFICACION SET ${setClause} WHERE cnotificacion = @cnotificacion AND crepuesto = @crepuesto`;
+      
+          const updateRequest = pool.request();
+          keys.forEach((key, index) => {
+              const value = repuestos[key] === '' ? null : repuestos[key];
+              updateRequest.input(`param${index + 1}`, value);
+          });
+          updateRequest.input('cnotificacion', repuestos.cnotificacion);
+          updateRequest.input('crepuesto', repuestos.crepuesto);
+      
+          await updateRequest.query(queryUpdate);
+        }else if(repuestos.type == 'delete'){
+          const keys = Object.keys(repuestos).filter(key => 
+            key !== 'type' &&
+            key !== 'xrepuesto'
+          );
+          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+      
+          const queryUpdate = `UPDATE EVREPUESTONOTIFICACION SET ${setClause} WHERE cnotificacion = @cnotificacion AND crepuesto = @crepuesto`;
+      
+          const updateRequest = pool.request();
+          keys.forEach((key, index) => {
+              const value = repuestos[key] === '' ? null : repuestos[key];
+              updateRequest.input(`param${index + 1}`, value);
+          });
+          updateRequest.input('cnotificacion', repuestos.cnotificacion);
+          updateRequest.input('crepuesto', repuestos.crepuesto);
+      
+          await updateRequest.query(queryUpdate);
+        }
+      }));
     }
     const update = 'Notificación Modificada Exitosamente'
     return update;
@@ -422,6 +481,24 @@ const getServiceOrder = async (corden) => {
   }
 };
 
+const getReplacementById = async (id) => {
+  try {
+    const repuestos = await Replacement.findAll({
+      where: {
+        cnotificacion: id,
+        bactivo: 1
+      },
+      attributes: [
+        'crepuesto', 'xrepuesto', 'ncantidad', 'xniveldano'    
+      ],
+    });
+    const replacement = repuestos.map((item) => item.get({ plain: true }));
+    return replacement;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
     searchEvents,
     getEvent,
@@ -431,5 +508,6 @@ export default {
     getNotasById,
     getServiceOrderById,
     getServiceOrder,
-    updateEvents
+    updateEvents,
+    getReplacementById
 }

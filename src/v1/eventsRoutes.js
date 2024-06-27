@@ -16,5 +16,6 @@ router
     .post("/getNotasById/:id", eventsController.getNotasById)
     .get("/getServiceOrder/:corden", eventsController.getServiceOrder)
     .post("/update", eventsController.updateEvents)
+    .post("/getReplacementById/:id", eventsController.getReplacementById)
 
 export default router;

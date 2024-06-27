@@ -263,6 +263,48 @@ const updateEvents = async (req, res) => {
       });
 }
 
+const getReplacementById = async (req, res) => {
+    const replacement = await Events.getReplacementById(req.params.id);
+    if (replacement.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: replacement.permissionError
+            });
+    }
+    if (replacement.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: replacement.error
+            });
+    }
+
+    if (replacement.length <= 0) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: 'No hay Repuestos para esta notificacion'
+            });
+    }
+
+    const replacementM = replacement.map(repuestos => {
+        const replacement = repuestos
+        replacement.type = 'update'
+        return replacement
+    })
+
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: replacementM
+        });
+}
+
 export default {
     searchEvents,
     getEvent,
@@ -272,5 +314,6 @@ export default {
     getServiceOrderById,
     getServiceOrder,
     updateEvents,
-    getNotasById
+    getNotasById,
+    getReplacementById
 }

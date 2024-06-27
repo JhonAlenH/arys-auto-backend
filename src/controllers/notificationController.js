@@ -3,7 +3,7 @@ const { json } = pkg;
 import Notification from '../db/Notification.js'
 
 const getNotifications = async (req, res) => {
-    const notifications = await Notification.getNotifications();
+    const notifications = await Notification.getAdminNotifications();
     if (notifications.error) { 
       res.status(notifications.code).send({ 
         status: false,

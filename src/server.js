@@ -39,8 +39,8 @@ import webSocketJs from './utilities/webSocket.js';
 const { diskStorage } = multer;
 
 const app = express();
+webSocketJs.getNotifications()
 const {io,server} = webSocketJs.generateWs(app)
-webSocketJs.initState()
 webSocketJs.defineConnection()
 
 dotenv;

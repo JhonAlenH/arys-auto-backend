@@ -1,4 +1,6 @@
 import sql from "mssql";
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
 const sqlConfig = {
   user: process.env.USER_BD,

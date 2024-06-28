@@ -1,4 +1,48 @@
 import Tracking from '../db/Tracking.js';
+import cron from 'node-cron'
+import webSocketJs from './../utilities/webSocket.js';
+
+const getAllTrackersInit = async () => {
+  try{
+    let now = new Date
+    const gettedTracks = await Tracking.searchTrackers(1)
+    if (gettedTracks.error) {
+      return res.status(gettedTracks.code).send({
+        status: false,
+        message: gettedTracks.error
+      });
+    }
+    const {admin_notificaciones, club_notificaciones} = await webSocketJs.getNotifications()
+    for (const track of gettedTracks) {
+      if(track.fseguimientonotificacion.toLocaleDateString() <= now.toLocaleDateString()){
+        const findedAlert = admin_notificaciones.find(alert => {
+          if (alert.xmensaje == `AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.` && alert.bactivo != 0) {
+            return alert
+          } 
+        })
+        if(!findedAlert) {
+          sendTrackerAlerts(track)
+        }
+      }
+    }
+  } catch(error) {
+
+  }
+}
+
+
+const sendTrackerAlerts = async (seguimiento) => {
+  webSocketJs.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`,'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
+}
+
+const getTrackersInfo = async (minutes, seguimiento) => {
+  cron.schedule(`/${minutes} * * * * `, () => {
+    sendTrackerAlerts(seguimiento)
+    console.log(`running a task every ${minutes} minute/s`);
+  });
+}
+
+
 
 const getAllTrackers = async (req, res) => {
   try {
@@ -56,5 +100,7 @@ const searchTrackerInfo = async (req, res) => {
 
 export default {
   getAllTrackers,
-  searchTrackerInfo
+  searchTrackerInfo,
+  getTrackersInfo,
+  getAllTrackersInit
 }

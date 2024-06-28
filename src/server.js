@@ -32,14 +32,16 @@ import v1CompaniasRouter from './v1/companiasRoutes.js';
 import v1MetodopagoRouter from './v1/metodologiapagoRoutes.js';
 import v1MenusRouter from './v1/menusRoutes.js';
 import v1NotificationsRouter from './v1/notificationsRoutes.js';
-import webSocketJs from './utilities/webSocket.js';
 
+
+import webSocketJs from './utilities/webSocket.js';
+import trackingController from './controllers/trackingController.js';
 
 
 const { diskStorage } = multer;
 
 const app = express();
-webSocketJs.getNotifications()
+const {admin_notificaciones, club_notificaciones} = webSocketJs.getNotifications()
 const {io,server} = webSocketJs.generateWs(app)
 webSocketJs.defineConnection()
 
@@ -97,7 +99,7 @@ app.use("/api/v1/metodologiapago", v1MetodopagoRouter);
 app.use("/api/v1/menus", v1MenusRouter);
 app.use("/api/v1/notificaciones", v1NotificationsRouter);
 
-
+trackingController.getAllTrackersInit()
 
 const PORT = process.env.PORT || 3000; 
 

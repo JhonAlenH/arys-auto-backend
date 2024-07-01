@@ -18,6 +18,7 @@ const getNotifications = async() => {
   if(response2) {
     club_notificaciones = response2
   }
+  return {admin_notificaciones, club_notificaciones}
 }
 
 const defineConnection = () => {
@@ -62,13 +63,19 @@ const addNotification = async (xmensaje, xurl, cusuario, ctipo_sistema)=>{
   date = date.toISOString()
   let data = {xmensaje: xmensaje, xurl: xurl, cusuario: cusuario, ctipo_sistema: ctipo_sistema, date: date}
 
+  // console.log(data);
+
   const response = await Notification.addNotification(data)
-  if(await response) {
+  if(response.error) {
+    return
+  }
+  if(response) {
     data.calerta = response.recordset[0].calerta
     admin_notificaciones.push(data)
   }
   io.emit('notifications', admin_notificaciones);
   io.emit()
+  return
 }
 
 

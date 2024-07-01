@@ -5,6 +5,7 @@ import moment from 'moment';
 import dayjs from "dayjs";
 import insert from "../utilities/insert.js";
 import webSocket from '../utilities/webSocket.js';
+import trackingController from '../controllers/trackingController.js';
 
 const sqlConfig = {
     user: process.env.USER_BD,
@@ -319,7 +320,6 @@ const updateEvents = async (data) => {
               key !== 'xestatusgeneral' &&
               key !== 'fsolicitud'
           );
-          console.log(keys)
           const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
       
           const queryUpdate = `UPDATE EVORDENSERVICIO SET ${setClause} WHERE cnotificacion = @cnotificacion AND corden = @corden`;
@@ -423,6 +423,53 @@ const updateEvents = async (data) => {
           updateRequest.input('crepuesto', repuestos.crepuesto);
       
           await updateRequest.query(queryUpdate);
+        }
+      }));
+    }
+    if(Array.isArray(data.seguimientos) && data.repuestos.length > 0){
+      await Promise.all(data.seguimientos.map(async (seguimiento) => {
+        if (seguimiento.type == 'create') {
+          const seguimientoKeys = Object.keys(serviceOrder).filter(key => 
+            key !== 'xtiposeguimiento' && 
+            key !== 'xmotivoseguimiento' && 
+            key !== 'xfseguimientonotificacion' && 
+            key !== 'type'
+          );
+          const seguimientoValues = seguimientoKeys.map(key => seguimiento[key] === '' ? null : seguimiento[key]);
+      
+          const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+
+          const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
+          
+          const seguimientoRequest = pool.request();
+          seguimientoKeys.forEach((key, index) => {
+            seguimientoRequest.input(`soparam${index + 1}`, seguimientoValues[index]);
+          });
+      
+          await seguimientoRequest.query(querySeguimiento);
+      }else if (seguimiento.type == 'update') {
+          const keys = Object.keys(serviceOrder).filter(key => 
+            key !== 'xtiposeguimiento' && 
+            key !== 'xmotivoseguimiento' && 
+            key !== 'xfseguimientonotificacion' && 
+            key !== 'type'
+          );
+          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+      
+          const queryUpdate = `UPDATE EVSEGUIMIENTONOTIFICACION SET ${setClause} WHERE cnotificacion = @cnotificacion AND cseguimientonotificacion = @cseguimientonotificacion`;
+      
+          const updateRequest = pool.request();
+          keys.forEach((key, index) => {
+              const value = seguimiento[key] === '' ? null : seguimiento[key];
+              updateRequest.input(`param${index + 1}`, value);
+          });
+          updateRequest.input('cnotificacion', seguimiento.cnotificacion);
+          updateRequest.input('cseguimientonotificacion', seguimiento.cseguimientonotificacion);
+      
+          await updateRequest.query(queryUpdate);
+          if (seguimiento.bcerrado == true) {
+            trackingController.stopRecordTrack(seguimiento.cseguimientonotificacion)
+          }
         }
       }));
     }

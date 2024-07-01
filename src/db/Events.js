@@ -191,7 +191,7 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion');
+  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas');
   const values = keys.map(key => data[key]);
   let pool;
   try {
@@ -204,7 +204,10 @@ const createEvents = async (data) => {
     keys.forEach((key, index) => {
       request.input(`param${index + 1}`, values[index]);
     });
-
+    console.log(keys)
+    console.log(values)
+    console.log(placeholders)
+    console.log(data.repuestos)
     const event = await request.query(query);
     const cnotificacion = event.recordset[0].cnotificacion;
 
@@ -224,20 +227,22 @@ const createEvents = async (data) => {
     }
 
     if (cnotificacion && data.repuestos) {
+      console.log(data.repuestos)
       await Promise.all(data.repuestos.map(item => {
         const repuestoRequest = pool.request()
           .input('cnotificacion', sql.Int, cnotificacion)
           .input('crepuesto', sql.Int, parseInt(item.crepuesto))
           .input('ncantidad', sql.Int, item.ncantidad)
           .input('xniveldano', sql.NVarChar, item.xniveldano)
+          .input('bactivo', sql.Bit, item.bactivo)
           .input('fcreacion', sql.DateTime, new Date())
           .input('cusuariocreacion', sql.Int, data.cusuario)
           .query(`
             INSERT INTO EVREPUESTONOTIFICACION (
-              cnotificacion, crepuesto, ncantidad, xniveldano, fcreacion, cusuariocreacion
+              cnotificacion, crepuesto, ncantidad, xniveldano, bactivo, fcreacion, cusuariocreacion
             )
             VALUES (
-              @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @fcreacion, @cusuariocreacion
+              @cnotificacion, @crepuesto, @ncantidad, @xniveldano, @bactivo, @fcreacion, @cusuariocreacion
             );
           `);
         return repuestoRequest;

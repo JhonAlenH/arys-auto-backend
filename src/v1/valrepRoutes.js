@@ -44,5 +44,6 @@ router
     .post("/provider-service",  valrepController.getProviderService)
     .post("/status",  valrepController.getStatus)
     .post("/replacement-events",  valrepController.getReplacementEvents)
+    .post("/provider",  valrepController.getProvider)
     
 export default router;

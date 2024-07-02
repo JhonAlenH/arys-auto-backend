@@ -32,6 +32,7 @@ const AdditionalService = sequelize.define('maservicio', {}, { tableName: 'maser
 const ProviderService = sequelize.define('prVproveedoresServicios', {});
 const Status = sequelize.define('MAESTATUSGENERAL', {}, { tableName: 'MAESTATUSGENERAL' });
 const ReplacementEvents = sequelize.define('evVrepuestos', {});
+const Provider = sequelize.define('MAPROVEEDORES', {});
 
 
 const Rol = sequelize.define('serol', {
@@ -695,6 +696,22 @@ const getReplacementEvents = async (getReplacementEvents) => {
   }
 };
 
+const getProvider = async (getProvider) => {
+  try {
+    const proveedores = await Provider.findAll({
+      where: {
+        cpais: getProvider.cpais,
+        ccompania: getProvider.ccompania,
+      },
+      attributes: ['cproveedor', 'xnombre'],
+    });
+    const provider = proveedores.map((item) => item.get({ plain: true }));
+    return provider;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
   getTrade,
   getCoin,
@@ -733,5 +750,6 @@ export default {
   getAdditionalServices,
   getProviderService,
   getStatus,
-  getReplacementEvents
+  getReplacementEvents,
+  getProvider
 };

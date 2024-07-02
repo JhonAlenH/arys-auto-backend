@@ -21,7 +21,7 @@ const Search = sequelize.define('evseguimientonotificacion', {}, { tableName: 'e
 const searchTrackers = async(ccompania) => {
   try {
     const items = await Search.findAll({
-      attributes: ['cseguimientonotificacion', 'cnotificacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'fseguimientonotificacion', 'bcerrado', 'xobservacion', 'corden'],
+      attributes: ['cseguimientonotificacion', 'cnotificacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'fseguimientonotificacion', 'bcerrado', 'xobservacion', 'corden', 'ntiempoalerta'],
     });
     const result = items.map((item) => item.get({ plain: true }));
     return result;

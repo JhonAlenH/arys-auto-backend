@@ -91,7 +91,7 @@ const getSeguimientos = async (body) => {
     let keys = Object.keys(body)
     if(keys.length <= 0) {
       items = await Seguimentos.findAll({
-        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
+        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
       });
     } else {
       let filters = {}
@@ -127,7 +127,7 @@ const getSeguimientos = async (body) => {
       }
       items = await Seguimentos.findAll({
         where: filters,
-        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xnombre', 'xapellido', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
+        attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
       });
     }
     const result = items.map((item) => item.get({ plain: true }));
@@ -205,10 +205,6 @@ const createEvents = async (data) => {
     keys.forEach((key, index) => {
       request.input(`param${index + 1}`, values[index]);
     });
-    console.log(keys)
-    console.log(values)
-    console.log(placeholders)
-    console.log(data.repuestos)
     const event = await request.query(query);
     const cnotificacion = event.recordset[0].cnotificacion;
 
@@ -284,6 +280,58 @@ const updateEvents = async (data) => {
   let pool;
   try {
     pool = await sql.connect(sqlConfig);
+    if(Array.isArray(data.seguimientos) && data.seguimientos.length > 0){
+      await Promise.all(data.seguimientos.map(async (seguimiento) => {
+        if (seguimiento.type == 'create') {
+          const seguimientoKeys = Object.keys(seguimiento).filter(key => 
+            key !== 'xtiposeguimiento' && 
+            key !== 'xmotivoseguimiento' && 
+            key !== 'xfseguimientonotificacion' && 
+            key !== 'ccontratoflota' && 
+            key !== 'type'
+          );
+          const seguimientoValues = seguimientoKeys.map(key => seguimiento[key] === '' ? null : seguimiento[key]);
+      
+          const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+
+          const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
+          
+          const seguimientoRequest = pool.request();
+          seguimientoKeys.forEach((key, index) => {
+            seguimientoRequest.input(`soparam${index + 1}`, seguimientoValues[index]);
+          });
+      
+          await seguimientoRequest.query(querySeguimiento);
+      }else if (seguimiento.type == 'update') {
+          const keys = Object.keys(seguimiento).filter(key => 
+            key !== 'xtiposeguimiento' && 
+            key !== 'xmotivoseguimiento' && 
+            key !== 'xfseguimientonotificacion' && 
+            key !== 'ccontratoflota' && 
+            key !== 'cseguimientonotificacion' && 
+            key !== 'type'
+          );
+          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+      
+          const queryUpdate = `UPDATE EVSEGUIMIENTONOTIFICACION SET ${setClause} WHERE cnotificacion = @cnotificacion AND cseguimientonotificacion = @cseguimientonotificacion`;
+      
+          const updateRequest = pool.request();
+          keys.forEach((key, index) => {
+              const value = seguimiento[key] === '' ? null : seguimiento[key];
+              updateRequest.input(`param${index + 1}`, value);
+          });
+          updateRequest.input('cnotificacion', seguimiento.cnotificacion);
+          updateRequest.input('cseguimientonotificacion', seguimiento.cseguimientonotificacion);
+          console.log(queryUpdate);
+      
+          await updateRequest.query(queryUpdate);
+          await pool.close();
+          if (seguimiento.bcerrado == true) {
+            trackingController.stopRecordTrack(seguimiento.cseguimientonotificacion)
+          }
+        }
+      }));
+    }
     if(Array.isArray(data.serviceOrder) && data.serviceOrder.length > 0){
       await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
         if (serviceOrder.type == 'create') {
@@ -333,6 +381,7 @@ const updateEvents = async (data) => {
           updateRequest.input('corden', serviceOrder.corden);
       
           await updateRequest.query(queryUpdate);
+          await pool.close();
         } 
       }));
     }
@@ -423,57 +472,13 @@ const updateEvents = async (data) => {
           updateRequest.input('crepuesto', repuestos.crepuesto);
       
           await updateRequest.query(queryUpdate);
+          await pool.close();
         }
       }));
     }
-    if(Array.isArray(data.seguimientos) && data.repuestos.length > 0){
-      await Promise.all(data.seguimientos.map(async (seguimiento) => {
-        if (seguimiento.type == 'create') {
-          const seguimientoKeys = Object.keys(serviceOrder).filter(key => 
-            key !== 'xtiposeguimiento' && 
-            key !== 'xmotivoseguimiento' && 
-            key !== 'xfseguimientonotificacion' && 
-            key !== 'type'
-          );
-          const seguimientoValues = seguimientoKeys.map(key => seguimiento[key] === '' ? null : seguimiento[key]);
-      
-          const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@soparam${i + 1}`).join(',');
-
-          const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
-          
-          const seguimientoRequest = pool.request();
-          seguimientoKeys.forEach((key, index) => {
-            seguimientoRequest.input(`soparam${index + 1}`, seguimientoValues[index]);
-          });
-      
-          await seguimientoRequest.query(querySeguimiento);
-      }else if (seguimiento.type == 'update') {
-          const keys = Object.keys(serviceOrder).filter(key => 
-            key !== 'xtiposeguimiento' && 
-            key !== 'xmotivoseguimiento' && 
-            key !== 'xfseguimientonotificacion' && 
-            key !== 'type'
-          );
-          const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
-      
-          const queryUpdate = `UPDATE EVSEGUIMIENTONOTIFICACION SET ${setClause} WHERE cnotificacion = @cnotificacion AND cseguimientonotificacion = @cseguimientonotificacion`;
-      
-          const updateRequest = pool.request();
-          keys.forEach((key, index) => {
-              const value = seguimiento[key] === '' ? null : seguimiento[key];
-              updateRequest.input(`param${index + 1}`, value);
-          });
-          updateRequest.input('cnotificacion', seguimiento.cnotificacion);
-          updateRequest.input('cseguimientonotificacion', seguimiento.cseguimientonotificacion);
-      
-          await updateRequest.query(queryUpdate);
-          if (seguimiento.bcerrado == true) {
-            trackingController.stopRecordTrack(seguimiento.cseguimientonotificacion)
-          }
-        }
-      }));
-    }
+    
     const update = 'Notificación Modificada Exitosamente'
+    
     
     return update;
   } catch (error) {

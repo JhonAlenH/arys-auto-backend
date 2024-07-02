@@ -3,6 +3,7 @@ import cron from 'node-cron'
 import webSocketJs from './../utilities/webSocket.js';
 
 let allRecordTrackers = []
+
 const getAllTrackersInit = async () => {
   try{
     let now = new Date
@@ -22,11 +23,10 @@ const getAllTrackersInit = async () => {
           } 
         })
         if(!findedAlert) {
-          sendTrackerAlerts(track)
-          
+          sendTrackerAlerts(`AVISO: seguimiento #${track.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + track.cnotificacion, 1, 2)          
         } else {
-          const task = recordTrackersInfo(5 ,track)
-          allRecordTrackers.push({task, cseguimientonotificacion: track.cseguimientonotificacion})
+          const task = await recordTrackersInfo(track.ntiempoalerta ,track)
+          allRecordTrackers.push({task: task, id: track.cseguimientonotificacion})
         }
       }
     }
@@ -36,24 +36,26 @@ const getAllTrackersInit = async () => {
 }
 
 const stopRecordTrack = async (id) => {
-  const recordTrack = allRecordTrackers.find(record => record.cseguimientonotificacion == id)
-  console.log(recordTrack);
+  const recordTrack = allRecordTrackers.find(record => record.id == id)
+  // const {admin_notificaciones, club_notificaciones} = await webSocketJs.getNotifications()
+  // console.log(admin_notificaciones);
   if(recordTrack) {
-    recordTrack.task.stop()
+    await recordTrack.task.stop()
     console.log('tarea cancelada para el seguimiento #' + id);
   }
 }
 
-const sendTrackerAlerts = async (seguimiento) => {
-  webSocketJs.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`,'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
+const sendTrackerAlerts = async (msg, url, user, system) => {
+  webSocketJs.addNotification(msg, url, user, system)
 }
 
-const recordTrackersInfo = async (minutes, seguimiento) => {
+const recordTrackersInfo = async (minutes, item) => {
   console.log('begining alerts');
   const task = cron.schedule(`*/${minutes} * * * * `, () => {
-    sendTrackerAlerts(seguimiento)
+    sendTrackerAlerts(`AVISO: seguimiento #${item.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + item.cnotificacion, 1, 2)
     console.log(`running a task every ${minutes} minute/s`);
   });
+
   return task
 }
 

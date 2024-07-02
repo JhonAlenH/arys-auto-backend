@@ -16,12 +16,14 @@ const sqlConfig = {
 
 const getAdminNotifications = async () => {
     try {
+        
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
            .query(`select * FROM SUALERTAS WHERE ctipo_sistema = 2 AND bactivo = 1`)
         if (result.rowsAffected < 1) {
             return false;
         }
+        console.log('de pana pa ver');
         
         let j = 0
         for (const record of result.recordset) {

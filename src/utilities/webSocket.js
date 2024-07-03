@@ -62,6 +62,18 @@ const editNotification = async (msg)=>{
   }
   return
 }
+const editNotifications = async (list)=>{
+  const response = await Notification.editNotifications(list)
+  if(response.rowsAffected >= 1) {
+    list.forEach(notification => {
+      
+      const notiFindedIndex = admin_notificaciones.findIndex(item=> item.calerta == notification.calerta)
+      admin_notificaciones.splice(notiFindedIndex, 1)
+    });
+    io.emit('notifications_admin', admin_notificaciones);
+  }
+  return
+}
 const addNotification = async (xmensaje, xurl, cusuario, ctipo_sistema)=>{
   let date = new Date()
   date = date.toISOString()
@@ -89,5 +101,6 @@ export default {
   getNotifications,
   defineConnection,
   addNotification,
-  editNotification
+  editNotification,
+  editNotifications
 }

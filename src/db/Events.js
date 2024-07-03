@@ -230,10 +230,13 @@ const createEvents = async (data) => {
         });
     
         const response = await seguimientoRequest.query(querySeguimiento);
-        console.log('response');
-        if (seguimiento.bcerrado == false) {
-          trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
-        }
+        if (response.recordset.length > 0) {
+            if (seguimiento.bcerrado == false){
+              seguimiento.cseguimientonotificacion = response.recordset[0].cseguimientonotificacion
+              webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
+              trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
+            }
+          }
       }))
     }
 
@@ -315,10 +318,12 @@ const updateEvents = async (data) => {
           });
       
           const response = await seguimientoRequest.query(querySeguimiento);
-          if (seguimiento.bcerrado == false) {
-            seguimiento.cseguimientonotificacion = response.recordset[0].cseguimientonotificacion
-            webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
-            trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
+          if (response.recordset.length > 0) {
+            if (seguimiento.bcerrado == false){
+              seguimiento.cseguimientonotificacion = response.recordset[0].cseguimientonotificacion
+              webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
+              trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
+            }
           }
         } else if (seguimiento.type == 'update') {
           const keys = Object.keys(seguimiento).filter(key => 

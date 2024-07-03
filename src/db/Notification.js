@@ -94,6 +94,23 @@ const addNotification = async (data) => {
         return { error: error.message };
     }
 }
+const editNotifications = async (list) => {
+    try {
+        console.log(`UPDATE SUALERTAS SET BACTIVO = 0 WHERE calerta in (${list.join(',')})`);
+        let pool = await sql.connect(sqlConfig);
+        let result = await pool.request()
+        .query(`UPDATE SUALERTAS SET BACTIVO = 0 WHERE calerta in (${list.join(',')})`)
+        if (result.rowsAffected < 1) {
+            return false;
+        }
+        await pool.close();
+        return result;
+    }
+    catch (error) {
+        console.log(error.message)
+        return { error: error.message };
+    }
+}
 const editNotification = async (id) => {
 
     try {
@@ -115,5 +132,6 @@ export default {
     getAdminNotifications,
     getClubNotifications,
     addNotification,
+    editNotifications,
     editNotification
 }

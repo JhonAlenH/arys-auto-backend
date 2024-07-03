@@ -96,9 +96,10 @@ const addNotification = async (data) => {
 }
 const editNotifications = async (list) => {
     try {
+        console.log(`UPDATE SUALERTAS SET BACTIVO = 0 WHERE calerta in (${list.join(',')})`);
         let pool = await sql.connect(sqlConfig);
         let result = await pool.request()
-           .query(`UPDATE SUALERTAS SET BACTIVO = 0 WHERE calerta in (${list.join(',')})`)
+        .query(`UPDATE SUALERTAS SET BACTIVO = 0 WHERE calerta in (${list.join(',')})`)
         if (result.rowsAffected < 1) {
             return false;
         }

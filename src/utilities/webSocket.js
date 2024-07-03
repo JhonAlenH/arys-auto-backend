@@ -63,14 +63,16 @@ const editNotification = async (msg)=>{
   return
 }
 const editNotifications = async (list)=>{
-  const response = await Notification.editNotifications(list)
-  if(response.rowsAffected >= 1) {
-    list.forEach(notification => {
-      
-      const notiFindedIndex = admin_notificaciones.findIndex(item=> item.calerta == notification.calerta)
-      admin_notificaciones.splice(notiFindedIndex, 1)
-    });
-    io.emit('notifications_admin', admin_notificaciones);
+  if(list.length > 0) {
+    const response = await Notification.editNotifications(list)
+    if(response.rowsAffected >= 1) {
+      list.forEach(notification => {
+        
+        const notiFindedIndex = admin_notificaciones.findIndex(item=> item.calerta == notification.calerta)
+        admin_notificaciones.splice(notiFindedIndex, 1)
+      });
+      io.emit('notifications_admin', admin_notificaciones);
+    }
   }
   return
 }

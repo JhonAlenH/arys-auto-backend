@@ -37,6 +37,7 @@ const getAllTrackersInit = async () => {
 }
 
 const stopRecordTrack = async (id) => {
+  
   const recordTrack = allRecordTrackers.find(record => record.id == id)
   if(recordTrack) {
     await recordTrack.task.stop()

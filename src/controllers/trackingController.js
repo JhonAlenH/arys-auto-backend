@@ -1,6 +1,7 @@
 import Tracking from '../db/Tracking.js';
 import cron from 'node-cron'
 import webSocketJs from './../utilities/webSocket.js';
+import Notification from '../db/Notification.js';
 
 let allRecordTrackers = []
 
@@ -37,12 +38,17 @@ const getAllTrackersInit = async () => {
 
 const stopRecordTrack = async (id) => {
   const recordTrack = allRecordTrackers.find(record => record.id == id)
-  // const {admin_notificaciones, club_notificaciones} = await webSocketJs.getNotifications()
-  // console.log(admin_notificaciones);
   if(recordTrack) {
     await recordTrack.task.stop()
     console.log('tarea cancelada para el seguimiento #' + id);
   }
+}
+const quitAlerts = async(xmensaje) => {
+  const {admin_notificaciones, club_notificaciones} = await webSocketJs.getNotifications()
+  const gettedNotifications = admin_notificaciones.filter(notification=> notification.xmensaje == xmensaje)
+  gettedNotifications.forEach( async(notification) => {
+    webSocketJs.editNotification(notification)
+  })
 }
 
 const sendTrackerAlerts = async (msg, url, user, system) => {
@@ -116,6 +122,7 @@ const searchTrackerInfo = async (req, res) => {
 }
 
 export default {
+  quitAlerts,
   getAllTrackers,
   searchTrackerInfo,
   stopRecordTrack,

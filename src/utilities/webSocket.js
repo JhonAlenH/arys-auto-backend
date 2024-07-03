@@ -39,12 +39,7 @@ const defineConnection = () => {
       io.emit('notifications_admin', await admin_notificaciones);
     })
     socket.on('edit_notifications_admin', async (msg)=>{
-      const response = await Notification.editNotification(msg.calerta)
-      if(response.rowsAffected >= 1) {
-        const notiFindedIndex = admin_notificaciones.findIndex(item=> item.calerta == msg.calerta)
-        admin_notificaciones.splice(notiFindedIndex, 1)
-        io.emit('notifications_admin', admin_notificaciones);
-      }
+      editNotification(msg)
     })
   })
 }
@@ -57,6 +52,15 @@ const generateWs = (app) => {
     }
   })
   return {io, server}
+}
+const editNotification = async (msg)=>{
+  const response = await Notification.editNotification(msg.calerta)
+  if(response.rowsAffected >= 1) {
+    const notiFindedIndex = admin_notificaciones.findIndex(item=> item.calerta == msg.calerta)
+    admin_notificaciones.splice(notiFindedIndex, 1)
+    io.emit('notifications_admin', admin_notificaciones);
+  }
+  return
 }
 const addNotification = async (xmensaje, xurl, cusuario, ctipo_sistema)=>{
   let date = new Date()
@@ -84,5 +88,6 @@ export default {
   generateWs,
   getNotifications,
   defineConnection,
-  addNotification
+  addNotification,
+  editNotification
 }

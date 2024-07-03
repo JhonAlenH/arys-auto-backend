@@ -320,7 +320,7 @@ const updateEvents = async (data) => {
             webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
             trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
           }
-      }else if (seguimiento.type == 'update') {
+        } else if (seguimiento.type == 'update') {
           const keys = Object.keys(seguimiento).filter(key => 
             key !== 'xtiposeguimiento' && 
             key !== 'xmotivoseguimiento' && 
@@ -492,6 +492,13 @@ const updateEvents = async (data) => {
     }
 
     await pool.close();
+    if(Array.isArray(data.seguimientos) && data.seguimientos.length > 0){
+      data.seguimientos.forEach( async(seguimiento) => {
+        if (seguimiento.type == 'update' && seguimiento.bcerrado == true) {
+          await trackingController.quitAlerts(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`)
+        }
+      })
+    }
     
     const update = 'Notificación Modificada Exitosamente'
     

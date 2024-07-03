@@ -23,7 +23,6 @@ const getAdminNotifications = async () => {
         if (result.rowsAffected < 1) {
             return false;
         }
-        console.log('de pana pa ver');
         
         let j = 0
         for (const record of result.recordset) {

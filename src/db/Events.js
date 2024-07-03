@@ -208,23 +208,36 @@ const createEvents = async (data) => {
     const event = await request.query(query);
     const cnotificacion = event.recordset[0].cnotificacion;
 
-    if (cnotificacion && data.seguimiento) {
-      const seguimientoKeys = ['cnotificacion', ...Object.keys(data.seguimiento)];
-      const seguimientoValues = [cnotificacion, ...Object.values(data.seguimiento)];
+    if (cnotificacion && data.seguimientos) {
 
-      const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@sparam${i + 1}`).join(',');
-      const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
+      await Promise.all(data.seguimientos.map(async (seguimiento) => {
+        const seguimientoKeys = Object.keys(seguimiento).filter(key => 
+          key !== 'xtiposeguimiento' && 
+          key !== 'xmotivoseguimiento' && 
+          key !== 'xfseguimientonotificacion' && 
+          key !== 'ccontratoflota' && 
+          key !== 'type'
+        );
+        const seguimientoValues = seguimientoKeys.map(key => seguimiento[key] === '' ? null : seguimiento[key]);
+    
+        const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@soparam${i + 1}`).join(',');
 
-      const seguimientoRequest = pool.request();
-      seguimientoKeys.forEach((key, index) => {
-        seguimientoRequest.input(`sparam${index + 1}`, seguimientoValues[index]);
-      });
-
-      await seguimientoRequest.query(querySeguimiento);
+        const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento});SELECT SCOPE_IDENTITY() AS cseguimientonotificacion`;
+        
+        const seguimientoRequest = pool.request();
+        seguimientoKeys.forEach((key, index) => {
+          seguimientoRequest.input(`soparam${index + 1}`, seguimientoValues[index]);
+        });
+    
+        const response = await seguimientoRequest.query(querySeguimiento);
+        console.log('response');
+        if (seguimiento.bcerrado == false) {
+          trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
+        }
+      }))
     }
 
     if (cnotificacion && data.repuestos) {
-      console.log(data.repuestos)
       await Promise.all(data.repuestos.map(item => {
         const repuestoRequest = pool.request()
           .input('cnotificacion', sql.Int, cnotificacion)
@@ -294,14 +307,19 @@ const updateEvents = async (data) => {
       
           const placeholdersSeguimiento = seguimientoKeys.map((_, i) => `@soparam${i + 1}`).join(',');
 
-          const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento})`;
+          const querySeguimiento = `INSERT INTO EVSEGUIMIENTONOTIFICACION (${seguimientoKeys.join(',')}) VALUES (${placeholdersSeguimiento}); SELECT SCOPE_IDENTITY() AS cseguimientonotificacion`;
           
           const seguimientoRequest = pool.request();
           seguimientoKeys.forEach((key, index) => {
             seguimientoRequest.input(`soparam${index + 1}`, seguimientoValues[index]);
           });
       
-          await seguimientoRequest.query(querySeguimiento);
+          const response = await seguimientoRequest.query(querySeguimiento);
+          if (seguimiento.bcerrado == false) {
+            seguimiento.cseguimientonotificacion = response.recordset[0].cseguimientonotificacion
+            webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
+            trackingController.recordTrackersInfo(seguimiento.ntiempoalerta, seguimiento)
+          }
       }else if (seguimiento.type == 'update') {
           const keys = Object.keys(seguimiento).filter(key => 
             key !== 'xtiposeguimiento' && 

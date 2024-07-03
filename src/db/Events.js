@@ -325,7 +325,6 @@ const updateEvents = async (data) => {
           console.log(queryUpdate);
       
           await updateRequest.query(queryUpdate);
-          await pool.close();
           if (seguimiento.bcerrado == true) {
             trackingController.stopRecordTrack(seguimiento.cseguimientonotificacion)
           }
@@ -381,7 +380,6 @@ const updateEvents = async (data) => {
           updateRequest.input('corden', serviceOrder.corden);
       
           await updateRequest.query(queryUpdate);
-          await pool.close();
         } 
       }));
     }
@@ -414,7 +412,6 @@ const updateEvents = async (data) => {
           let query = `INSERT INTO EVNOTANOTIFICACION (${notasKeys.join(',')}) VALUES (${valuesString})`
           let pool = await sql.connect(sqlConfig);
           let result = await pool.request().query(query)
-          await pool.close();
           webSocket.addNotification(`Nuevas notas añadidas a la notificación #${data.cnotificacion}`, `admin/events/notifications/${data.cnotificacion}`, 1, 2)
         }
       }))
@@ -472,10 +469,11 @@ const updateEvents = async (data) => {
           updateRequest.input('crepuesto', repuestos.crepuesto);
       
           await updateRequest.query(queryUpdate);
-          await pool.close();
         }
       }));
     }
+
+    await pool.close();
     
     const update = 'Notificación Modificada Exitosamente'
     

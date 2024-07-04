@@ -495,6 +495,82 @@ const updateEvents = async (data) => {
         }
       }));
     }
+    
+    if (Array.isArray(data.quotes) && data.quotes.length > 0) {
+      let ccotizacion;
+
+      // Aplicar "distinct" en quotes
+      const distinctQuotes = data.quotes.reduce((acc, current) => {
+        const cproveedor = current.cproveedor;
+        if (!acc.find(item => item.cproveedor === cproveedor)) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+    
+      await Promise.all(distinctQuotes.map(async (quotes) => {
+        if (quotes.type == 'create') {
+          const quotesKeys = Object.keys(quotes).filter(key => 
+            key !== 'type' && 
+            key !== 'crepuesto' &&
+            key !== 'ncantidad' &&
+            key !== 'xniveldano');
+          const quotesValues = quotesKeys.map(key => quotes[key] === '' ? null : quotes[key]);
+    
+          const placeholdersquotes = quotesKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+    
+          const queryquotes = `INSERT INTO EVCOTIZACIONNOTIFICACION (${quotesKeys.join(',')}) VALUES (${placeholdersquotes});`;
+          
+          const quotesRequest = pool.request();
+          quotesKeys.forEach((key, index) => {
+            quotesRequest.input(`soparam${index + 1}`, quotesValues[index]);
+          });
+          
+          const cotizacion = await quotesRequest.query(queryquotes);
+
+          const selectQuery = `
+            SELECT * FROM EVCOTIZACIONNOTIFICACION 
+            WHERE cnotificacion = @cnotificacion;
+          `;
+
+          const selectRequest = pool.request();
+          selectRequest.input('cnotificacion', quotes.cnotificacion);
+
+          ccotizacion = await selectRequest.query(selectQuery);
+        }
+      }));
+
+      await Promise.all(data.quotes.map(async (quotese) => {
+        if (quotese.type == 'create') {
+          const filteredQuotes = Object.entries(quotese).filter(([key]) => 
+            key !== 'type' && 
+            key !== 'cnotificacion' &&
+            key !== 'cproveedor' &&
+            key !== 'xobservacion' &&
+            key !== 'mtotalcotizacion' &&
+            key !== 'mmontoiva' &&
+            key !== 'mtotal' &&
+            key !== 'cimpuesto' &&
+            key !== 'pimpuesto' &&
+            key !== 'cestatusgeneral');
+
+          const coti = ccotizacion.recordset.map(async (quotes) => {
+            const QuotesKeys = ['ccotizacion', ...filteredQuotes.map(([key]) => key)];
+            const QuotesValues = [quotes, ...filteredQuotes.map(([, value]) => value)];
+    
+            const placeholdersQuotes = QuotesKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+            const queryQuotes = `INSERT INTO EVREPUESTOCOTIZACION (${QuotesKeys.join(',')}) VALUES (${placeholdersQuotes})`;
+    
+            const QuotesRequest = pool.request();
+            QuotesKeys.forEach((key, index) => {
+              QuotesRequest.input(`soparam${index + 1}`, QuotesValues[index]);
+            });
+    
+            await QuotesRequest.query(queryQuotes);
+          })
+        }
+      }));
+    }
 
     await pool.close();
     if(Array.isArray(data.seguimientos) && data.seguimientos.length > 0){

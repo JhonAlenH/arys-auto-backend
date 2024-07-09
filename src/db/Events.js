@@ -510,38 +510,52 @@ const updateEvents = async (data) => {
     
       await Promise.all(distinctQuotes.map(async (quotes) => {
         if (quotes.type == 'create') {
-          const quotesKeys = Object.keys(quotes).filter(key => 
+          const getLastCcotizacionQuery = `
+            SELECT MAX(ccotizacion) as lastCcotizacion FROM EVCOTIZACIONNOTIFICACION;
+          `;
+          
+          const lastCcotizacionRequest = pool.request();
+          const result = await lastCcotizacionRequest.query(getLastCcotizacionQuery);
+          
+          const lastCcotizacion = result.recordset[0].lastCcotizacion || 0;
+          const newCcotizacion = lastCcotizacion + 1;
+        
+          ccotizacion = newCcotizacion;
+          quotes.ccotizacion = newCcotizacion;
+        
+          let quotesKeys = Object.keys(quotes).filter(key => 
             key !== 'type' && 
             key !== 'crepuesto' &&
             key !== 'ncantidad' &&
             key !== 'xniveldano');
+        
+          // Asegurarse de que 'ccotizacion' se añade una sola vez
+          if (!quotesKeys.includes('ccotizacion')) {
+            quotesKeys.push('ccotizacion');
+          }
+        
+          // Generar valores de quotes incluyendo 'ccotizacion'
           const quotesValues = quotesKeys.map(key => quotes[key] === '' ? null : quotes[key]);
-    
+        
           const placeholdersquotes = quotesKeys.map((_, i) => `@soparam${i + 1}`).join(',');
-    
+        
           const queryquotes = `INSERT INTO EVCOTIZACIONNOTIFICACION (${quotesKeys.join(',')}) VALUES (${placeholdersquotes});`;
           
-          const quotesRequest = pool.request();
+          const quotesRequest = pool.request(); 
           quotesKeys.forEach((key, index) => {
             quotesRequest.input(`soparam${index + 1}`, quotesValues[index]);
           });
-          
+        
           const cotizacion = await quotesRequest.query(queryquotes);
-
-          const selectQuery = `
-            SELECT * FROM EVCOTIZACIONNOTIFICACION 
-            WHERE cnotificacion = @cnotificacion;
-          `;
-
-          const selectRequest = pool.request();
-          selectRequest.input('cnotificacion', quotes.cnotificacion);
-
-          ccotizacion = await selectRequest.query(selectQuery);
+        
         }
+        
+        
       }));
 
       await Promise.all(data.quotes.map(async (quotese) => {
         if (quotese.type == 'create') {
+          console.log(data.quotes)
           const filteredQuotes = Object.entries(quotese).filter(([key]) => 
             key !== 'type' && 
             key !== 'cnotificacion' &&
@@ -554,9 +568,10 @@ const updateEvents = async (data) => {
             key !== 'pimpuesto' &&
             key !== 'cestatusgeneral');
 
-          const coti = ccotizacion.recordset.map(async (quotes) => {
-            const QuotesKeys = ['ccotizacion', ...filteredQuotes.map(([key]) => key)];
-            const QuotesValues = [quotes, ...filteredQuotes.map(([, value]) => value)];
+            console.log(ccotizacion)
+
+            const QuotesKeys = ['ccotizacion', ...filteredQuotes.map(([key]) => key)].filter((key, index, self) => self.indexOf(key) === index);
+            const QuotesValues = [ccotizacion, ...filteredQuotes.map(([, value]) => value)];
     
             const placeholdersQuotes = QuotesKeys.map((_, i) => `@soparam${i + 1}`).join(',');
             const queryQuotes = `INSERT INTO EVREPUESTOCOTIZACION (${QuotesKeys.join(',')}) VALUES (${placeholdersQuotes})`;
@@ -567,9 +582,8 @@ const updateEvents = async (data) => {
             });
     
             await QuotesRequest.query(queryQuotes);
-          })
         }
-      }));
+      })); 
     }
 
     await pool.close();

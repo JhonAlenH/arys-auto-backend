@@ -192,7 +192,7 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  const keys = Object.keys(data).filter(key => key !== 'seguimiento' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas');
+  const keys = Object.keys(data).filter(key => key !== 'seguimientos' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas' && key !== 'quotes');
   const values = keys.map(key => data[key]);
   let pool;
   try {
@@ -209,8 +209,8 @@ const createEvents = async (data) => {
     const cnotificacion = event.recordset[0].cnotificacion;
 
     if (cnotificacion && data.seguimientos) {
-
       await Promise.all(data.seguimientos.map(async (seguimiento) => {
+        seguimiento.cnotificacion = cnotificacion
         const seguimientoKeys = Object.keys(seguimiento).filter(key => 
           key !== 'xtiposeguimiento' && 
           key !== 'xmotivoseguimiento' && 

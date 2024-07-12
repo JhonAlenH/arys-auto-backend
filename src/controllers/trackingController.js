@@ -26,7 +26,7 @@ const getAllTrackersInit = async () => {
         if(!findedAlert) {
           sendTrackerAlerts(`AVISO: seguimiento #${track.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + track.cnotificacion, 1, 2)          
         } else {
-          const task = await recordTrackersInfo(track.ntiempoalerta ,track)
+          // const task = await recordTrackersInfo(track.ntiempoalerta ,track)
           allRecordTrackers.push({task: task, id: track.cseguimientonotificacion})
         }
       }

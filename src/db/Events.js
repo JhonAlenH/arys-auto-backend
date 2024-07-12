@@ -33,6 +33,8 @@ const ServiceOrder2 = sequelize.define('evVordenServicio', {
 }, {tableName: 'evVordenServicio'});
 
 const Replacement = sequelize.define('evVrepuestos', {});
+const Quotes = sequelize.define('evVcotizaciones', {});
+
 
 
 const searchEvents = async (body, ccompania, cpais) => {
@@ -554,7 +556,7 @@ const updateEvents = async (data) => {
       }));
 
       await Promise.all(data.quotes.map(async (quotese) => {
-        if (quotese.type == 'create') {
+        if (quotese.type == 'create' && quotese.crepuesto !== null) {
           console.log(data.quotes)
           const filteredQuotes = Object.entries(quotese).filter(([key]) => 
             key !== 'type' && 
@@ -566,7 +568,8 @@ const updateEvents = async (data) => {
             key !== 'mtotal' &&
             key !== 'cimpuesto' &&
             key !== 'pimpuesto' &&
-            key !== 'cestatusgeneral');
+            key !== 'cestatusgeneral' &&
+            key !== 'cservicio');
 
             console.log(ccotizacion)
 
@@ -676,6 +679,23 @@ const getReplacementById = async (id) => {
   }
 };
 
+const getQuotesById = async (id) => {
+  try {
+    const cotizaciones = await Quotes.findAll({
+      where: {
+        cnotificacion: id
+      },
+      attributes: [
+        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio' 
+      ],
+    });
+    const quotes = cotizaciones.map((item) => item.get({ plain: true }));
+    return quotes;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
     searchEvents,
     getEvent,
@@ -686,5 +706,6 @@ export default {
     getServiceOrderById,
     getServiceOrder,
     updateEvents,
-    getReplacementById
+    getReplacementById,
+    getQuotesById
 }

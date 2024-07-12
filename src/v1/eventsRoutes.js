@@ -17,5 +17,6 @@ router
     .get("/getServiceOrder/:corden", eventsController.getServiceOrder)
     .post("/update", eventsController.updateEvents)
     .post("/getReplacementById/:id", eventsController.getReplacementById)
+    .post("/getQuotesById/:id", eventsController.getQuotesById)
 
 export default router;

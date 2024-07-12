@@ -91,6 +91,9 @@ const getSeguimientos = async (body) => {
     let keys = Object.keys(body)
     if(keys.length <= 0) {
       items = await Seguimentos.findAll({
+        where:{
+          bcerrado: false
+        },
         attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
       });
     } else {
@@ -125,6 +128,7 @@ const getSeguimientos = async (body) => {
       } else {
         filters = body
       }
+      filters.bcerrado = false
       items = await Seguimentos.findAll({
         where: filters,
         attributes: ['cnotificacion','cseguimientonotificacion', 'xtiposeguimiento', 'xobservacion', 'ctiposeguimiento', 'cmotivoseguimiento', 'xmotivoseguimiento', 'bcerrado', 'fseguimientonotificacion'],
@@ -262,24 +266,25 @@ const createEvents = async (data) => {
       }));
     } 
 
-    if (cnotificacion && Array.isArray(data.serviceOrder)) {
-      await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
-        const filteredServiceOrder = Object.entries(serviceOrder).filter(([key]) => key !== 'type' && key !== 'cnotificacion');
+    // if (cnotificacion && Array.isArray(data.serviceOrder)) {
+    //   await Promise.all(data.serviceOrder.map(async (serviceOrder) => {
+    //     serviceOrder.cnotificacion = cnotificacion
+    //     const filteredServiceOrder = Object.entries(serviceOrder).filter(([key]) => key !== 'type' && key !== 'cnotificacion' && key !== 'xestatusgeneral');
           
-        const serviceOrderKeys = ['cnotificacion', ...filteredServiceOrder.map(([key]) => key)];
-        const serviceOrderValues = [cnotificacion, ...filteredServiceOrder.map(([, value]) => value)];
+    //     const serviceOrderKeys = ['cnotificacion', ...filteredServiceOrder.map(([key]) => key)];
+    //     const serviceOrderValues = [cnotificacion, ...filteredServiceOrder.map(([, value]) => value)];
 
-        const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
-        const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
+    //     const placeholdersServiceOrder = serviceOrderKeys.map((_, i) => `@soparam${i + 1}`).join(',');
+    //     const queryServiceOrder = `INSERT INTO EVORDENSERVICIO (${serviceOrderKeys.join(',')}) VALUES (${placeholdersServiceOrder})`;
 
-        const serviceOrderRequest = pool.request();
-        serviceOrderKeys.forEach((key, index) => {
-          serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
-        });
+    //     const serviceOrderRequest = pool.request();
+    //     serviceOrderKeys.forEach((key, index) => {
+    //       serviceOrderRequest.input(`soparam${index + 1}`, serviceOrderValues[index]);
+    //     });
 
-        await serviceOrderRequest.query(queryServiceOrder);
-      }));
-    }
+    //     await serviceOrderRequest.query(queryServiceOrder);
+    //   }));
+    // }
 
     return event;
   } catch (error) {

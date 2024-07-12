@@ -32,7 +32,7 @@ const AdditionalService = sequelize.define('maservicio', {}, { tableName: 'maser
 const ProviderService = sequelize.define('prVproveedoresServicios', {});
 const Status = sequelize.define('MAESTATUSGENERAL', {}, { tableName: 'MAESTATUSGENERAL' });
 const ReplacementEvents = sequelize.define('evVrepuestos', {});
-const Provider = sequelize.define('MAPROVEEDORES', {});
+const Provider = sequelize.define('prVproveedoresServicios', {});
 
 
 const Rol = sequelize.define('serol', {
@@ -702,6 +702,7 @@ const getProvider = async (getProvider) => {
       where: {
         cpais: getProvider.cpais,
         ccompania: getProvider.ccompania,
+        cservicio: getProvider.cservicio
       },
       attributes: ['cproveedor', 'xnombre'],
     });

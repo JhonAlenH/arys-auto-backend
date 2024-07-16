@@ -347,6 +347,32 @@ const getQuotesById = async (req, res) => {
         });
 }
 
+const getQuotesReplacement = async (req, res) => {
+    const replacement = await Events.getQuotesReplacement(req.params.id);
+    if (replacement.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: replacement.permissionError
+            });
+    }
+    if (replacement.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: replacement.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: replacement
+        });
+}
+
 export default {
     searchEvents,
     getEvent,
@@ -358,5 +384,6 @@ export default {
     updateEvents,
     getNotasById,
     getReplacementById,
-    getQuotesById
+    getQuotesById,
+    getQuotesReplacement
 }

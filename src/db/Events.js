@@ -40,7 +40,7 @@ const ReplacementQuotes = sequelize.define('evVrepuestosCoti', {}, {tableName: '
 const searchEvents = async (body, ccompania, cpais) => {
     try {
       let event
-      if(ccompania != 1){
+      if(ccompania != 1){ 
         if(!body.ccompania){
           body.ccompania = ccompania
         }

@@ -15,6 +15,7 @@ const sqlConfig = {
 }
 
 const Search = sequelize.define('suVcontratos', {});
+const Receipts = sequelize.define('surecibo', {}, {tableName: 'surecibo'});
 const SearchCompany = sequelize.define('macompania', {});
 const Contract = sequelize.define('sucontratoflota', {}, { tableName: 'sucontratoflota' });
 const Detail = sequelize.define('suVcontratos', {
@@ -75,6 +76,30 @@ const getContractsByUser = async (cusuario) => {
     
     let contracts = contract.map((item) => item.get({ plain: true }));
     return contracts;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+const getReceiptsByContract = async (ccontratoflota) => {
+  try {
+    let pool = await sql.connect(sqlConfig);
+    let result = await pool.request().query(`SELECT * FROM SURECIBO WHERE ccontratoflota = ${ccontratoflota}`)
+    let j = 0
+    for (const record of result.recordset) {
+        const keys = Object.keys(record)
+        const values = Object.values(record)
+        let resultLowerCase = {}
+        let i = 0
+        for (const key of keys) {
+            const lowerKey = key.toLowerCase()
+            resultLowerCase[lowerKey] = values[i]
+            i++
+        }
+        result.recordset[j] = resultLowerCase
+        j++ 
+    };
+    await pool.close();
+    return result.recordset;
   } catch (error) {
     return { error: error.message };
   }
@@ -270,5 +295,6 @@ export default {
   searchContractIndividual,
   detailMembership,
   detailMembershipService,
-  getContractsByUser
+  getContractsByUser,
+  getReceiptsByContract
 }

@@ -71,6 +71,21 @@ const searchPropietary = async (req, res) => {
         });
     }
 }
+const searchReceiptsByContract = async (req, res) => {
+    const receipts = await Contracts.getReceiptsByContract(req.params.ccontratoflota);
+    if (!receipts) {
+        return res.status(200).send({
+          status: true,
+        });
+    }else{
+        return res
+        .status(200)
+        .send({
+            status: true,
+            receipts
+        });
+    }
+}
 
 const typeServicePlan = async (req, res) => {
     const type = await contractsService.typeServicePlan(req.body);
@@ -199,4 +214,5 @@ export default {
     typeServicePlan,
     createMembership,
     detailMembership,
+    searchReceiptsByContract
 }

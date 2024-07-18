@@ -198,7 +198,7 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  const keys = Object.keys(data).filter(key => key !== 'seguimientos' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas' && key !== 'quotes');
+  const keys = Object.keys(data).filter(key => key !== 'seguimientos' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas' && key !== 'quotes' && key !== 'quotesAccepted');
   const values = keys.map(key => data[key]);
   let pool;
   try {

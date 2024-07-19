@@ -58,19 +58,20 @@ const getUserSubscription = async (cpropietario) => {
   //   return { error: getPlanInfo.error, code: 500 };
   // }
   for (const sub of subscriptionInfo.recordset) {
-    
-    if (sub.xplan.includes('DIAMANTE')) {
-      sub.xplancolor = 'diamond'
-      sub.xplanicon = 'fa-regular fa-gem'
-    } else if (sub.xplan.includes('GOLD')) {
-      sub.xplancolor = 'gold'
-      sub.xplanicon = 'fa-solid fa-coins'
-    } else if (sub.xplan.includes('PLUS')) {
-      sub.xplancolor = 'plus'
-      sub.xplanicon = 'fa-solid fa-plus'
-    } else if (sub.xplan.includes('BASICO')) {
-      sub.xplancolor = 'basic'
-      sub.xplanicon = 'fa-solid fa-ticket-simple'
+    if(sub.xplan){
+      if (sub.xplan.includes('DIAMANTE')) {
+        sub.xplancolor = 'diamond'
+        sub.xplanicon = 'fa-regular fa-gem'
+      } else if (sub.xplan.includes('GOLD')) {
+        sub.xplancolor = 'gold'
+        sub.xplanicon = 'fa-solid fa-coins'
+      } else if (sub.xplan.includes('PLUS')) {
+        sub.xplancolor = 'plus'
+        sub.xplanicon = 'fa-solid fa-plus'
+      } else if (sub.xplan.includes('BASICO')) {
+        sub.xplancolor = 'basic'
+        sub.xplanicon = 'fa-solid fa-ticket-simple'
+      }
     }
     sub.xfdesde = dayjs(sub.fdesde).format('DD/MM/YYYY')
     sub.xfhasta = dayjs(sub.fhasta).format('DD/MM/YYYY')

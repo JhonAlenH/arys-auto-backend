@@ -594,6 +594,58 @@ const updateEvents = async (data) => {
       })); 
     }
 
+    if (Array.isArray(data.quotesAccepted) && data.quotesAccepted.length > 0) {
+      await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
+        const keys = Object.keys(quotesAccepted).filter(key => 
+          key !== 'ccotizacion' &&
+          key !== 'crepuesto' && 
+          key !== 'xrepuesto' && 
+          key !== 'ncantidad' && 
+          key !== 'bdisponible' &&
+          key !== 'munitariorepuesto' &&
+          key !== 'mtotalrepuesto' 
+        );
+        const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+
+        const queryUpdate = `UPDATE EVCOTIZACIONNOTIFICACION SET ${setClause} WHERE ccotizacion = @ccotizacion`;
+
+        const updateRequest = pool.request();
+        keys.forEach((key, index) => {
+            const value = quotesAccepted[key] === '' ? null : quotesAccepted[key];
+            updateRequest.input(`param${index + 1}`, value);
+        });
+        updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
+
+        await updateRequest.query(queryUpdate);
+      }));
+
+      // Actualización en evrepuestocotizacion
+      await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
+        const keys = Object.keys(quotesAccepted).filter(key =>
+            key !== 'ccotizacion' &&
+            key !== 'crepuesto' && 
+            key !== 'xrepuesto' && 
+            key !== 'mtotal' && 
+            key !== 'mtotalcotizacion' && 
+            key !== 'pimpuesto' && 
+            key !== 'cestatusgeneral' 
+        );
+        const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+
+        const queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`;
+
+        const updateRequest = pool.request();
+        keys.forEach((key, index) => {
+            const value = quotesAccepted[key] === '' ? null : quotesAccepted[key];
+            updateRequest.input(`param${index + 1}`, value);
+        });
+        updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
+        updateRequest.input('crepuesto', quotesAccepted.crepuesto);
+
+        await updateRequest.query(queryUpdate);
+      }));
+    }
+
     await pool.close();
     if(Array.isArray(data.seguimientos) && data.seguimientos.length > 0){
       data.seguimientos.forEach( async(seguimiento) => {

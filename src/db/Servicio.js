@@ -15,7 +15,7 @@ const sqlConfig = {
 const getTypeServices = async(ccompania) => {
   try {
     let pool = await sql.connect(sqlConfig)
-    let result = await pool.request().query(`SELECT ctiposervicio, xtiposervicio from MATIPOSERVICIOS WHERE ccompania = ${ccompania}`)
+    let result = await pool.request().query(`SELECT ctiposervicio, xtiposervicio from MATIPOSERVICIOS`)
     await pool.close();
     return { 
       result: result
@@ -30,7 +30,7 @@ const getServicesByType = async(ctiposervicio, ccompania) => {
   
   try {
     let pool = await sql.connect(sqlConfig)
-    let result = await pool.request().query(`SELECT cservicio, xservicio, ctiposervicio from MASERVICIO WHERE ccompania = ${ccompania};`)
+    let result = await pool.request().query(`SELECT cservicio, xservicio, ctiposervicio from MASERVICIO;`)
     await pool.close();
     return { 
       result: result
@@ -48,9 +48,8 @@ const createService = async() => {
 
 const searchPlanServices = async(cplan) => {
   try {
-
     let pool = await sql.connect(sqlConfig)
-    let result = await pool.request().query(`SELECT * from MAPLANES_SERVICIOS WHERE cplan = ${cplan};`)
+    let result = await pool.request().query(`SELECT * from MAPLANES_SERVICIOS WHERE id_plan = ${cplan};`)
     await pool.close();
 
     if(result.recordset.length > 0){
@@ -156,27 +155,29 @@ const getServicesAndTypes = async(ccompania) => {
 }
 
 const linkServicios = async(services, cplan) => {
+  console.log(cplan);
   
   try {
     let pool = await sql.connect(sqlConfig);
     const servicesSplittedString = services.split('[]')[0].split(',')
-    console.log(servicesSplittedString);
 
     const servicios = await pool.request().query(`
-    DELETE FROM MAPLANES_SERVICIOS WHERE cplan = ${parseInt(cplan)}
+    DELETE FROM MAPLANES_SERVICIOS WHERE id_plan = ${parseInt(cplan)}
     `)
     let result = {message: 'no hay servicios'}
     if(servicesSplittedString.length > 0 && servicesSplittedString[0]) {      
   
       const table = new sql.Table('MAPLANES_SERVICIOS');
-      table.columns.add('cplan', sql.Int, {nullable: true});
-      table.columns.add('cservicio', sql.Int, {nullable: true});
-      table.columns.add('ctiposervicio', sql.Int, {nullable: true});
-      table.columns.add('nusos', sql.Int, {nullable: true});
+      table.columns.add('ID_PLAN', sql.Int, {nullable: false});
+      table.columns.add('CSERVICIO', sql.Int, {nullable: false});
+      table.columns.add('CTIPOSERVICIO', sql.Int, {nullable: true});
+      table.columns.add('NUSOS', sql.Int, {nullable: true});
+      table.columns.add('BACTIVO', sql.Bit, {nullable: true});
   
       for (const service of servicesSplittedString) {
         const splittedServiceInfo =  service.split('?')
-        table.rows.add(cplan, parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]), parseInt(splittedServiceInfo[2]));
+        console.log(parseInt(splittedServiceInfo[0]));
+        table.rows.add(parseInt(cplan), parseInt(splittedServiceInfo[0]), parseInt(splittedServiceInfo[1]), 1, true);
       }
       
       result = await pool.request().bulk(table)

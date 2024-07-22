@@ -270,7 +270,7 @@ const detailMembershipService = async (detailMembershipService) => {
   try {
     const service = await TypeService.findAll({
       where: {
-        cplan: detailMembershipService
+        id: detailMembershipService
       },
       attributes: [
                     [Sequelize.literal('DISTINCT ctiposervicio'), 'ctiposervicio'],

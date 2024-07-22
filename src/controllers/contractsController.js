@@ -196,7 +196,7 @@ const detailMembership = async (req, res) => {
                     message: detail.error
                 });
         }
-        const service = await contractsService.detailMembershipService(detail.cplan);
+        const service = await contractsService.detailMembershipService(detail.cplan );
         return res
             .status(200)
             .send({

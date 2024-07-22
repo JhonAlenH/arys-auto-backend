@@ -227,8 +227,7 @@ const detailMembership = async (detailMembership) => {
     const contract = await Detail.findOne({
       where: {
         ccontratoflota: detailMembership.ccontratoflota,
-        cpais: detailMembership.cpais,
-        ccompania: detailMembership.ccompania,
+
       },
       attributes: [
         'cpropietario',

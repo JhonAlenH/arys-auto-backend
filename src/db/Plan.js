@@ -35,7 +35,7 @@ const editPlan = async(id,data) => {
   try {
     let pool = await sql.connect(sqlConfig);
     let result = await pool.request().query(`
-    UPDATE MAPLANES SET ${rData} where cplan = ${id}`)
+    UPDATE MAPLANES SET ${rData} where id = ${id}`)
     await pool.close();
     return { 
       result: result

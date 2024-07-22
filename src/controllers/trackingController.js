@@ -9,6 +9,7 @@ const getAllTrackersInit = async () => {
   try{
     let now = new Date
     const gettedTracks = await Tracking.searchTrackers(1)
+    console.log(gettedTracks);
     if (gettedTracks.error) {
       return res.status(gettedTracks.code).send({
         status: false,
@@ -61,24 +62,25 @@ const recordTrackersInfo = async (item) => {
   const date = new Date()
   const hour = date.getHours()
   const day = date.getDate()
-  console.log(item);
+
   let cronString = ''
   if(item.xintervalo == 'segundos') {
-    cronString = `/${item.nalerta} * * * * * `
+    cronString = `/${parseInt(item.nalerta)} * * * * * `
   } else if(item.xintervalo == 'minutos') {
-    cronString = `*/${item.nalerta} * * * * `
+    cronString = `* /${parseInt(item.nalerta)} * * * * `
   } else if(item.xintervalo == 'horas') {
-    cronString = `0 0 0/${item.nalerta} 1/1 * ? *`
+    cronString = `0 0 0/${parseInt(item.nalerta)} * * ? *`
   } else if(item.xintervalo == 'días') {
-    cronString = ` 0 0 ${hour} 1/${item.nalerta} * ? *`
+    cronString = `0 0 ${hour} 1/${parseInt(item.nalerta)} * ? *`
   } else if(item.xintervalo == 'semanas') {
-    cronString = ` 0 0 ${hour} 1/${(item.nalerta)*7} * ? *`
+    cronString = `0 0 ${hour} 1/${(parseInt(item.nalerta))*7} * ? *`
   } else if(item.xintervalo == 'meses') {
-    cronString = ` 0 0 ${hour} ${day} 1/${item.nalerta} ? *`
+    cronString = `0 0 ${hour} ${day} 1/${parseInt(item.nalerta)} ? *`
   }
+  console.log(cronString);
   const task = cron.schedule(cronString, () => {
     sendTrackerAlerts(`AVISO: seguimiento #${item.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + item.cnotificacion, 1, 2)
-    console.log(`tarea ejecutandose cada ${item.nalerta} ${item.xintervalo}`);
+    console.log(`tarea ejecutandose cada ${parseInt(item.nalerta)} ${item.xintervalo}`);
   });
 
   return task

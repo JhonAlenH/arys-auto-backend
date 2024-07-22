@@ -26,7 +26,7 @@ const getAllTrackersInit = async () => {
         if(!findedAlert) {
           sendTrackerAlerts(`AVISO: seguimiento #${track.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + track.cnotificacion, 1, 2)          
         } else {
-          // const task = await recordTrackersInfo(track.ntiempoalerta ,track)
+          const task = await recordTrackersInfo(track)
           allRecordTrackers.push({task: task, id: track.cseguimientonotificacion})
         }
       }
@@ -56,8 +56,26 @@ const sendTrackerAlerts = async (msg, url, user, system) => {
   webSocketJs.addNotification(msg, url, user, system)
 }
 
-const recordTrackersInfo = async (minutes, item) => {
+const recordTrackersInfo = async (item) => {
   console.log('begining alerts');
+  const date = new Date()
+  const hour = getHours()
+  const day = getDate()
+  console.log(item);
+  let cronString = ''
+  if(item.xintervalo == 'segundos') {
+    cronString = `/${item.nalerta} * * * * * `
+  } else if(item.xintervalo == 'minutos') {
+    cronString = `*/${item.nalerta} * * * * `
+  } else if(item.xintervalo == 'horas') {
+    cronString = `0 0 0/${item.nalerta} 1/1 * ? *`
+  } else if(item.xintervalo == 'días') {
+    cronString = ` 0 0 ${hour} 1/${item.nalerta} * ? *`
+  } else if(item.xintervalo == 'semanas') {
+    cronString = ` 0 0 ${hour} 1/${(item.nalerta)*7} * ? *`
+  } else if(item.xintervalo == 'meses') {
+    cronString = ` 0 0 ${hour} ${day} 1/${item.nalerta} ? *`
+  }
   const task = cron.schedule(`*/${minutes} * * * * `, () => {
     sendTrackerAlerts(`AVISO: seguimiento #${item.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + item.cnotificacion, 1, 2)
     console.log(`running a task every ${minutes} minute/s`);

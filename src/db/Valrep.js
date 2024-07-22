@@ -632,8 +632,7 @@ const getAdditionalServices = async (getAdditionalServices) => {
     const serv = await AdditionalService.findAll({
       where: { 
         cservicio: { [Op.notIn]: cservicioIds }, // Utilizar Op.notIn para excluir los IDs
-        cpais: getAdditionalServices.cpais, 
-        ccompania: getAdditionalServices.ccompania, 
+        cpais: getAdditionalServices.cpais,  
       },
       attributes: ['cservicio', 'xservicio', 'itiporeporte'],
     });

@@ -59,8 +59,8 @@ const sendTrackerAlerts = async (msg, url, user, system) => {
 const recordTrackersInfo = async (item) => {
   console.log('begining alerts');
   const date = new Date()
-  const hour = getHours()
-  const day = getDate()
+  const hour = date.getHours()
+  const day = date.getDate()
   console.log(item);
   let cronString = ''
   if(item.xintervalo == 'segundos') {
@@ -76,9 +76,9 @@ const recordTrackersInfo = async (item) => {
   } else if(item.xintervalo == 'meses') {
     cronString = ` 0 0 ${hour} ${day} 1/${item.nalerta} ? *`
   }
-  const task = cron.schedule(`*/${minutes} * * * * `, () => {
+  const task = cron.schedule(cronString, () => {
     sendTrackerAlerts(`AVISO: seguimiento #${item.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + item.cnotificacion, 1, 2)
-    console.log(`running a task every ${minutes} minute/s`);
+    console.log(`tarea ejecutandose cada ${item.nalerta} ${item.xintervalo}`);
   });
 
   return task

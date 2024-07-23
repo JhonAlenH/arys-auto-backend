@@ -635,7 +635,7 @@ const getAdditionalServices = async (getAdditionalServices) => {
         cpais: getAdditionalServices.cpais,  
       },
       attributes: ['cservicio', 'xservicio', 'itiporeporte'],
-    });
+    }); 
 
     // Mapear los servicios adicionales a objetos planos
     const serviceList = serv.map(item => item.get({ plain: true }));

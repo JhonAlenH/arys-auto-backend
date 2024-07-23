@@ -61,6 +61,7 @@ const sendTrackerAlerts = async (msg, url, user, system) => {
 const recordTrackersInfo = async (item) => {
   console.log('begining alerts');
   const date = new Date()
+  const minutes = date.getMinutes()
   const hour = date.getHours()
   const day = date.getDate()
 
@@ -70,16 +71,15 @@ const recordTrackersInfo = async (item) => {
   } else if(item.xintervalo == 'minutos') {
     cronString = `*/${parseInt(item.nalerta)} * * * *`
   } else if(item.xintervalo == 'horas') {
-    cronString = `0 0 0/${parseInt(item.nalerta)} * * ? *`
+    cronString = `${minutes} */${hour} * * *`
   } else if(item.xintervalo == 'días') {
-    cronString = `0 0 ${hour} 1/${parseInt(item.nalerta)} * ? *`
+    cronString = `${minutes} ${hour} */${item.nalerta} * *`
   } else if(item.xintervalo == 'semanas') {
-    cronString = `0 0 ${hour} 1/${(parseInt(item.nalerta))*7} * ? *`
+    cronString = `${minutes} ${hour} */${(item.nalerta)*7 } * *`
   } else if(item.xintervalo == 'meses') {
-    cronString = `0 0 ${hour} ${day} 1/${parseInt(item.nalerta)} ? *`
+    cronString = `${minutes} ${hour} ${day} */${item.nalerta} *`
   }
   var valid = cron.validate(cronString);
-  // cronString = '* * * * *'
   console.log(cronString);
   console.log(valid);
   let task = null
@@ -89,7 +89,6 @@ const recordTrackersInfo = async (item) => {
       console.log(`tarea ejecutandose cada ${parseInt(item.nalerta)} ${item.xintervalo}`);
     });
   }
-  
 
   return task
 }

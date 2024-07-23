@@ -123,6 +123,7 @@ const getAllTrackers = async (req, res) => {
 }
 const addTracker = async (task, id) => {
   allRecordTrackers.push({task: task, id: id})
+  console.log('añadido la alerta a la lista', allRecordTrackers.length);
 }
 const searchTrackerInfo = async (req, res) => {
   try {

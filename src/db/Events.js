@@ -241,7 +241,8 @@ const createEvents = async (data) => {
             if (seguimiento.bcerrado == false){
               seguimiento.cseguimientonotificacion = response.recordset[0].cseguimientonotificacion
               webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
-              trackingController.recordTrackersInfo(seguimiento)
+              const task = trackingController.recordTrackersInfo(seguimiento)
+              trackingController.addTracker(task, seguimiento.id)
             }
           }
       }))
@@ -330,7 +331,8 @@ const updateEvents = async (data) => {
             if (seguimiento.bcerrado == false){
               seguimiento.cseguimientonotificacion = response.recordset[0].cseguimientonotificacion
               webSocket.addNotification(`AVISO: seguimiento #${seguimiento.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + seguimiento.cnotificacion, 1, 2)
-              trackingController.recordTrackersInfo(seguimiento)
+              const task = trackingController.recordTrackersInfo(seguimiento)
+              trackingController.addTracker(task, seguimiento.id)
             }
           }
         } else if (seguimiento.type == 'update') {

@@ -9,7 +9,6 @@ const getAllTrackersInit = async () => {
   try{
     let now = new Date
     const gettedTracks = await Tracking.searchTrackers(1)
-    console.log(gettedTracks);
     if (gettedTracks.error) {
       return res.status(gettedTracks.code).send({
         status: false,
@@ -28,7 +27,9 @@ const getAllTrackersInit = async () => {
           sendTrackerAlerts(`AVISO: seguimiento #${track.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + track.cnotificacion, 1, 2)          
         } else {
           const task = await recordTrackersInfo(track)
-          allRecordTrackers.push({task: task, id: track.cseguimientonotificacion})
+          if(task){
+            addTracker(task, track.cseguimientonotificacion)
+          }
         }
       }
     }
@@ -67,7 +68,7 @@ const recordTrackersInfo = async (item) => {
   if(item.xintervalo == 'segundos') {
     cronString = `/${parseInt(item.nalerta)} * * * * * `
   } else if(item.xintervalo == 'minutos') {
-    cronString = `* /${parseInt(item.nalerta)} * * * * `
+    cronString = `*/${parseInt(item.nalerta)} * * * *`
   } else if(item.xintervalo == 'horas') {
     cronString = `0 0 0/${parseInt(item.nalerta)} * * ? *`
   } else if(item.xintervalo == 'días') {
@@ -77,11 +78,18 @@ const recordTrackersInfo = async (item) => {
   } else if(item.xintervalo == 'meses') {
     cronString = `0 0 ${hour} ${day} 1/${parseInt(item.nalerta)} ? *`
   }
+  var valid = cron.validate(cronString);
+  // cronString = '* * * * *'
   console.log(cronString);
-  const task = cron.schedule(cronString, () => {
-    sendTrackerAlerts(`AVISO: seguimiento #${item.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + item.cnotificacion, 1, 2)
-    console.log(`tarea ejecutandose cada ${parseInt(item.nalerta)} ${item.xintervalo}`);
-  });
+  console.log(valid);
+  let task = null
+  if(valid) {
+    task = cron.schedule(cronString, () => {
+      sendTrackerAlerts(`AVISO: seguimiento #${item.cseguimientonotificacion} pendiente en esta notificación.`, 'admin/events/notifications/' + item.cnotificacion, 1, 2)
+      console.log(`tarea ejecutandose cada ${parseInt(item.nalerta)} ${item.xintervalo}`);
+    });
+  }
+  
 
   return task
 }
@@ -113,6 +121,9 @@ const getAllTrackers = async (req, res) => {
   } catch (error) {
     
   }
+}
+const addTracker = async (task, id) => {
+  allRecordTrackers.push({task: task, id: id})
 }
 const searchTrackerInfo = async (req, res) => {
   try {
@@ -148,5 +159,6 @@ export default {
   searchTrackerInfo,
   stopRecordTrack,
   recordTrackersInfo,
-  getAllTrackersInit
+  getAllTrackersInit,
+  addTracker
 }

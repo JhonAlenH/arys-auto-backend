@@ -613,7 +613,10 @@ const getTracingMotive = async (getTracingMotive) => {
 const getContractedService = async (ccontratoflota) => {
   try {
     const serv = await Service.findAll({
-      where: {ccontratoflota: ccontratoflota},
+      where: {
+        ccontratoflota: ccontratoflota,
+        ncantidad: { [Op.gt]: 0 }
+      },
       attributes: ['cservicio', 'xservicio', 'itiporeporte'],
     });
     const service = serv.map((item) => item.get({ plain: true }));

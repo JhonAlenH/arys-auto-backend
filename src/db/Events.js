@@ -35,6 +35,7 @@ const ServiceOrder2 = sequelize.define('evVordenServicio', {
 const Replacement = sequelize.define('evVrepuestos', {});
 const Quotes = sequelize.define('evVcotizaciones', {});
 const ReplacementQuotes = sequelize.define('evVrepuestosCoti', {}, {tableName: 'evVrepuestosCoti'});
+const ReplacementQuotesDetail = sequelize.define('evVrepuestosDisponibles', {});
 
 
 const searchEvents = async (body, ccompania, cpais) => {
@@ -410,6 +411,43 @@ const updateEvents = async (data) => {
           updateRequest.input('corden', serviceOrder.corden);
       
           await updateRequest.query(queryUpdate);
+
+          
+
+          if (serviceOrder.cestatusgeneral === 6) {
+            const selectQuery = `
+                SELECT ncantidad 
+                FROM SUSERVICIOS 
+                WHERE ccontratoflota = @ccontratoflota 
+                AND cservicio = @cservicio
+            `;
+        
+            const selectRequest = pool.request();
+            selectRequest.input('ccontratoflota', data.ccontratoflota);
+            selectRequest.input('cservicio', serviceOrder.cservicio);
+        
+            const selectResult = await selectRequest.query(selectQuery);
+            const ncantidad = selectResult.recordset[0].ncantidad;
+        
+            // Restar uno al valor de ncantidad
+            const newCantidad = ncantidad - 1;
+        
+            // Actualizar el valor de ncantidad en SUSERVICIOS
+            const updateCantidadQuery = `
+                UPDATE SUSERVICIOS 
+                SET ncantidad = @newCantidad 
+                WHERE ccontratoflota = @ccontratoflota 
+                AND cservicio = @cservicio
+            `;
+        
+            const updateCantidadRequest = pool.request();
+            updateCantidadRequest.input('newCantidad', newCantidad);
+            updateCantidadRequest.input('ccontratoflota', data.ccontratoflota);
+            updateCantidadRequest.input('cservicio', serviceOrder.cservicio);
+        
+            await updateCantidadRequest.query(updateCantidadQuery);
+          }
+
         } 
       }));
     }
@@ -770,6 +808,31 @@ const getQuotesReplacement = async (id) => {
   }
 };
 
+const getQuotesReplacementDetail = async (id) => {
+  try {
+    const repuestos = await ReplacementQuotesDetail.findAll({
+      where: {
+        ccotizacion: id
+      },
+      attributes: [
+        'ccotizacion', 
+        'crepuesto', 
+        'xrepuesto', 
+        'ncantidad', 
+        'xniveldano', 
+        'munitariorepuesto', 
+        'mtotalrepuesto', 
+        'xmoneda',
+        'mtotalcotizacion'
+      ],
+    });
+    const replacement = repuestos.map((item) => item.get({ plain: true }));
+    return replacement;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 export default {
     searchEvents,
     getEvent,
@@ -782,5 +845,6 @@ export default {
     updateEvents,
     getReplacementById,
     getQuotesById,
-    getQuotesReplacement
+    getQuotesReplacement,
+    getQuotesReplacementDetail
 }

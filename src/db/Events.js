@@ -635,7 +635,7 @@ const updateEvents = async (data) => {
 
     if (Array.isArray(data.quotesData) && data.quotesData.length > 0) {
       await Promise.all(data.quotesData.map(async (quoteData) => {
-      let quotesKeys = Object.keys(quoteData).filter(key => 
+        let quotesKeys = Object.keys(quoteData).filter(key => 
         key !== 'type' && 
         key !== 'crepuesto' &&
         key !== 'ncantidad' &&
@@ -665,32 +665,33 @@ const updateEvents = async (data) => {
   
           const cotizacion = await quotesRequest.query(queryquotes);
           quoteData.ccotizacion = cotizacion.recordset[0].ccotizacion
+          if (Array.isArray(quoteData.repuestos) && quoteData.repuestos.length > 0) {
+            await Promise.all(quoteData.repuestos.map(async (repuesto) => {
+              repuesto.ccotizacion = quoteData.ccotizacion
+              const keys = Object.keys(repuesto).filter(key =>
+                  key !== 'xrepuesto' &&
+                  key !== 'type' &&
+                  key !== 'itiporeporte'
+              );
   
-          await Promise.all(quoteData.repuestos.map(async (repuesto) => {
-            repuesto.ccotizacion = quoteData.ccotizacion
-            const keys = Object.keys(repuesto).filter(key =>
-                key !== 'xrepuesto' &&
-                key !== 'type' &&
-                key !== 'itiporeporte'
-            );
-
+              
+              const repuestosValues = keys.map(key => repuesto[key] === '' ? null : repuesto[key]);            
+              console.log(repuestosValues)
+              const repuestosKeys = keys.map((_, i) => `@param${i + 1}`).join(',');
             
-            const repuestosValues = keys.map(key => repuesto[key] === '' ? null : repuesto[key]);            
-            console.log(repuestosValues)
-            const repuestosKeys = keys.map((_, i) => `@param${i + 1}`).join(',');
-          
-            
-            
-            const repuestoQuote = `INSERT INTO EVREPUESTOCOTIZACION (${keys.join(',')}) VALUES (${repuestosKeys})`;
-  
-            console.log(repuestoQuote)
-            const createRequest = pool.request();
-            keys.forEach((key, index) => {
-                createRequest.input(`param${index + 1}`, repuestosValues[index]);
-            });
-  
-            await createRequest.query(repuestoQuote);
-          }));
+              
+              
+              const repuestoQuote = `INSERT INTO EVREPUESTOCOTIZACION (${keys.join(',')}) VALUES (${repuestosKeys})`;
+    
+              console.log(repuestoQuote)
+              const createRequest = pool.request();
+              keys.forEach((key, index) => {
+                  createRequest.input(`param${index + 1}`, repuestosValues[index]);
+              });
+    
+              await createRequest.query(repuestoQuote);
+            }));
+          }
         }
       
       }))

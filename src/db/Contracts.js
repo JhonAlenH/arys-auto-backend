@@ -83,7 +83,11 @@ const getContractsByUser = async (cusuario) => {
 const getReceiptsByContract = async (ccontratoflota) => {
   try {
     let pool = await sql.connect(sqlConfig);
-    let result = await pool.request().query(`SELECT * FROM SURECIBO WHERE ccontratoflota = ${ccontratoflota}`)
+    let result = await pool.request().query(`
+      SELECT SURECIBO.*, MAESTATUSGENERAL.XESTATUSGENERAL
+      FROM SURECIBO INNER JOIN
+      MAESTATUSGENERAL ON SURECIBO.CESTATUSGENERAL = MAESTATUSGENERAL.CESTATUSGENERAL WHERE ccontratoflota = ${ccontratoflota}
+      `)
     let j = 0
     for (const record of result.recordset) {
         const keys = Object.keys(record)

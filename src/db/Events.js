@@ -488,7 +488,7 @@ const updateEvents = async (data) => {
     if(Array.isArray(data.repuestos) && data.repuestos.length > 0){
       await Promise.all(data.repuestos.map(async (repuestos) => {
         if (repuestos.type == 'create') {
-          const repuestosKeys = Object.keys(repuestos).filter(key => key !== 'type');
+          const repuestosKeys = Object.keys(repuestos).filter(key => key !== 'type' && key !== 'selected');
           const repuestosValues = repuestosKeys.map(key => repuestos[key] === '' ? null : repuestos[key]);
       
           const placeholdersRepuestos = repuestosKeys.map((_, i) => `@soparam${i + 1}`).join(',');
@@ -523,7 +523,8 @@ const updateEvents = async (data) => {
         }else if(repuestos.type == 'delete'){
           const keys = Object.keys(repuestos).filter(key => 
             key !== 'type' &&
-            key !== 'xrepuesto'
+            key !== 'xrepuesto' &&
+            key !== 'selected'
           );
           const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
       
@@ -638,6 +639,7 @@ const updateEvents = async (data) => {
         let quotesKeys = Object.keys(quoteData).filter(key => 
         key !== 'type' && 
         key !== 'crepuesto' &&
+        key !== 'selected' &&
         key !== 'ncantidad' &&
         key !== 'repuestos' &&
         key !== 'report' &&
@@ -671,6 +673,7 @@ const updateEvents = async (data) => {
               const keys = Object.keys(repuesto).filter(key =>
                   key !== 'xrepuesto' &&
                   key !== 'type' &&
+                  key !== 'selected' &&
                   key !== 'itiporeporte'
               );
   

@@ -27,7 +27,7 @@ const defineConnection = () => {
         await getNotifications()
         x++
       }
-      console.log('aqui hay ',await admin_notificaciones.length);
+      console.log('existen ' + await admin_notificaciones.length + ' alertas activas');
 
       io.emit('notifications_admin', await admin_notificaciones);
       io.emit('notifications_club', await club_notificaciones);

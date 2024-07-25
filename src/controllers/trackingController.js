@@ -48,8 +48,12 @@ const stopRecordTrack = async (id) => {
 }
 const quitAlerts = async(xmensaje) => {
   const {admin_notificaciones, club_notificaciones} = await webSocketJs.getNotifications()
-  const gettedNotifications = admin_notificaciones.filter(notification=>notification.xmensaje == xmensaje)
-  const gettedNotificationsIds = gettedNotifications.map(notification=>notification.calerta)
+  let gettedNotifications = []
+  let gettedNotificationsIds = []
+  if(admin_notificaciones){
+    gettedNotifications = admin_notificaciones.filter(notification=>notification.xmensaje == xmensaje)
+    gettedNotificationsIds = gettedNotifications.map(notification=>notification.calerta)
+  }
   
   webSocketJs.editNotifications(gettedNotificationsIds)
 }

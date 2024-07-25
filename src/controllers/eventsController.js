@@ -173,7 +173,7 @@ const getServiceOrderById = async (req, res) => {
 
     const ordenesM = ordenes.map(orden => {
         const ordenNew = orden
-        ordenNew.type = 'update'
+        ordenNew.type = 'info'
         return ordenNew
     })
     return res
@@ -373,6 +373,37 @@ const getQuotesReplacement = async (req, res) => {
         });
 }
 
+const getQuotesReplacementDetail = async (req, res) => {
+    const replacement = await Events.getQuotesReplacementDetail(req.params.id);
+    if (replacement.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: replacement.permissionError
+            });
+    }
+    if (replacement.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: replacement.error
+            });
+    }
+    const repuestos = replacement.map(repue => {
+        const repuestosNew = repue
+        repuestosNew.selected = false
+        return repuestosNew
+    })
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: repuestos
+        });
+}
+
 export default {
     searchEvents,
     getEvent,
@@ -385,5 +416,6 @@ export default {
     getNotasById,
     getReplacementById,
     getQuotesById,
-    getQuotesReplacement
+    getQuotesReplacement,
+    getQuotesReplacementDetail
 }

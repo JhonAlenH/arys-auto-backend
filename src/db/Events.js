@@ -704,6 +704,7 @@ const updateEvents = async (data) => {
       await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
         const keys = Object.keys(quotesAccepted).filter(key => 
           key !== 'ccotizacion' &&
+          key !== 'selected' &&
           key !== 'crepuesto' && 
           key !== 'xrepuesto' && 
           key !== 'ncantidad' && 
@@ -731,6 +732,7 @@ const updateEvents = async (data) => {
         const keys = Object.keys(quotesAccepted).filter(key =>
             key !== 'ccotizacion' &&
             key !== 'crepuesto' && 
+            key !== 'selected' && 
             key !== 'xrepuesto' && 
             key !== 'mtotal' && 
             key !== 'mmontototal' && 

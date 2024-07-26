@@ -160,6 +160,7 @@ const typeServicePlan = async (typeServicePlan) => {
 };
 
 const createMembership = async (createMembership) => {
+  console.log(createMembership.cplan)
   try {
       let xcliente = createMembership.xnombre + ' ' + createMembership.xapellido
       let pool = await sql.connect(sqlConfig);

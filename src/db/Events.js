@@ -199,7 +199,7 @@ const getSeguimientosById = async (id) => {
 };
 
 const createEvents = async (data) => {
-  const keys = Object.keys(data).filter(key => key !== 'seguimientos' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas' && key !== 'quotes' && key !== 'quotesAccepted');
+  const keys = Object.keys(data).filter(key => key !== 'seguimientos' && key !== 'repuestos' && key !== 'serviceOrder' && key !== 'cnotificacion' && key !== 'notas' && key !== 'quotes' && key !== 'quotesAccepted' && key !== 'quotesData' );
   const values = keys.map(key => data[key]);
   let pool;
   try {
@@ -208,6 +208,8 @@ const createEvents = async (data) => {
 
     const placeholders = keys.map((_, i) => `@param${i + 1}`).join(',');
     const query = `INSERT INTO EVNOTIFICACION (${keys.join(',')}) VALUES (${placeholders}) SELECT SCOPE_IDENTITY() AS cnotificacion`;
+
+    console.log(query)
 
     keys.forEach((key, index) => {
       request.input(`param${index + 1}`, values[index]);

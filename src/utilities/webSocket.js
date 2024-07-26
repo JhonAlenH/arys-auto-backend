@@ -65,6 +65,7 @@ const editNotification = async (msg)=>{
 const editNotifications = async (list)=>{
   if(list.length > 0) {
     const response = await Notification.editNotifications(list)
+    // console.log(admin_notificaciones);
     if(response.rowsAffected >= 1) {
       list.forEach(notification => {
         

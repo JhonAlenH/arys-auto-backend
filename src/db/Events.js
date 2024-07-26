@@ -490,7 +490,7 @@ const updateEvents = async (data) => {
     if(Array.isArray(data.repuestos) && data.repuestos.length > 0){
       await Promise.all(data.repuestos.map(async (repuestos) => {
         if (repuestos.type == 'create') {
-          const repuestosKeys = Object.keys(repuestos).filter(key => key !== 'type' && key !== 'selected');
+          const repuestosKeys = Object.keys(repuestos).filter(key => key !== 'type' && key !== 'selected' && key !== 'cestatusgeneral');
           const repuestosValues = repuestosKeys.map(key => repuestos[key] === '' ? null : repuestos[key]);
       
           const placeholdersRepuestos = repuestosKeys.map((_, i) => `@soparam${i + 1}`).join(',');
@@ -703,6 +703,7 @@ const updateEvents = async (data) => {
     }
 
     if (Array.isArray(data.quotesAccepted) && data.quotesAccepted.length > 0) {
+      console.log(data.quotesAccepted)
       await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
         const keys = Object.keys(quotesAccepted).filter(key => 
           key !== 'ccotizacion' &&
@@ -713,7 +714,12 @@ const updateEvents = async (data) => {
           key !== 'bdisponible' &&
           key !== 'munitariorepuesto' &&
           key !== 'mmontototal' &&
-          key !== 'mtotalrepuesto' 
+          key !== 'mtotalrepuesto' &&
+          key !== 'type' &&
+          key !== 'selected' &&
+          key !== 'mivaindividual' &&
+          key !== 'xmoneda' &&
+          key !== 'xniveldano'
         );
         const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
 
@@ -740,7 +746,9 @@ const updateEvents = async (data) => {
             key !== 'mmontototal' && 
             key !== 'mtotalcotizacion' && 
             key !== 'pimpuesto' && 
-            key !== 'cestatusgeneral' 
+            key !== 'type' &&
+            key !== 'selected' &&
+            key !== 'xmoneda'
         );
         const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
 
@@ -897,7 +905,8 @@ const getQuotesReplacementDetail = async (id) => {
         'munitariorepuesto', 
         'mtotalrepuesto', 
         'xmoneda',
-        'mtotalcotizacion'
+        'mtotalcotizacion',
+        'cestatusgeneral'
       ],
     });
     const replacement = repuestos.map((item) => item.get({ plain: true }));

@@ -410,39 +410,39 @@ const updateEvents = async (data) => {
 
           
 
-          if (serviceOrder.cestatusgeneral === 6) {
-            const selectQuery = `
-                SELECT ncantidad 
-                FROM SUSERVICIOS 
-                WHERE ccontratoflota = @ccontratoflota 
-                AND cservicio = @cservicio
-            `;
+          // if (serviceOrder.cestatusgeneral === 6) {
+          //   const selectQuery = `
+          //       SELECT ncantidad 
+          //       FROM SUSERVICIOS 
+          //       WHERE ccontratoflota = @ccontratoflota 
+          //       AND cservicio = @cservicio
+          //   `;
         
-            const selectRequest = pool.request();
-            selectRequest.input('ccontratoflota', data.ccontratoflota);
-            selectRequest.input('cservicio', serviceOrder.cservicio);
+          //   const selectRequest = pool.request();
+          //   selectRequest.input('ccontratoflota', data.ccontratoflota);
+          //   selectRequest.input('cservicio', serviceOrder.cservicio);
         
-            const selectResult = await selectRequest.query(selectQuery);
-            const ncantidad = selectResult.recordset[0].ncantidad;
+          //   const selectResult = await selectRequest.query(selectQuery);
+          //   const ncantidad = selectResult.recordset[0].ncantidad;
         
-            // Restar uno al valor de ncantidad
-            const newCantidad = ncantidad - 1;
+          //   // Restar uno al valor de ncantidad
+          //   const newCantidad = ncantidad - 1;
         
-            // Actualizar el valor de ncantidad en SUSERVICIOS
-            const updateCantidadQuery = `
-                UPDATE SUSERVICIOS 
-                SET ncantidad = @newCantidad 
-                WHERE ccontratoflota = @ccontratoflota 
-                AND cservicio = @cservicio
-            `;
+          //   // Actualizar el valor de ncantidad en SUSERVICIOS
+          //   const updateCantidadQuery = `
+          //       UPDATE SUSERVICIOS 
+          //       SET ncantidad = @newCantidad 
+          //       WHERE ccontratoflota = @ccontratoflota 
+          //       AND cservicio = @cservicio
+          //   `;
         
-            const updateCantidadRequest = pool.request();
-            updateCantidadRequest.input('newCantidad', newCantidad);
-            updateCantidadRequest.input('ccontratoflota', data.ccontratoflota);
-            updateCantidadRequest.input('cservicio', serviceOrder.cservicio);
+          //   const updateCantidadRequest = pool.request();
+          //   updateCantidadRequest.input('newCantidad', newCantidad);
+          //   updateCantidadRequest.input('ccontratoflota', data.ccontratoflota);
+          //   updateCantidadRequest.input('cservicio', serviceOrder.cservicio);
         
-            await updateCantidadRequest.query(updateCantidadQuery);
-          }
+          //   await updateCantidadRequest.query(updateCantidadQuery);
+          // }
 
         } 
       }));

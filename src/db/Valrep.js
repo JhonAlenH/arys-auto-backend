@@ -461,7 +461,7 @@ const getPlan = async (getPlan) => {
   try {
     const planes = await Plan.findAll({
       where: {ccompania: getPlan.ccompania},
-      attributes: ['cplan', 'xplan', 'mcosto'],
+      attributes: ['cplan', 'id', 'xplan', 'mcosto'],
     });
     const result = planes.map((item) => item.get({ plain: true }));
     return result;

@@ -148,7 +148,7 @@ const typeServicePlan = async (typeServicePlan) => {
   try {
     const service = await TypeService.findAll({
       where: {
-        cplan: typeServicePlan.cplan
+        id_plan: typeServicePlan.cplan
       },
       attributes: ['cplan', 'ctiposervicio', 'xtiposervicio'],
     });

@@ -14,6 +14,9 @@ const sqlConfig = {
     }
 }
 
+let allContracts = []
+let contractsRender = []
+
 const Search = sequelize.define('suVcontratos', {});
 const Receipts = sequelize.define('surecibo', {}, {tableName: 'surecibo'});
 const SearchCompany = sequelize.define('macompania', {});
@@ -44,28 +47,74 @@ const Vehicle = sequelize.define('suVpropietario', {
 const searchContracts = async (body, idcompania) => {
   try {
     let contract;
+    let contractList = []
     if (idcompania != 1) {
       if (!body.ccompania) {
         body.ccompania = idcompania;
       }
-      contract = await Search.findAll({
-        where: body,
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
-        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
-      });
-    } else {
-      contract = await Search.findAll({
-        where: body,
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
-        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
-      });
     }
+    contract = await Search.findAll({
+      where: body,
+      attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+      order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
+    });
+
     let contracts = contract.map((item) => item.get({ plain: true }));
-    return contracts;
+    contracts.forEach((item) => {
+      contractList.push({
+          ccontratoflota: item.ccontratoflota,
+          xnombre: item.xnombre + ' ' + item.xapellido,
+          xvehiculo: item.xmarca,
+          xplaca: item.xplaca,
+          xmarca: item.xmarca,
+          xmodelo: item.xmodelo,
+          xversion: item.xversion,
+          ccompania: item.ccompania,
+          xcompania: item.xcompania,
+          xestatusgeneral: item.xestatusgeneral,
+      });
+  })
+    allContracts = contractList
+    contractsRender = contractList
+    return contractList.length;
   } catch (error) {
     return { error: error.message };
   }
 };
+
+
+
+const searchContractsByPage = async (page, records) => {
+  const pageBegin = parseInt(page) * parseInt(records)
+  const searchedAll = contractsRender.slice(pageBegin, pageBegin + parseInt(records) )
+  return searchedAll
+}
+const searchContractsByText = async (text) => {
+  if(text) {
+
+    contractsRender = allContracts.filter(item => {
+      let values = Object.values(item)
+      values.shift()
+      const valueFinded = values.find(value => {
+        if(typeof value == 'string'){
+          if (value.toLowerCase().includes(text.toLowerCase())){
+            return value
+          }
+        } else if(typeof value == 'number') {
+          const valueString = value.toString()
+          if (valueString.toLowerCase().includes(text.toLowerCase())){
+            return value
+          }
+        }
+      })
+      if (valueFinded) return item
+    })
+  } else {
+    contractsRender = allContracts
+  }
+  return contractsRender
+}
+
 const getContractsByUser = async (cusuario) => {
   try {
     let contract = await Search.findAll({
@@ -291,6 +340,8 @@ const detailMembershipService = async (detailMembershipService) => {
 };
 
 export default {
+  searchContractsByText,
+  searchContractsByPage,
   searchContracts,
   searchPropietary,
   searchVehicle,

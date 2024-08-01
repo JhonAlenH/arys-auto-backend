@@ -14,6 +14,9 @@ const sqlConfig = {
     }
 }
 
+let allContracts = []
+let contractsPage = []
+
 const Search = sequelize.define('suVcontratos', {});
 const Receipts = sequelize.define('surecibo', {}, {tableName: 'surecibo'});
 const SearchCompany = sequelize.define('macompania', {});
@@ -44,6 +47,7 @@ const Vehicle = sequelize.define('suVpropietario', {
 const searchContracts = async (body, idcompania) => {
   try {
     let contract;
+    let contractList = []
     if (idcompania != 1) {
       if (!body.ccompania) {
         body.ccompania = idcompania;
@@ -60,12 +64,35 @@ const searchContracts = async (body, idcompania) => {
         order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
       });
     }
+
     let contracts = contract.map((item) => item.get({ plain: true }));
-    return contracts;
+    contracts.forEach((item) => {
+      contractList.push({
+          ccontratoflota: item.ccontratoflota,
+          xnombre: item.xnombre + ' ' + item.xapellido,
+          xvehiculo: item.xmarca,
+          xplaca: item.xplaca,
+          xmarca: item.xmarca,
+          xmodelo: item.xmodelo,
+          xversion: item.xversion,
+          ccompania: item.ccompania,
+          xcompania: item.xcompania,
+          xestatusgeneral: item.xestatusgeneral,
+      });
+  })
+    allContracts = contractList
+    return contractList.length;
   } catch (error) {
     return { error: error.message };
   }
 };
+
+const searchContractsByPage = async (page, records) => {
+  const getPage = page - 1
+  const searchedAll = allContracts.slice((getPage * records), parseInt(records))
+  return searchedAll
+}
+
 const getContractsByUser = async (cusuario) => {
   try {
     let contract = await Search.findAll({
@@ -291,6 +318,7 @@ const detailMembershipService = async (detailMembershipService) => {
 };
 
 export default {
+  searchContractsByPage,
   searchContracts,
   searchPropietary,
   searchVehicle,

@@ -7,6 +7,7 @@ const router = express.Router();
 router
 
     .post("/search/:id", contractsController.searchContracts)
+    .post("/searchByPage/:page/:records", contractsController.searchContractsByPage)
     .post("/search-propietary", contractsController.searchPropietary)
     .post("/vehicle", contractsController.searchVehicle)
     .post("/type-service", contractsController.typeServicePlan)

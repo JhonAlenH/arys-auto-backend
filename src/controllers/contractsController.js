@@ -1,6 +1,28 @@
 import contractsService from '../service/contractsService.js';
 import Contracts from '../db/Contracts.js';
 
+const searchContractsByPage = async (req, res) => {
+    const page = req.params.page
+    const records = req.params.records
+    const contracts = await Contracts.searchContractsByPage(page, records);
+    if (contracts.error) {
+        return res
+        .status(403)
+        .send({
+            status: false,
+            message: contracts.permissionError
+        });
+    }
+    console.log(contracts)
+    return res
+    .status(200)
+    .send({
+        status: true,
+        data: {
+            contracts: contracts
+        }
+    });
+}
 const searchContracts = async (req, res) => {
     let contractList = []
     const contracts = await contractsService.searchContracts(req.body, req.params.id);
@@ -20,30 +42,13 @@ const searchContracts = async (req, res) => {
                 message: contracts.error
             });
     }
-    if(contracts.length > 0){
-
-        contracts.forEach((item) => {
-            contractList.push({
-                ccontratoflota: item.ccontratoflota,
-                xnombre: item.xnombre + ' ' + item.xapellido,
-                xvehiculo: item.xmarca,
-                xplaca: item.xplaca,
-                xmarca: item.xmarca,
-                xmodelo: item.xmodelo,
-                xversion: item.xversion,
-                ccompania: item.ccompania,
-                xcompania: item.xcompania,
-                xestatusgeneral: item.xestatusgeneral,
-            });
-        })
-    }
 
     return res
         .status(200)
         .send({
             status: true,
             data: {
-                contracts: contractList
+                contracts: contracts
             }
         });
 }
@@ -208,6 +213,7 @@ const detailMembership = async (req, res) => {
 }
 
 export default {
+    searchContractsByPage,
     searchContracts,
     searchPropietary,
     searchVehicle,

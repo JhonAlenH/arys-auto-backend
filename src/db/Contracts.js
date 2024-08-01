@@ -93,7 +93,8 @@ const searchContractsByText = async (text) => {
   if(text) {
 
     contractsRender = allContracts.filter(item => {
-      const values = Object.values(item)
+      let values = Object.values(item)
+      values.shift()
       const valueFinded = values.find(value => {
         if(typeof value == 'string'){
           if (value.toLowerCase().includes(text.toLowerCase())){

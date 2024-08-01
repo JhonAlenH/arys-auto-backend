@@ -13,13 +13,32 @@ const searchContractsByPage = async (req, res) => {
             message: contracts.permissionError
         });
     }
-    console.log(contracts)
     return res
     .status(200)
     .send({
         status: true,
         data: {
             contracts: contracts
+        }
+    });
+}
+const searchContractsByText = async (req, res) => {
+    const text = req.body.text
+    const contracts = await Contracts.searchContractsByText(text);
+    if (contracts.error) {
+        return res
+        .status(403)
+        .send({
+            status: false,
+            message: contracts.permissionError
+        });
+    }
+    return res
+    .status(200)
+    .send({
+        status: true,
+        data: {
+            contracts: contracts.length
         }
     });
 }
@@ -213,6 +232,7 @@ const detailMembership = async (req, res) => {
 }
 
 export default {
+    searchContractsByText,
     searchContractsByPage,
     searchContracts,
     searchPropietary,

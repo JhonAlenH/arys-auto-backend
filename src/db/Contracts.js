@@ -15,7 +15,7 @@ const sqlConfig = {
 }
 
 let allContracts = []
-let contractsPage = []
+let contractsRender = []
 
 const Search = sequelize.define('suVcontratos', {});
 const Receipts = sequelize.define('surecibo', {}, {tableName: 'surecibo'});
@@ -52,18 +52,12 @@ const searchContracts = async (body, idcompania) => {
       if (!body.ccompania) {
         body.ccompania = idcompania;
       }
-      contract = await Search.findAll({
-        where: body,
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
-        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
-      });
-    } else {
-      contract = await Search.findAll({
-        where: body,
-        attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
-        order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
-      });
     }
+    contract = await Search.findAll({
+      where: body,
+      attributes: ['ccontratoflota', 'xnombre', 'xapellido', 'xplaca', 'xmarca', 'xmodelo', 'xversion', 'ccompania', 'xestatusgeneral', 'xcompania'],
+      order: [['ccontratoflota', 'ASC']], // Ordenar por ccontratoflota en orden ascendente
+    });
 
     let contracts = contract.map((item) => item.get({ plain: true }));
     contracts.forEach((item) => {
@@ -81,16 +75,43 @@ const searchContracts = async (body, idcompania) => {
       });
   })
     allContracts = contractList
+    contractsRender = contractList
     return contractList.length;
   } catch (error) {
     return { error: error.message };
   }
 };
 
+
+
 const searchContractsByPage = async (page, records) => {
-  const getPage = page - 1
-  const searchedAll = allContracts.slice((getPage * records), parseInt(records))
+  const pageBegin = parseInt(page) * parseInt(records)
+  const searchedAll = contractsRender.slice(pageBegin, pageBegin + parseInt(records) )
   return searchedAll
+}
+const searchContractsByText = async (text) => {
+  if(text) {
+
+    contractsRender = allContracts.filter(item => {
+      const values = Object.values(item)
+      const valueFinded = values.find(value => {
+        if(typeof value == 'string'){
+          if (value.toLowerCase().includes(text.toLowerCase())){
+            return value
+          }
+        } else if(typeof value == 'number') {
+          const valueString = value.toString()
+          if (valueString.toLowerCase().includes(text.toLowerCase())){
+            return value
+          }
+        }
+      })
+      if (valueFinded) return item
+    })
+  } else {
+    contractsRender = allContracts
+  }
+  return contractsRender
 }
 
 const getContractsByUser = async (cusuario) => {
@@ -318,6 +339,7 @@ const detailMembershipService = async (detailMembershipService) => {
 };
 
 export default {
+  searchContractsByText,
   searchContractsByPage,
   searchContracts,
   searchPropietary,

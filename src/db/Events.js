@@ -764,7 +764,7 @@ const getQuotesById = async (id) => {
         cnotificacion: id
       },
       attributes: [
-        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio' 
+        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio', 'cestatusgeneral', 'xestatusgeneral'
       ],
     });
     const quotes = cotizaciones.map((item) => item.get({ plain: true }));

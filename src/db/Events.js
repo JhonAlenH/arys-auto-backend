@@ -35,6 +35,7 @@ const ServiceOrder2 = sequelize.define('evVordenServicio', {
 const Replacement = sequelize.define('evVrepuestos', {});
 const Quotes = sequelize.define('evVcotizaciones', {});
 const ReplacementQuotes = sequelize.define('evVrepuestosCoti', {}, {tableName: 'evVrepuestosCoti'});
+const DeliveryQuote = sequelize.define('EVGRUACOTIZACION', {}, {tableName: 'EVGRUACOTIZACION'});
 const ReplacementQuotesDetail = sequelize.define('evVrepuestosDisponibles', {});
 
 
@@ -790,6 +791,22 @@ const getQuotesReplacement = async (id) => {
     return { error: error.message };
   }
 };
+const getQuoteDelivery = async (id) => {
+  try {
+    const repuestos = await DeliveryQuote.findAll({
+      where: {
+        ccotizacion: id
+      },
+      attributes: [
+        'cgruacotizacion', 'ccotizacion', 'cnotificacion', 'xorigen_grua', 'xdestino_grua', 'cmoneda', 'mmonto_grua', 'mmontoiva'
+      ],
+    });
+    const replacement = repuestos.map((item) => item.get({ plain: true }));
+    return replacement;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
 
 const getQuotesReplacementDetail = async (id) => {
   try {
@@ -830,5 +847,6 @@ export default {
     getReplacementById,
     getQuotesById,
     getQuotesReplacement,
+    getQuoteDelivery,
     getQuotesReplacementDetail
 }

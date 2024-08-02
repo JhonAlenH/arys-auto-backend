@@ -347,6 +347,31 @@ const getQuotesById = async (req, res) => {
         });
 }
 
+const getQuoteDelivery = async (req, res) => {
+    const delivery = await Events.getQuoteDelivery(req.params.id);
+    if (delivery.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: delivery.permissionError
+            });
+    }
+    if (delivery.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: delivery.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: replacement
+        });
+}
 const getQuotesReplacement = async (req, res) => {
     const replacement = await Events.getQuotesReplacement(req.params.id);
     if (replacement.permissionError) {
@@ -417,5 +442,6 @@ export default {
     getReplacementById,
     getQuotesById,
     getQuotesReplacement,
+    getQuoteDelivery,
     getQuotesReplacementDetail
 }

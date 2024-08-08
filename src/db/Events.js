@@ -698,7 +698,7 @@ const getServiceOrderById = async (id) => {
         cnotificacion: id
       },
       attributes: [
-        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'corden', 'cservicio', 'ccotizacion', 'xservicio', 'cnotificacion', 
         'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 
@@ -722,7 +722,7 @@ const getServiceOrder = async (corden) => {
         corden: corden
       },
       attributes: [
-        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'corden', 'ccotizacion', 'cservicio', 'xservicio', 'cnotificacion', 
         'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 

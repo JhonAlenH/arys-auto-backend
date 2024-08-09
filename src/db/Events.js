@@ -774,6 +774,22 @@ const getQuotesById = async (id) => {
     return { error: error.message };
   }
 };
+const getQuoteById = async (id) => {
+  try {
+    const cotizaciones = await Quotes.findAll({
+      where: {
+        ccotizacion: id
+      },
+      attributes: [
+        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio', 'cestatusgeneral', 'xestatusgeneral', 'xmoneda'
+      ],
+    });
+    const quotes = cotizaciones.map((item) => item.get({ plain: true }));
+    return quotes;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
 
 const getQuotesReplacement = async (id) => {
   try {
@@ -782,7 +798,7 @@ const getQuotesReplacement = async (id) => {
         ccotizacion: id
       },
       attributes: [
-        'ccotizacion', 'crepuesto', 'xrepuesto', 'ncantidad', 'xniveldano'
+        'ccotizacion', 'crepuesto', 'xrepuesto', 'ncantidad', 'xniveldano', 'bdisponible'
       ],
     });
     const replacement = repuestos.map((item) => item.get({ plain: true }));
@@ -821,6 +837,7 @@ const getQuotesReplacementDetail = async (id) => {
         'ncantidad', 
         'xniveldano', 
         'munitariorepuesto', 
+        'mivaindividual', 
         'mtotalrepuesto', 
         'xmoneda',
         'mtotalcotizacion',
@@ -845,6 +862,7 @@ export default {
     getServiceOrder,
     updateEvents,
     getReplacementById,
+    getQuoteById,
     getQuotesById,
     getQuotesReplacement,
     getQuoteDelivery,

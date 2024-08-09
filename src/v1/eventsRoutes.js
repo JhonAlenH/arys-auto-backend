@@ -18,6 +18,7 @@ router
     .post("/update", eventsController.updateEvents)
     .post("/getReplacementById/:id", eventsController.getReplacementById)
     .post("/getQuotesById/:id", eventsController.getQuotesById)
+    .post("/getQuoteById/:id", eventsController.getQuoteById)
     .post("/quotes-replacement/:id", eventsController.getQuotesReplacement)
     .post("/quote-delivery/:id", eventsController.getQuotesReplacement)
     .post("/quotes-replacement/detail/:id", eventsController.getQuotesReplacementDetail)

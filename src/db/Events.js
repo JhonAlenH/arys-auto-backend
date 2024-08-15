@@ -612,6 +612,9 @@ const updateEvents = async (data) => {
           key !== 'crepuesto' && 
           key !== 'xrepuesto' && 
           key !== 'ncantidad' && 
+          key !== 'itiporeporte' &&
+          key !== 'xdestino_grua' &&
+          key !== 'xorigen_grua' &&
           key !== 'bdisponible' &&
           key !== 'munitariorepuesto' &&
           key !== 'mmontototal' &&
@@ -638,22 +641,57 @@ const updateEvents = async (data) => {
 
       // Actualización en evrepuestocotizacion
       await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
-        const keys = Object.keys(quotesAccepted).filter(key =>
-            key !== 'ccotizacion' &&
-            key !== 'crepuesto' && 
-            key !== 'selected' && 
-            key !== 'xrepuesto' && 
-            key !== 'mtotal' && 
-            key !== 'mmontototal' && 
-            key !== 'mtotalcotizacion' && 
-            key !== 'pimpuesto' && 
-            key !== 'type' &&
-            key !== 'selected' &&
-            key !== 'xmoneda'
-        );
+        let keys = []
+        
+        if(quotesAccepted.itiporeporte == 'G') {
+          keys = Object.keys(quotesAccepted).filter(key =>
+              key !== 'crepuesto' && 
+              key !== 'bdisponible' && 
+              key !== 'selected' && 
+              key !== 'itiporeporte' &&
+              key !== 'xrepuesto' && 
+              key !== 'mmontototal' && 
+              key !== 'pimpuesto' && 
+              key !== 'type' &&
+              key !== 'selected' &&
+              key !== 'xmoneda'
+          );
+        } else {
+          keys = Object.keys(quotesAccepted).filter(key =>
+              key !== 'ccotizacion' &&
+              key !== 'crepuesto' && 
+              key !== 'selected' && 
+              key !== 'itiporepuesto' && 
+              key !== 'xrepuesto' &&
+              key !== 'itiporeporte' &&
+              key !== 'xdestino_grua' &&
+              key !== 'xorigen_grua' &&
+              key !== 'mtotal' && 
+              key !== 'mmontototal' && 
+              key !== 'mtotalcotizacion' && 
+              key !== 'pimpuesto' && 
+              key !== 'type' &&
+              key !== 'selected' &&
+              key !== 'xmoneda'
+          );
+        }
         const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+        
+        let queryUpdate = '';
 
-        const queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`;
+        if(quotesAccepted.itiporeporte == 'G') {
+          const gruaValues = keys.map(key => repuesto[key] === '' ? null : repuesto[key]);
+          const gruaKeys = keys.map((_, i) => `@param${i + 1}`).join(',');
+          queryUpdate = `INSERT INTO EVREPUESTOCOTIZACION (${keys.join(',')}) VALUES (${gruaKeys})`
+
+          const createRequest = pool.request();
+          keys.forEach((key, index) => {
+              createRequest.input(`param${index + 1}`, gruaValues[index]);
+          });
+          await createRequest.query(repuestoQuote);
+        } else {
+          queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`
+        }
 
         const updateRequest = pool.request();
         keys.forEach((key, index) => {

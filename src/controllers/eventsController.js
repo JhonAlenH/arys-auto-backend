@@ -305,6 +305,41 @@ const getReplacementById = async (req, res) => {
         });
 }
 
+const getQuoteById = async (req, res) => {
+    const quotes = await Events.getQuoteById(req.params.id);
+    if (quotes.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: quotes.permissionError
+            });
+    }
+    if (quotes.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: quotes.error
+            });
+    }
+
+    if (quotes.length <= 0) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: 'No hay Cotizacion con el id brindado'
+            });
+    }
+
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: quotes
+        });
+}
 const getQuotesById = async (req, res) => {
     const quotes = await Events.getQuotesById(req.params.id);
     if (quotes.permissionError) {
@@ -347,6 +382,56 @@ const getQuotesById = async (req, res) => {
         });
 }
 
+const getQuoteDeliveryDetail = async (req, res) => {
+    const delivery = await Events.getQuoteDeliveryDetail(req.params.id);
+    if (delivery.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: delivery.permissionError
+            });
+    }
+    if (delivery.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: delivery.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: delivery
+        });
+}
+const getQuoteDelivery = async (req, res) => {
+    const delivery = await Events.getQuoteDelivery(req.params.id);
+    if (delivery.permissionError) {
+        return res
+            .status(403)
+            .send({
+                status: false,
+                message: delivery.permissionError
+            });
+    }
+    if (delivery.error) {
+        return res
+            .status(500)
+            .send({
+                status: false,
+                message: delivery.error
+            });
+    }
+    return res
+        .status(200)
+        .send({
+            status: true,
+            data: delivery
+        });
+}
 const getQuotesReplacement = async (req, res) => {
     const replacement = await Events.getQuotesReplacement(req.params.id);
     if (replacement.permissionError) {
@@ -415,7 +500,10 @@ export default {
     updateEvents,
     getNotasById,
     getReplacementById,
+    getQuoteById,
     getQuotesById,
     getQuotesReplacement,
+    getQuoteDelivery,
+    getQuoteDeliveryDetail,
     getQuotesReplacementDetail
 }

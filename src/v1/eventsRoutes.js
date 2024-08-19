@@ -18,7 +18,10 @@ router
     .post("/update", eventsController.updateEvents)
     .post("/getReplacementById/:id", eventsController.getReplacementById)
     .post("/getQuotesById/:id", eventsController.getQuotesById)
+    .post("/getQuoteById/:id", eventsController.getQuoteById)
     .post("/quotes-replacement/:id", eventsController.getQuotesReplacement)
+    .post("/quote-delivery/:id", eventsController.getQuoteDelivery)
+    .post("/quote-delivery/detail/:id", eventsController.getQuoteDeliveryDetail)
     .post("/quotes-replacement/detail/:id", eventsController.getQuotesReplacementDetail)
 
 export default router;

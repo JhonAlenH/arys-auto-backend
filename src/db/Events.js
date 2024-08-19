@@ -35,6 +35,8 @@ const ServiceOrder2 = sequelize.define('evVordenServicio', {
 const Replacement = sequelize.define('evVrepuestos', {});
 const Quotes = sequelize.define('evVcotizaciones', {});
 const ReplacementQuotes = sequelize.define('evVrepuestosCoti', {}, {tableName: 'evVrepuestosCoti'});
+const DeliveryQuote = sequelize.define('EVGRUACOTIZACION', {}, {tableName: 'EVGRUACOTIZACION'});
+const DeliveryQuoteDetail = sequelize.define('evVGruaDetail', {}, {tableName: 'evVGruaDetail'});
 const ReplacementQuotesDetail = sequelize.define('evVrepuestosDisponibles', {});
 
 
@@ -603,14 +605,17 @@ const updateEvents = async (data) => {
     }
 
     if (Array.isArray(data.quotesAccepted) && data.quotesAccepted.length > 0) {
-      console.log(data.quotesAccepted)
       await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
         const keys = Object.keys(quotesAccepted).filter(key => 
           key !== 'ccotizacion' &&
           key !== 'selected' &&
+          key !== 'cgruacotizacion' && 
           key !== 'crepuesto' && 
           key !== 'xrepuesto' && 
           key !== 'ncantidad' && 
+          key !== 'itiporeporte' &&
+          key !== 'xdestino_grua' &&
+          key !== 'xorigen_grua' &&
           key !== 'bdisponible' &&
           key !== 'munitariorepuesto' &&
           key !== 'mmontototal' &&
@@ -637,36 +642,85 @@ const updateEvents = async (data) => {
 
       // Actualización en evrepuestocotizacion
       await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
-        const keys = Object.keys(quotesAccepted).filter(key =>
-            key !== 'ccotizacion' &&
-            key !== 'crepuesto' && 
-            key !== 'selected' && 
-            key !== 'xrepuesto' && 
-            key !== 'mtotal' && 
-            key !== 'mmontototal' && 
-            key !== 'mtotalcotizacion' && 
-            key !== 'pimpuesto' && 
-            key !== 'type' &&
-            key !== 'selected' &&
-            key !== 'xmoneda'
-        );
+        let keys = []
+        console.log('Tipo Reporte', quotesAccepted.itiporeporte);
+        if(quotesAccepted.itiporeporte == 'G') {
+          console.log(quotesAccepted.itiporeporte);
+          keys = Object.keys(quotesAccepted).filter(key =>
+              key !== 'crepuesto' && 
+              key !== 'cgruacotizacion' && 
+              key !== 'cestatusgeneral' && 
+              key !== 'bdisponible' && 
+              key !== 'selected' && 
+              key !== 'itiporeporte' &&
+              key !== 'xrepuesto' && 
+              key !== 'mmontototal' && 
+              key !== 'pimpuesto' && 
+              key !== 'type' &&
+              key !== 'selected' &&
+              key !== 'xmoneda'
+          );
+        } else {
+          keys = Object.keys(quotesAccepted).filter(key =>
+              key !== 'ccotizacion' &&
+              key !== 'cgruacotizacion' &&
+              key !== 'crepuesto' && 
+              key !== 'selected' && 
+              key !== 'itiporepuesto' && 
+              key !== 'xrepuesto' &&
+              key !== 'itiporeporte' &&
+              key !== 'xdestino_grua' &&
+              key !== 'xorigen_grua' &&
+              key !== 'mmontototal' && 
+              key !== 'mtotal' && 
+              key !== 'mtotalcotizacion' && 
+              key !== 'pimpuesto' && 
+              key !== 'type' &&
+              key !== 'selected' &&
+              key !== 'xmoneda'
+          );
+        }
         const setClause = keys.map((key, index) => `${key} = @param${index + 1}`).join(', ');
+        
+        let queryUpdate = '';
 
-        const queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`;
+        if(quotesAccepted.itiporeporte == 'G') {
+          const gruaValues = keys.map(key => quotesAccepted[key] === '' ? null : quotesAccepted[key]);
+          const gruaKeys = keys.map((_, i) => `@param${i + 1}`).join(',');
+          queryUpdate = `INSERT INTO EVGRUACOTIZACION (${keys.join(',')}) VALUES (${gruaKeys})`
+          console.log(queryUpdate);
 
-        const updateRequest = pool.request();
-        keys.forEach((key, index) => {
-            const value = quotesAccepted[key] === '' ? null : quotesAccepted[key];
-            updateRequest.input(`param${index + 1}`, value);
-        });
-        updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
-        updateRequest.input('crepuesto', quotesAccepted.crepuesto);
+          const createRequest = pool.request();
+          keys.forEach((key, index) => {
+            createRequest.input(`param${index + 1}`, gruaValues[index]);
+          });
+          await createRequest.query(queryUpdate);
+        } else if(quotesAccepted.cgruacotizacion){} else {
+          if(quotesAccepted.selected == true || quotesAccepted.bdisponible){
+            queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`
+            const updateRequest = pool.request();
+            keys.forEach((key, index) => {
+                const value = quotesAccepted[key] === '' ? null : quotesAccepted[key];
+                updateRequest.input(`param${index + 1}`, value);
+            });
+            updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
+            updateRequest.input('crepuesto', quotesAccepted.crepuesto);
+    
+            await updateRequest.query(queryUpdate);
+          } else {
+            queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET bdisponible = 0 WHERE ccotizacion = ${quotesAccepted.ccotizacion} AND crepuesto = ${quotesAccepted.crepuesto}`
+            const updateRequest = pool.request();
+            updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
+            updateRequest.input('crepuesto', quotesAccepted.crepuesto);
+    
+            await updateRequest.query(queryUpdate);
+          }
+        }
 
-        await updateRequest.query(queryUpdate);
       }));
     }
 
-    await pool.close();7
+    await pool.close();
     if(Array.isArray(data.seguimientos) && data.seguimientos.length > 0){
       data.seguimientos.forEach( async(seguimiento) => {
         if (seguimiento.type == 'update' && seguimiento.bcerrado == true) {
@@ -697,7 +751,7 @@ const getServiceOrderById = async (id) => {
         cnotificacion: id
       },
       attributes: [
-        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'corden', 'cservicio', 'ccotizacion', 'xservicio', 'cnotificacion', 
         'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 
@@ -721,7 +775,7 @@ const getServiceOrder = async (corden) => {
         corden: corden
       },
       attributes: [
-        'corden', 'cservicio', 'xservicio', 'cnotificacion', 
+        'corden', 'ccotizacion', 'cservicio', 'xservicio', 'cnotificacion', 
         'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 
@@ -764,7 +818,23 @@ const getQuotesById = async (id) => {
         cnotificacion: id
       },
       attributes: [
-        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio' 
+        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio', 'cestatusgeneral', 'xestatusgeneral', 'xmoneda'
+      ],
+    });
+    const quotes = cotizaciones.map((item) => item.get({ plain: true }));
+    return quotes;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+const getQuoteById = async (id) => {
+  try {
+    const cotizaciones = await Quotes.findAll({
+      where: {
+        ccotizacion: id
+      },
+      attributes: [
+        'ccotizacion', 'cproveedor', 'xproveedor', 'xobservacion', 'mmontototal', 'itiporeporte', 'xservicio', 'cestatusgeneral', 'xestatusgeneral', 'xmoneda'
       ],
     });
     const quotes = cotizaciones.map((item) => item.get({ plain: true }));
@@ -781,11 +851,43 @@ const getQuotesReplacement = async (id) => {
         ccotizacion: id
       },
       attributes: [
-        'ccotizacion', 'crepuesto', 'xrepuesto', 'ncantidad', 'xniveldano'
+        'ccotizacion', 'crepuesto', 'xrepuesto', 'ncantidad', 'xniveldano', 'bdisponible'
       ],
     });
     const replacement = repuestos.map((item) => item.get({ plain: true }));
     return replacement;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+const getQuoteDeliveryDetail = async (id) => {
+  try {
+    const deliverys = await DeliveryQuoteDetail.findAll({
+      where: {
+        ccotizacion: id
+      },
+      attributes: [
+        'cgruacotizacion', 'cestatusgeneral', 'ccotizacion', 'xorigen_grua', 'xmoneda', 'xdestino_grua', 'cmoneda', 'mtotal', 'mtotalcotizacion'
+      ],
+    });
+    const delivery = deliverys.map((item) => item.get({ plain: true }));
+    return delivery;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+const getQuoteDelivery = async (id) => {
+  try {
+    const deliverys = await DeliveryQuoteDetail.findAll({
+      where: {
+        ccotizacion: id
+      },
+      attributes: [
+        'cgruacotizacion', 'cestatusgeneral', 'ccotizacion', 'xorigen_grua', 'xmoneda','xdestino_grua', 'cmoneda', 'mtotal', 'mtotalcotizacion'
+      ],
+    });
+    const delivery = deliverys.map((item) => item.get({ plain: true }));
+    return delivery;
   } catch (error) {
     return { error: error.message };
   }
@@ -804,6 +906,7 @@ const getQuotesReplacementDetail = async (id) => {
         'ncantidad', 
         'xniveldano', 
         'munitariorepuesto', 
+        'mivaindividual', 
         'mtotalrepuesto', 
         'xmoneda',
         'mtotalcotizacion',
@@ -828,7 +931,10 @@ export default {
     getServiceOrder,
     updateEvents,
     getReplacementById,
+    getQuoteById,
     getQuotesById,
     getQuotesReplacement,
+    getQuoteDelivery,
+    getQuoteDeliveryDetail,
     getQuotesReplacementDetail
 }

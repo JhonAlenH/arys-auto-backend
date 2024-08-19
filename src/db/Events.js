@@ -609,6 +609,7 @@ const updateEvents = async (data) => {
         const keys = Object.keys(quotesAccepted).filter(key => 
           key !== 'ccotizacion' &&
           key !== 'selected' &&
+          key !== 'cgruacotizacion' && 
           key !== 'crepuesto' && 
           key !== 'xrepuesto' && 
           key !== 'ncantidad' && 
@@ -642,11 +643,12 @@ const updateEvents = async (data) => {
       // Actualización en evrepuestocotizacion
       await Promise.all(data.quotesAccepted.map(async (quotesAccepted) => {
         let keys = []
-        
+        console.log('Tipo Reporte', quotesAccepted.itiporeporte);
         if(quotesAccepted.itiporeporte == 'G') {
           console.log(quotesAccepted.itiporeporte);
           keys = Object.keys(quotesAccepted).filter(key =>
               key !== 'crepuesto' && 
+              key !== 'cgruacotizacion' && 
               key !== 'cestatusgeneral' && 
               key !== 'bdisponible' && 
               key !== 'selected' && 
@@ -661,6 +663,7 @@ const updateEvents = async (data) => {
         } else {
           keys = Object.keys(quotesAccepted).filter(key =>
               key !== 'ccotizacion' &&
+              key !== 'cgruacotizacion' &&
               key !== 'crepuesto' && 
               key !== 'selected' && 
               key !== 'itiporepuesto' && 
@@ -692,17 +695,26 @@ const updateEvents = async (data) => {
             createRequest.input(`param${index + 1}`, gruaValues[index]);
           });
           await createRequest.query(queryUpdate);
-        } else {
-          queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`
-          const updateRequest = pool.request();
-          keys.forEach((key, index) => {
-              const value = quotesAccepted[key] === '' ? null : quotesAccepted[key];
-              updateRequest.input(`param${index + 1}`, value);
-          });
-          updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
-          updateRequest.input('crepuesto', quotesAccepted.crepuesto);
-  
-          await updateRequest.query(queryUpdate);
+        } else if(quotesAccepted.cgruacotizacion){} else {
+          if(quotesAccepted.selected == true || quotesAccepted.bdisponible){
+            queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET ${setClause} WHERE ccotizacion = @ccotizacion AND crepuesto = @crepuesto`
+            const updateRequest = pool.request();
+            keys.forEach((key, index) => {
+                const value = quotesAccepted[key] === '' ? null : quotesAccepted[key];
+                updateRequest.input(`param${index + 1}`, value);
+            });
+            updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
+            updateRequest.input('crepuesto', quotesAccepted.crepuesto);
+    
+            await updateRequest.query(queryUpdate);
+          } else {
+            queryUpdate = `UPDATE EVREPUESTOCOTIZACION SET bdisponible = 0 WHERE ccotizacion = ${quotesAccepted.ccotizacion} AND crepuesto = ${quotesAccepted.crepuesto}`
+            const updateRequest = pool.request();
+            updateRequest.input('ccotizacion', quotesAccepted.ccotizacion);
+            updateRequest.input('crepuesto', quotesAccepted.crepuesto);
+    
+            await updateRequest.query(queryUpdate);
+          }
         }
 
       }));
@@ -855,7 +867,7 @@ const getQuoteDeliveryDetail = async (id) => {
         ccotizacion: id
       },
       attributes: [
-        'cgruacotizacion', 'ccotizacion', 'xorigen_grua', 'xmoneda', 'xdestino_grua', 'cmoneda', 'mtotal', 'mtotalcotizacion'
+        'cgruacotizacion', 'cestatusgeneral', 'ccotizacion', 'xorigen_grua', 'xmoneda', 'xdestino_grua', 'cmoneda', 'mtotal', 'mtotalcotizacion'
       ],
     });
     const delivery = deliverys.map((item) => item.get({ plain: true }));
@@ -871,7 +883,7 @@ const getQuoteDelivery = async (id) => {
         ccotizacion: id
       },
       attributes: [
-        'cgruacotizacion', 'ccotizacion', 'xorigen_grua', 'xmoneda','xdestino_grua', 'cmoneda', 'mtotal', 'mtotalcotizacion'
+        'cgruacotizacion', 'cestatusgeneral', 'ccotizacion', 'xorigen_grua', 'xmoneda','xdestino_grua', 'cmoneda', 'mtotal', 'mtotalcotizacion'
       ],
     });
     const delivery = deliverys.map((item) => item.get({ plain: true }));

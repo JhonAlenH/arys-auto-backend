@@ -775,7 +775,7 @@ const getServiceOrder = async (corden) => {
         corden: corden
       },
       attributes: [
-        'corden', 'ccotizacion', 'cservicio', 'xservicio', 'cnotificacion', 
+        'corden', 'ccotizacion', 'ccontratoflota', 'cservicio', 'xservicio', 'cnotificacion', 
         'fsolicitud', 'fajuste', 'cproveedor', 'xproveedor', 
         'xdireccion_proveedor', 'xidentidad_proveedor', 
         'xcorreo_proveedor', 'xtelefono_proveedor', 

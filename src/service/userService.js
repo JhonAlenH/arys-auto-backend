@@ -16,26 +16,33 @@ const getUserInfo = async (id) => {
   if(!userInfo) {
     return { error: "Error", code: 401 };
   }
+  console.log(userInfo);
   const ownerResult = await User.getOwnerInfo(userInfo.xcedula.toString());
+  console.log('paqyuve',ownerResult);
   if (ownerResult.error) {
     return { error: ownerResult.error, code: 500 };
   }
   if (ownerResult.rowsAffected < 1) {
     return { error: "Error", code: 401 };
   }
-  const ownerInfo = ownerResult.recordset[0]
-  
-  const gettedUserSubscription = await getUserSubscription(ownerInfo.cpropietario)
   
   
-
+  
   const gettedDocuments = await User.getUserDocuments(userInfo.cusuario)
   if (gettedDocuments.error) {
     return { error: gettedDocuments.error, code: 500 };
   }
 
-  const result = {...ownerInfo, ...userInfo}
-  result.subscription = gettedUserSubscription
+  const result = {...userInfo}
+
+  if(ownerResult) {
+    const ownerInfo = ownerResult.recordset[0]
+    
+    const gettedUserSubscription = await getUserSubscription(ownerInfo.cpropietario)
+    result = { ...result, ...ownerInfo }
+    result.subscription = gettedUserSubscription
+  }
+
   if(gettedDocuments) {
     result.documents = gettedDocuments
   } else {
